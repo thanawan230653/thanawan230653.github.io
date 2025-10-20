@@ -1,99 +1,118 @@
-
 <!doctype html>
 <html lang="th">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Login</title>
-  <style>
-    :root{
-      --bg1:#0f172a;
-      --bg2:#0b1220;
-      --accent1:#7c3aed;
-      --accent2:#06b6d4;
-      --muted: rgba(255,255,255,0.7);
-      --error:#ef4444;
-      --success:#10b981;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;display:grid;place-items:center;height:100vh;
-      font-family:Inter,Arial,sans-serif;
-      background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#fff;
-    }
-    .card{
-      width:100%;max-width:400px;background:rgba(255,255,255,0.03);
-      border-radius:16px;padding:28px;box-shadow:0 10px 25px rgba(0,0,0,0.5);
-      backdrop-filter: blur(8px);
-    }
-    h1{margin:0 0 20px;font-size:24px;text-align:center}
-    label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px}
-    .field{margin-bottom:16px;position:relative}
-    input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);
-      background:rgba(255,255,255,0.05);color:#fff;font-size:15px;outline:none}
-    input:focus{border-color:var(--accent1);box-shadow:0 0 0 2px rgba(124,58,237,0.4)}
-    .btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:600;
-      background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;cursor:pointer}
-    .message{margin-top:12px;padding:12px;border-radius:10px;font-weight:600;font-size:14px}
-    .message.error{background:rgba(239,68,68,0.12);color:var(--error)}
-    .message.success{background:rgba(16,185,129,0.12);color:var(--success)}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ตัวอย่าง: เปิดเว็บใน modal (ยังอยู่หน้าเดิม)</title>
+<style>
+  body{font-family:Inter,Arial,sans-serif;background:#0f172a;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+  .wrap{max-width:880px;width:100%;padding:24px;text-align:center}
+  button.primary{background:linear-gradient(90deg,#7c3aed,#06b6d4);border:none;padding:12px 18px;border-radius:10px;color:#fff;font-weight:600;cursor:pointer}
+  /* modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(2,6,23,0.7);display:none;align-items:center;justify-content:center;z-index:9999}
+  .modal{width:90%;max-width:1100px;height:80%;background:#081025;border-radius:10px;box-shadow:0 20px 60px rgba(2,6,23,0.7);overflow:hidden;display:flex;flex-direction:column}
+  .modal-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent)}
+  .modal-body{flex:1;display:block}
+  .modal iframe{width:100%;height:100%;border:0;background:#000}
+  .close-btn{background:transparent;border:none;color:#fff;font-size:16px;cursor:pointer;padding:8px}
+  .fallback{padding:12px;color:#ffd;display:none}
+  .note{margin-top:14px;color:rgba(255,255,255,0.7);font-size:14px}
+</style>
 </head>
 <body>
-  <div class="card">
-    <h1>เข้าสู่ระบบ</h1>
-    <form id="loginForm" onsubmit="return handleSubmit(event)">
-      <label for="email">อีเมล</label>
-      <div class="field">
-        <input id="email" type="email" placeholder="you@example.com" required>
+  <div class="wrap">
+    <h2>ตัวอย่าง: เปิด player.castr ใน modal (ยังคงอยู่หน้าเดิม)</h2>
+    <p class="note">ถ้าเว็บเป้าหมายบล็อกการฝัง (X-Frame-Options/CSP) จะมีปุ่มให้เปิดในแท็บใหม่แทน</p>
+    <button id="openBtn" class="primary">เปิด player.castr ในหน้าต่างย่อย</button>
+
+    <div id="overlay" class="modal-overlay" role="dialog" aria-hidden="true">
+      <div class="modal" role="document">
+        <div class="modal-header">
+          <strong>player.castr — preview</strong>
+          <div>
+            <button id="popOut" class="close-btn" title="Open in new tab">เปิดในแท็บใหม่</button>
+            <button id="closeBtn" class="close-btn" aria-label="Close">✕</button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <!-- iframe จะใส่ src โดย js -->
+          <iframe id="playerFrame" src="about:blank" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+        </div>
       </div>
-      <label for="password">รหัสผ่าน</label>
-      <div class="field">
-        <input id="password" type="password" placeholder="••••••••" required>
-      </div>
-      <button class="btn" type="submit">เข้าสู่ระบบ</button>
-      <div id="msg"></div>
-    </form>
+    </div>
+
+    <div id="fallback" class="fallback">
+      <p>ไม่สามารถฝังหน้าดังกล่าวภายใน iframe (เว็บอาจบล็อกการฝัง). <a id="openNewLink" href="#" target="_blank" style="color:#7c3aed;text-decoration:underline">เปิดในแท็บใหม่</a></p>
+    </div>
   </div>
-  <script>
-    const VALID_EMAIL = 'pawarit1@gmail.com';
-    const VALID_PASS = 'Grace-pahhinm';
-    const REDIRECT_URL = 'https://youtu.be/PNSsaoEG2H8?si=Eo2ZYG9OW6NwYCgv';
 
-    function showMessage(text,type){
-      const msg = document.getElementById('msg');
-      msg.innerHTML = '';
-      const div = document.createElement('div');
-      div.className = 'message ' + type;
-      div.textContent = text;
-      msg.appendChild(div);
+<script>
+(function(){
+  const TARGET = 'https://player.castr.com/live_8e385dd0ad6b11f0b41723ee96c50f3d';
+  const openBtn = document.getElementById('openBtn');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('closeBtn');
+  const playerFrame = document.getElementById('playerFrame');
+  const fallback = document.getElementById('fallback');
+  const openNewLink = document.getElementById('openNewLink');
+  const popOut = document.getElementById('popOut');
+
+  openNewLink.href = TARGET;
+
+  function showOverlay(){
+    // reset messages
+    fallback.style.display = 'none';
+    overlay.style.display = 'flex';
+    overlay.setAttribute('aria-hidden','false');
+
+    // set iframe src (เริ่มโหลด)
+    playerFrame.src = TARGET;
+
+    // ถ้าโหลดสำเร็จ iframe จะส่ง event onload
+    // แต่ถ้าโดนบล็อก (X-Frame-Options: DENY / SAMEORIGIN) browser จะป้องกันการแสดงผล
+    // วิธีตรวจ: ฟัง onload แล้วตรวจว่า contentWindow สำเร็จหรือไม่ — cross-origin จะไม่อนุญาตให้อ่านรายละเอียด
+    // ดังนั้นเรใช้ fallback timeout: ถ้า onload ไม่ถูกเรียกภายใน 2.2s ให้แสดงปุ่มเปิดในแท็บใหม่
+    let loaded = false;
+    function onLoadOK(){
+      loaded = true;
+      // iframe โหลดสำเร็จ — ถ้าต้องการซ่อน fallback ให้แน่ใจ
+      fallback.style.display = 'none';
     }
+    playerFrame.onload = onLoadOK;
 
-    function handleSubmit(e){
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const pass = document.getElementById('password').value;
-      const emailOk = email.toLowerCase() === VALID_EMAIL.toLowerCase();
-      const passOk = pass === VALID_PASS;
+    // timeout fallback
+    const to = setTimeout(()=>{
+      if(!loaded){
+        // อาจจะถูกบล็อกหรือโหลดช้า — แสดงข้อความและปุ่มเปิดในแท็บใหม่
+        fallback.style.display = 'block';
+      }
+    }, 2200);
 
-      if(emailOk && passOk){
-        showMessage('เข้าสู่ระบบสำเร็จ กำลังนำทาง…','success');
-        window.location.href = REDIRECT_URL;
-        return true;
-      }
-      if(!emailOk && passOk){
-        showMessage('เมลไม่ถูกต้อง','error');
-        return false;
-      }
-      if(emailOk && !passOk){
-        showMessage('password ของคุณไม่ถูกต้อง','error');
-        return false;
-      }
-      if(!emailOk && !passOk){
-        showMessage('ลองใหม่อีกครั้ง password และเมลไม่ถูกต้อง','error');
-        return false;
-      }
+    // ถ้าปิด overlay ให้ล้าง src เพื่อลด resource
+    closeBtn.onclick = function(){
+      overlay.style.display = 'none';
+      overlay.setAttribute('aria-hidden','true');
+      playerFrame.src = 'about:blank';
+      playerFrame.onload = null;
+      clearTimeout(to);
+    };
+
+    // ปุ่มเปิดในแท็บใหม่
+    popOut.onclick = function(){
+      window.open(TARGET, '_blank');
+    };
+  }
+
+  openBtn.addEventListener('click', showOverlay);
+
+  // ถ้านอก modal คลิกปิด (optional)
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay){
+      closeBtn.click();
     }
-  </script>
+  });
+
+})();
+</script>
 </body>
 </html>
