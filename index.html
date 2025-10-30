@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Apply Form </title>
+  <title>หน้าล็อกอิน + ดาวน์โหลดไฟล์</title>
   <style>
     :root{--accent:#06b6d4;--muted:#94a3b8}
     *{box-sizing:border-box}
@@ -37,7 +37,7 @@
     <div class="grid">
       <div class="card">
         <h1>เข้าสู่ระบบ</h1>
-        <p class="lead">ระบบเซิฟเวอร์ PAT Unlock ล๊อกอินเพื่อไปหน้าโหลดไฟล์และสูตรสอน</p>
+        <p class="lead">เวปนี้สร้ามาสำหลับโหลดไฟล์และนักพัฒนาเท่านั้น</p>
         <form id="loginForm" autocomplete="off">
           <div>
             <label for="user">ชื่อผู้ใช้</label>
@@ -45,32 +45,38 @@
           </div>
           <div>
             <label for="pass">รหัสผ่าน</label>
-            <input id="pass" name="admin" type="password" placeholder="admin" required />
+            <input id="pass" name="pass" type="password" placeholder="••••••••" required />
           </div>
           <div class="actions">
             <button type="submit" class="primary">ล็อกอิน</button>
             <button type="button" id="guestBtn" class="ghost">ดาวน์โหลดเป็นผู้เยี่ยมชม</button>
           </div>
-          <p class="note">หมายเหตุ: หน้านี้เป็น HTML ตัวอย่าง — การล็อกอินจริงต้องใช้ระบบฝั่งเซิร์ฟเวอร์</p>
+          <p class="note">ชื่อผู้ใช้: adminpat / รหัสผ่าน: 0842781903<br>หรือชื่อผู้ใช้: chainda / รหัสผ่าน: pat</p>
         </form>
       </div>
       <div class="card">
         <h1>ดาวน์โหลดไฟล์ (3 ลิงก์)</h1>
-        <p class="lead">คลิกปุ่มเพื่อดาวน์โหลดไฟล์</p>
+        <p class="lead">ก่อนดาวน์โหลดต้องใส่รหัสผ่าน trueid</p>
         <div class="downloads" id="downloads"></div>
       </div>
     </div>
   </div>
   <div class="toast" id="toast">พร้อมดาวน์โหลด</div>
   <script>
-    const files = [
-      {id:'file1', title:'Notrue 25.01.91.16', url:'https://drive.google.com/file/d/19PbXVWUlZgVjdkj3cF__TgXnpEJEEo-K/view?usp=drive_link', size:'Google Drive'},
-      {id:'file2', title:'ทรูเดิม 25.01.91.16', url:'https://ott-download.trueid.net/atv/TrueDmpOTT-UI-user-25-01-91-16.apk', size:'APK File'},
-      {id:'file3', title:'ทรูโคลน (ยังไม่เปิดให้ดาวน์โหลด)', url:'#', size:'รออัปเดต'}
+    const files=[
+      {id:'file1',title:'Notrue 25.01.91.16',url:'https://drive.google.com/file/d/19PbXVWUlZgVjdkj3cF__TgXnpEJEEo-K/view?usp=drive_link',size:'Google Drive'},
+      {id:'file2',title:'ทรูเดิม 25.01.91.16',url:'https://ott-download.trueid.net/atv/TrueDmpOTT-UI-user-25-01-91-16.apk',size:'APK File'},
+      {id:'file3',title:'ทรูโคลน (ยังไม่เปิดให้ดาวน์โหลด)',url:'#',size:'รออัปเดต'}
     ];
     const dlContainer=document.getElementById('downloads');
     const toast=document.getElementById('toast');
+    let passTry=0;
     function showToast(text){toast.textContent=text;toast.style.display='block';clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>toast.style.display='none',2400)}
+    function checkDownloadPassword(callback){
+      const pwd=prompt('กรุณาใส่รหัสผ่านสำหรับดาวน์โหลดไฟล์:');
+      if(pwd==='trueid'){showToast('รหัสถูกต้อง');callback();}
+      else{passTry++;if(passTry>=3){window.location.href='https://t.me/PAT230653';}else{alert('รหัสไม่ถูกต้อง ลองใหม่อีกครั้ง ('+passTry+'/3)');checkDownloadPassword(callback);}}
+    }
     function createItem(f){
       const wrap=document.createElement('div');wrap.className='dl-item';
       const left=document.createElement('div');left.className='dl-left';
@@ -81,17 +87,19 @@
       meta.appendChild(name);meta.appendChild(sm);
       left.appendChild(ico);left.appendChild(meta);
       const btn=document.createElement('button');btn.className='download-btn';btn.textContent='ดาวน์โหลด';
-      btn.addEventListener('click',e=>{
-        e.preventDefault();
-        if(f.url==='#'){showToast('ลิงก์ยังไม่เปิดให้ดาวน์โหลด');return;}
-        const a=document.createElement('a');a.href=f.url;a.target='_blank';a.rel='noopener';a.click();
-        showToast('เปิดลิงก์ดาวน์โหลด: '+f.title);
-      });
+      btn.addEventListener('click',e=>{e.preventDefault();if(f.url==='#'){showToast('ลิงก์ยังไม่เปิดให้ดาวน์โหลด');return;}checkDownloadPassword(()=>{window.open(f.url,'_blank');});});
       wrap.appendChild(left);wrap.appendChild(btn);return wrap;
     }
     files.forEach(f=>dlContainer.appendChild(createItem(f)));
-    document.getElementById('loginForm').addEventListener('submit',e=>{e.preventDefault();const u=document.getElementById('user').value.trim();if(!u){showToast('กรุณากรอกชื่อผู้ใช้');return;}showToast('ล็อกอินสำเร็จ (จำลอง): '+u)});
-    document.getElementById('guestBtn').addEventListener('click',()=>{showToast('โหมดผู้เยี่ยมชมพร้อมใช้งาน')});
+    document.getElementById('loginForm').addEventListener('submit',e=>{
+      e.preventDefault();
+      const u=document.getElementById('user').value.trim();
+      const p=document.getElementById('pass').value.trim();
+      if(u==='adminpat'&&p==='0842781903'){window.location.href='https://drive.google.com/drive/folders/1Baw0F_SGB9tti-6Ji4oIjFoHE88vezBF?usp=sharing';return;}
+      if(u==='chainda'&&p==='pat'){window.location.href='https://thanawan230653.github.io/pat.html';return;}
+      showToast('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+    });
+    document.getElementById('guestBtn').addEventListener('click',()=>{window.location.href='https://thanawan230653.github.io/emmc.html'});
   </script>
 </body>
 </html>
