@@ -1,118 +1,97 @@
 <!doctype html>
 <html lang="th">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ตัวอย่าง M3U8 แบบ Live สตรีมเอง</title>
-<style>
-  body{font-family:Inter,Arial,sans-serif;background:#0f172a;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
-  .wrap{max-width:880px;width:100%;padding:24px;text-align:center}
-  button.primary{background:linear-gradient(90deg,#7c3aed,#06b6d4);border:none;padding:12px 18px;border-radius:10px;color:#fff;font-weight:600;cursor:pointer}
-  /* modal */
-  .modal-overlay{position:fixed;inset:0;background:rgba(2,6,23,0.7);display:none;align-items:center;justify-content:center;z-index:9999}
-  .modal{width:90%;max-width:1100px;height:80%;background:#081025;border-radius:10px;box-shadow:0 20px 60px rgba(2,6,23,0.7);overflow:hidden;display:flex;flex-direction:column}
-  .modal-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent)}
-  .modal-body{flex:1;display:block}
-  .modal iframe{width:100%;height:100%;border:0;background:#000}
-  .close-btn{background:transparent;border:none;color:#fff;font-size:16px;cursor:pointer;padding:8px}
-  .fallback{padding:12px;color:#ffd;display:none}
-  .note{margin-top:14px;color:rgba(255,255,255,0.7);font-size:14px}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>หน้าล็อกอิน + ดาวน์โหลดไฟล์</title>
+  <style>
+    :root{--accent:#06b6d4;--muted:#94a3b8}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans Thai','Helvetica Neue',Arial;min-height:100vh;display:flex;align-items:center;justify-content:center;background:url('https://www.scimath.org/images/stories/flexicontent/item_9445_field_65/l_2018-11-19_02.02.21.JPG') center/cover no-repeat;color:#e6eef6}
+    .wrap{width:100%;max-width:960px;padding:24px;background:rgba(0,0,0,0.6);border-radius:16px;backdrop-filter:blur(6px)}
+    .grid{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:start}
+    .card{background:rgba(0,0,0,0.5);border-radius:12px;padding:22px;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+    h1{margin:0 0 8px;font-size:20px}
+    p.lead{color:var(--muted);margin:0 0 18px}
+    form{display:flex;flex-direction:column;gap:12px}
+    label{font-size:12px;color:var(--muted)}
+    input[type="text"],input[type="password"]{padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:inherit}
+    .actions{display:flex;gap:8px;align-items:center}
+    button.primary{background:var(--accent);border:none;padding:10px 14px;border-radius:10px;color:#021025;font-weight:600;cursor:pointer}
+    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.3);padding:8px 10px;border-radius:8px;color:var(--muted);cursor:pointer}
+    .downloads{display:flex;flex-direction:column;gap:12px}
+    .dl-item{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1)}
+    .dl-left{display:flex;gap:12px;align-items:center}
+    .file-ico{width:44px;height:44px;border-radius:8px;background:linear-gradient(180deg,#063143,#035c6a);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .meta{line-height:1}
+    .name{font-weight:600}
+    .muted{color:var(--muted);font-size:13px}
+    .download-btn{padding:8px 10px;border-radius:8px;border:none;cursor:pointer}
+    .note{font-size:13px;color:var(--muted);margin-top:10px}
+    .toast{position:fixed;right:20px;bottom:20px;background:#062b32;padding:10px 14px;border-radius:10px;color:#dff7fb;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 20px rgba(0,0,0,0.6);display:none}
+    @media (max-width:900px){.grid{grid-template-columns:1fr;}.wrap{padding:16px}.card{padding:16px}}
+  </style>
 </head>
 <body>
   <div class="wrap">
-    <h2>ตัวอย่าง: เปิด player.castr ใน modal (ยังคงอยู่หน้าเดิม)</h2>
-    <p class="note">ถ้าเว็บเป้าหมายบล็อกการฝัง (X-Frame-Options/CSP) จะมีปุ่มให้เปิดในแท็บใหม่แทน</p>
-    <button id="openBtn" class="primary">เปิด player.castr ในหน้าต่างย่อย</button>
-
-    <div id="overlay" class="modal-overlay" role="dialog" aria-hidden="true">
-      <div class="modal" role="document">
-        <div class="modal-header">
-          <strong>player.castr — preview</strong>
+    <div class="grid">
+      <div class="card">
+        <h1>เข้าสู่ระบบ</h1>
+        <p class="lead">กรุณาล็อกอินเพื่อดาวน์โหลดไฟล์ — หรือคลิกดาวน์โหลดถ้าต้องการไฟล์สาธารณะ</p>
+        <form id="loginForm" autocomplete="off">
           <div>
-            <button id="popOut" class="close-btn" title="Open in new tab">เปิดในแท็บใหม่</button>
-            <button id="closeBtn" class="close-btn" aria-label="Close">✕</button>
+            <label for="user">ชื่อผู้ใช้</label>
+            <input id="user" name="user" type="text" placeholder="ใส่ชื่อผู้ใช้" required />
           </div>
-        </div>
-        <div class="modal-body">
-          <!-- iframe จะใส่ src โดย js -->
-          <iframe id="playerFrame" src="about:blank" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
-        </div>
+          <div>
+            <label for="pass">รหัสผ่าน</label>
+            <input id="pass" name="pass" type="password" placeholder="••••••••" required />
+          </div>
+          <div class="actions">
+            <button type="submit" class="primary">ล็อกอิน</button>
+            <button type="button" id="guestBtn" class="ghost">ดาวน์โหลดเป็นผู้เยี่ยมชม</button>
+          </div>
+          <p class="note">หมายเหตุ: หน้านี้เป็น HTML ตัวอย่าง — การล็อกอินจริงต้องใช้ระบบฝั่งเซิร์ฟเวอร์</p>
+        </form>
+      </div>
+      <div class="card">
+        <h1>ดาวน์โหลดไฟล์ (3 ลิงก์)</h1>
+        <p class="lead">คลิกปุ่มเพื่อดาวน์โหลดไฟล์</p>
+        <div class="downloads" id="downloads"></div>
       </div>
     </div>
-
-    <div id="fallback" class="fallback">
-      <p>ไม่สามารถฝังหน้าดังกล่าวภายใน iframe (เว็บอาจบล็อกการฝัง). <a id="openNewLink" href="#" target="_blank" style="color:#7c3aed;text-decoration:underline">เปิดในแท็บใหม่</a></p>
-    </div>
   </div>
-
-<script>
-(function(){
-  const TARGET = 'https://player.castr.com/live_8e385dd0ad6b11f0b41723ee96c50f3d';
-  const openBtn = document.getElementById('openBtn');
-  const overlay = document.getElementById('overlay');
-  const closeBtn = document.getElementById('closeBtn');
-  const playerFrame = document.getElementById('playerFrame');
-  const fallback = document.getElementById('fallback');
-  const openNewLink = document.getElementById('openNewLink');
-  const popOut = document.getElementById('popOut');
-
-  openNewLink.href = TARGET;
-
-  function showOverlay(){
-    // reset messages
-    fallback.style.display = 'none';
-    overlay.style.display = 'flex';
-    overlay.setAttribute('aria-hidden','false');
-
-    // set iframe src (เริ่มโหลด)
-    playerFrame.src = TARGET;
-
-    // ถ้าโหลดสำเร็จ iframe จะส่ง event onload
-    // แต่ถ้าโดนบล็อก (X-Frame-Options: DENY / SAMEORIGIN) browser จะป้องกันการแสดงผล
-    // วิธีตรวจ: ฟัง onload แล้วตรวจว่า contentWindow สำเร็จหรือไม่ — cross-origin จะไม่อนุญาตให้อ่านรายละเอียด
-    // ดังนั้นเรใช้ fallback timeout: ถ้า onload ไม่ถูกเรียกภายใน 2.2s ให้แสดงปุ่มเปิดในแท็บใหม่
-    let loaded = false;
-    function onLoadOK(){
-      loaded = true;
-      // iframe โหลดสำเร็จ — ถ้าต้องการซ่อน fallback ให้แน่ใจ
-      fallback.style.display = 'none';
+  <div class="toast" id="toast">พร้อมดาวน์โหลด</div>
+  <script>
+    const files = [
+      {id:'file1', title:'Notrue 25.01.91.16', url:'https://drive.google.com/file/d/19PbXVWUlZgVjdkj3cF__TgXnpEJEEo-K/view?usp=drive_link', size:'Google Drive'},
+      {id:'file2', title:'ทรูเดิม 25.01.91.16', url:'https://ott-download.trueid.net/atv/TrueDmpOTT-UI-user-25-01-91-16.apk', size:'APK File'},
+      {id:'file3', title:'ทรูโคลน (ยังไม่เปิดให้ดาวน์โหลด)', url:'#', size:'รออัปเดต'}
+    ];
+    const dlContainer=document.getElementById('downloads');
+    const toast=document.getElementById('toast');
+    function showToast(text){toast.textContent=text;toast.style.display='block';clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>toast.style.display='none',2400)}
+    function createItem(f){
+      const wrap=document.createElement('div');wrap.className='dl-item';
+      const left=document.createElement('div');left.className='dl-left';
+      const ico=document.createElement('div');ico.className='file-ico';ico.textContent=f.title.slice(0,2).toUpperCase();
+      const meta=document.createElement('div');meta.className='meta';
+      const name=document.createElement('div');name.className='name';name.textContent=f.title;
+      const sm=document.createElement('div');sm.className='muted';sm.textContent=f.size;
+      meta.appendChild(name);meta.appendChild(sm);
+      left.appendChild(ico);left.appendChild(meta);
+      const btn=document.createElement('button');btn.className='download-btn';btn.textContent='ดาวน์โหลด';
+      btn.addEventListener('click',e=>{
+        e.preventDefault();
+        if(f.url==='#'){showToast('ลิงก์ยังไม่เปิดให้ดาวน์โหลด');return;}
+        const a=document.createElement('a');a.href=f.url;a.target='_blank';a.rel='noopener';a.click();
+        showToast('เปิดลิงก์ดาวน์โหลด: '+f.title);
+      });
+      wrap.appendChild(left);wrap.appendChild(btn);return wrap;
     }
-    playerFrame.onload = onLoadOK;
-
-    // timeout fallback
-    const to = setTimeout(()=>{
-      if(!loaded){
-        // อาจจะถูกบล็อกหรือโหลดช้า — แสดงข้อความและปุ่มเปิดในแท็บใหม่
-        fallback.style.display = 'block';
-      }
-    }, 2200);
-
-    // ถ้าปิด overlay ให้ล้าง src เพื่อลด resource
-    closeBtn.onclick = function(){
-      overlay.style.display = 'none';
-      overlay.setAttribute('aria-hidden','true');
-      playerFrame.src = 'about:blank';
-      playerFrame.onload = null;
-      clearTimeout(to);
-    };
-
-    // ปุ่มเปิดในแท็บใหม่
-    popOut.onclick = function(){
-      window.open(TARGET, '_blank');
-    };
-  }
-
-  openBtn.addEventListener('click', showOverlay);
-
-  // ถ้านอก modal คลิกปิด (optional)
-  overlay.addEventListener('click', function(e){
-    if(e.target === overlay){
-      closeBtn.click();
-    }
-  });
-
-})();
-</script>
+    files.forEach(f=>dlContainer.appendChild(createItem(f)));
+    document.getElementById('loginForm').addEventListener('submit',e=>{e.preventDefault();const u=document.getElementById('user').value.trim();if(!u){showToast('กรุณากรอกชื่อผู้ใช้');return;}showToast('ล็อกอินสำเร็จ (จำลอง): '+u)});
+    document.getElementById('guestBtn').addEventListener('click',()=>{showToast('โหมดผู้เยี่ยมชมพร้อมใช้งาน')});
+  </script>
 </body>
 </html>
