@@ -1,105 +1,74 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>หน้าล็อกอิน + ดาวน์โหลดไฟล์</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แนะนำตัว - Thanawan</title>
   <style>
-    :root{--accent:#06b6d4;--muted:#94a3b8}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans Thai','Helvetica Neue',Arial;min-height:100vh;display:flex;align-items:center;justify-content:center;background:url('https://www.scimath.org/images/stories/flexicontent/item_9445_field_65/l_2018-11-19_02.02.21.JPG') center/cover no-repeat;color:#e6eef6}
-    .wrap{width:100%;max-width:960px;padding:24px;background:rgba(0,0,0,0.6);border-radius:16px;backdrop-filter:blur(6px)}
-    .grid{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:start}
-    .card{background:rgba(0,0,0,0.5);border-radius:12px;padding:22px;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
-    h1{margin:0 0 8px;font-size:20px}
-    p.lead{color:var(--muted);margin:0 0 18px}
-    form{display:flex;flex-direction:column;gap:12px}
-    label{font-size:12px;color:var(--muted)}
-    input[type="text"],input[type="password"]{padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:inherit}
-    .actions{display:flex;gap:8px;align-items:center}
-    button.primary{background:var(--accent);border:none;padding:10px 14px;border-radius:10px;color:#021025;font-weight:600;cursor:pointer}
-    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.3);padding:8px 10px;border-radius:8px;color:var(--muted);cursor:pointer}
-    .downloads{display:flex;flex-direction:column;gap:12px}
-    .dl-item{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1)}
-    .dl-left{display:flex;gap:12px;align-items:center}
-    .file-ico{width:44px;height:44px;border-radius:8px;background:linear-gradient(180deg,#063143,#035c6a);display:flex;align-items:center;justify-content:center;font-weight:700}
-    .meta{line-height:1}
-    .name{font-weight:600}
-    .muted{color:var(--muted);font-size:13px}
-    .download-btn{padding:8px 10px;border-radius:8px;border:none;cursor:pointer}
-    .note{font-size:13px;color:var(--muted);margin-top:10px}
-    .toast{position:fixed;right:20px;bottom:20px;background:#062b32;padding:10px 14px;border-radius:10px;color:#dff7fb;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 20px rgba(0,0,0,0.6);display:none}
-    @media (max-width:900px){.grid{grid-template-columns:1fr;}.wrap{padding:16px}.card{padding:16px}}
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://png.pngtree.com/thumb_back/fh260/background/20230519/pngtree-animated-waves-video-4k-1920x1080-image_2603301.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      text-align: center;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      backdrop-filter: blur(2px);
+    }
+
+    .profile {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 40px;
+      border-radius: 20px;
+      display: inline-block;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    }
+
+    img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 3px solid white;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin: 10px 0;
+    }
+
+    p {
+      font-size: 18px;
+      margin: 5px 0 20px 0;
+    }
+
+    a {
+      display: inline-block;
+      text-decoration: none;
+      color: white;
+      background-color: #0078ff;
+      padding: 10px 25px;
+      border-radius: 25px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    a:hover {
+      background-color: #005fcc;
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="grid">
-      <div class="card">
-        <h1>เข้าสู่ระบบ</h1>
-        <p class="lead">เวปนี้สร้ามาสำหลับโหลดไฟล์และนักพัฒนาเท่านั้น</p>
-        <form id="loginForm" autocomplete="off">
-          <div>
-            <label for="user">ชื่อผู้ใช้</label>
-            <input id="user" name="user" type="text" placeholder="ใส่ชื่อผู้ใช้" required />
-          </div>
-          <div>
-            <label for="pass">รหัสผ่าน</label>
-            <input id="pass" name="pass" type="password" placeholder="••••••••" required />
-          </div>
-          <div class="actions">
-            <button type="submit" class="primary">ล็อกอิน</button>
-            <button type="button" id="guestBtn" class="ghost">ดาวน์โหลดเป็นผู้เยี่ยมชม</button>
-          </div>
-          <p class="note">ติดต่อฟ่ายสนับสนุน PAT เท่านั้น</p>
-        </form>
-      </div>
-      <div class="card">
-        <h1>ดาวน์โหลดไฟล์ (3 ลิงก์)</h1>
-        <p class="lead">ก่อนดาวน์โหลดต้องใส่รหัสผ่าน trueid</p>
-        <div class="downloads" id="downloads"></div>
-      </div>
-    </div>
+  <div class="profile">
+    <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" alt="Profile Picture">
+    <h1>Thanawan</h1>
+    <p>ยินดีต้อนรับเข้าสู่หน้าแนะนำตัวของฉัน</p>
+    <a href="https://github.com/thanawan230653" target="_blank">เยี่ยมชม GitHub ของฉัน</a>
   </div>
-  <div class="toast" id="toast">พร้อมดาวน์โหลด</div>
-  <script>
-    const files=[
-      {id:'file1',title:'Notrue 25.01.91.16',url:'https://drive.google.com/file/d/19PbXVWUlZgVjdkj3cF__TgXnpEJEEo-K/view?usp=drive_link',size:'Google Drive'},
-      {id:'file2',title:'ทรูเดิม 25.01.91.16',url:'https://ott-download.trueid.net/atv/TrueDmpOTT-UI-user-25-01-91-16.apk',size:'APK File'},
-      {id:'file3',title:'ทรูโคลน (ยังไม่เปิดให้ดาวน์โหลด)',url:'#',size:'รออัปเดต'}
-    ];
-    const dlContainer=document.getElementById('downloads');
-    const toast=document.getElementById('toast');
-    let passTry=0;
-    function showToast(text){toast.textContent=text;toast.style.display='block';clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>toast.style.display='none',2400)}
-    function checkDownloadPassword(callback){
-      const pwd=prompt('กรุณาใส่รหัสผ่านสำหรับดาวน์โหลดไฟล์:');
-      if(pwd==='trueid'){showToast('รหัสถูกต้อง');callback();}
-      else{passTry++;if(passTry>=3){window.location.href='https://t.me/PAT230653';}else{alert('รหัสไม่ถูกต้อง ลองใหม่อีกครั้ง ('+passTry+'/3)');checkDownloadPassword(callback);}}
-    }
-    function createItem(f){
-      const wrap=document.createElement('div');wrap.className='dl-item';
-      const left=document.createElement('div');left.className='dl-left';
-      const ico=document.createElement('div');ico.className='file-ico';ico.textContent=f.title.slice(0,2).toUpperCase();
-      const meta=document.createElement('div');meta.className='meta';
-      const name=document.createElement('div');name.className='name';name.textContent=f.title;
-      const sm=document.createElement('div');sm.className='muted';sm.textContent=f.size;
-      meta.appendChild(name);meta.appendChild(sm);
-      left.appendChild(ico);left.appendChild(meta);
-      const btn=document.createElement('button');btn.className='download-btn';btn.textContent='ดาวน์โหลด';
-      btn.addEventListener('click',e=>{e.preventDefault();if(f.url==='#'){showToast('ลิงก์ยังไม่เปิดให้ดาวน์โหลด');return;}checkDownloadPassword(()=>{window.open(f.url,'_blank');});});
-      wrap.appendChild(left);wrap.appendChild(btn);return wrap;
-    }
-    files.forEach(f=>dlContainer.appendChild(createItem(f)));
-    document.getElementById('loginForm').addEventListener('submit',e=>{
-      e.preventDefault();
-      const u=document.getElementById('user').value.trim();
-      const p=document.getElementById('pass').value.trim();
-      if(u==='adminpat'&&p==='0842781903'){window.location.href='https://drive.google.com/drive/folders/1Baw0F_SGB9tti-6Ji4oIjFoHE88vezBF?usp=sharing';return;}
-      if(u==='chainda'&&p==='pat'){window.location.href='https://thanawan230653.github.io/pat.html';return;}
-      showToast('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
-    });
-    document.getElementById('guestBtn').addEventListener('click',()=>{window.location.href='https://thanawan230653.github.io/emmc.html'});
-  </script>
 </body>
 </html>
