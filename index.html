@@ -223,8 +223,8 @@
   let i = 0, dir = 1;
   function tick(){
     i += dir;
-    if(i >= base.length){ dir = -1; setTimeout(tick, 1200); return; }
-    if(i <= 10){ dir = 1; setTimeout(tick, 600); return; }
+    if(i >= base.length){ dir = -1; setTimeout(tick, 1300); return; }
+    if(i <= 15){ dir = 1; setTimeout(tick, 600); return; }
     el.textContent = base.slice(0, i);
     setTimeout(tick, 65);
   }
