@@ -56,20 +56,34 @@
   .avatar img{width:100%;height:100%;object-fit:cover}
   .title{font-size:clamp(24px,3.2vw,40px);line-height:1.1;margin:0 0 8px;font-weight:800;text-shadow:0 2px 12px rgba(0,0,0,.45)}
   .typing{border-right:2px solid var(--brand);white-space:nowrap;overflow:hidden;display:inline-block}
-  .sub{color:var(--muted);margin-top:6px}
+
+  /* badges (อัปเดตให้รองรับลิงก์) */
   .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
-  .badge{font-size:14px;padding:8px 12px;border-radius:999px;background:linear-gradient(135deg, rgba(76,201,240,.25), rgba(181,23,158,.25));border:1px solid rgba(255,255,255,.25)}
+  .badge{
+    display:inline-block;
+    text-decoration:none;
+    color:var(--txt);
+    font-size:14px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:linear-gradient(135deg, rgba(76,201,240,.25), rgba(181,23,158,.25));
+    border:1px solid rgba(255,255,255,.25);
+    transition:.25s;
+  }
+  .badge:hover{transform:translateY(-1px);filter:brightness(1.05)}
+
+  .sub{color:var(--muted);margin-top:6px}
   .player{display:flex;align-items:center;gap:14px;margin-top:16px;flex-wrap:wrap}
   .viz{display:flex;gap:3px;height:22px;align-items:flex-end}
   .bar{width:4px;height:6px;background:linear-gradient(180deg, var(--brand), var(--brand-2));border-radius:2px;opacity:.35;transform-origin:bottom}
   .viz.playing .bar{opacity:1;animation:beat 1s ease-in-out infinite}
   .bar:nth-child(odd){animation-delay:.1s}.bar:nth-child(3n){animation-delay:.2s}.bar:nth-child(5n){animation-delay:.3s}.bar:nth-child(7n){animation-delay:.4s}
   @keyframes beat{0%,100%{height:6px}50%{height:22px}}
+
   .card{background:rgba(2,6,23,.7);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
   .social{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
   .link{text-decoration:none;color:var(--txt);border:1px solid var(--glass-bd);border-radius:12px;padding:10px 14px;background:rgba(255,255,255,.06);transition:.25s;display:inline-flex;align-items:center;gap:8px}
   .link:hover{transform:translateY(-1px);background:rgba(255,255,255,.12)}
-  /* ล็อกลิงก์ก่อนล็อกอิน */
   .locked{opacity:.55;filter:grayscale(.3);cursor:not-allowed;pointer-events:auto}
   .locked:hover{transform:none;background:rgba(255,255,255,.06)}
   footer{text-align:center;color:var(--muted);padding:30px 20px;border-top:1px solid var(--glass-bd);background:rgba(0,0,0,.45);backdrop-filter:blur(8px)}
@@ -114,8 +128,9 @@
           <h1 class="title"><span class="typing" id="typing" data-text="Pawarit Sosirikul - PAT"></span></h1>
           <div class="sub">อายุ 16 ปี | อาชีพ: ขายข้าว | ความสามารถ: ซอฟต์แวร์ & ฮาร์ดแวร์</div>
 
+          <!-- badges: ทำให้ 🌐 เว็บดีไซน์ เป็นลิงก์ -->
           <div class="badges">
-            <span class="badge">🌐 เว็บไซต์</span>
+            <a class="badge" href="https://thanawan230653.github.io/pawarit.html" target="_blank" rel="noopener">🌐 เว็บดีไซน์</a>
             <span class="badge">🛠️ ฮาร์ดแวร์</span>
             <span class="badge">💾 ซอฟต์แวร์</span>
             <span class="badge">🤖 Android Developer</span>
@@ -134,18 +149,10 @@
             <audio id="audio" preload="none" src="https://raw.githubusercontent.com/Mr-xcam/mmm/refs/heads/main/3.mp3"></audio>
           </div>
 
-          <!-- Quick contact (ป้องกันก่อนล็อกอิน) -->
+          <!-- Quick contact (ล็อกก่อนล็อกอิน) -->
           <div class="social" style="margin-top:14px;flex-wrap:wrap">
-            <a class="link locked" data-protect="contact"
-               data-href="tel:0842781903"
-               data-label="📞 โทร: 084-278-1903"
-               href="#locked">📞 โทร: 084-XXX-XXXX</a>
-
-            <a class="link locked" data-protect="contact"
-               data-href="mailto:viv121oioppl@gmail.com"
-               data-label="✉️ อีเมล: viv121oioppl@gmail.com"
-               href="#locked">✉️ อีเมล: ********@gmail.com</a>
-
+            <a class="link locked" data-protect="contact" data-href="tel:0842781903" data-label="📞 โทร: 084-278-1903" href="#locked">📞 โทร: 084-XXX-XXXX</a>
+            <a class="link locked" data-protect="contact" data-href="mailto:viv121oioppl@gmail.com" data-label="✉️ อีเมล: viv121oioppl@gmail.com" href="#locked">✉️ อีเมล: ********@gmail.com</a>
             <a class="link" href="https://www.youtube.com/@hddc322" target="_blank" rel="noopener">▶️ YouTube: @hddc322</a>
           </div>
 
@@ -182,16 +189,8 @@
     <div class="wrap-main">
       <h2 style="margin:0 0 12px">ติดต่อ</h2>
       <div class="card" style="display:flex;gap:12px;flex-wrap:wrap">
-        <a class="link locked" data-protect="contact"
-           data-href="tel:0842781903"
-           data-label="📞 โทร: 084-278-1903"
-           href="#locked">📞 โทร: 084-XXX-XXXX</a>
-
-        <a class="link locked" data-protect="contact"
-           data-href="mailto:viv121oioppl@gmail.com"
-           data-label="✉️ อีเมล: viv121oioppl@gmail.com"
-           href="#locked">✉️ อีเมล: ********@gmail.com</a>
-
+        <a class="link locked" data-protect="contact" data-href="tel:0842781903" data-label="📞 โทร: 084-278-1903" href="#locked">📞 โทร: 084-XXX-XXXX</a>
+        <a class="link locked" data-protect="contact" data-href="mailto:viv121oioppl@gmail.com" data-label="✉️ อีเมล: viv121oioppl@gmail.com" href="#locked">✉️ อีเมล: ********@gmail.com</a>
         <a class="link" href="https://www.youtube.com/@hddc322" target="_blank" rel="noopener">▶️ YouTube: @hddc322</a>
         <a class="link" href="https://t.me/PAT230653" target="_blank" rel="noopener">✈️ Telegram</a>
         <a class="link" href="https://www.facebook.com/kubsss7544" target="_blank" rel="noopener">📘 Facebook</a>
@@ -270,7 +269,6 @@ document.getElementById('year').textContent = new Date().getFullYear();
   cancelBtn.addEventListener('click', close);
   modal.addEventListener('click', (e)=>{ if(e.target===modal) close(); });
 
-  // ถ้าเป็นลิงก์ที่ถูกป้องกัน ให้เปิด modal แทน
   document.addEventListener('click', (e)=>{
     const a = e.target.closest('a[data-protect="contact"]');
     if(!a) return;
