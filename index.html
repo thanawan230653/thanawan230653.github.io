@@ -41,41 +41,57 @@
     animation: twinkle 8s linear infinite;opacity:.35;
   }
   @keyframes twinkle{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-  .nav{position:sticky;top:0;z-index:50;display:flex;gap:14px;align-items:center;justify-content:center;
+
+  .nav{
+    position:sticky;top:0;z-index:50;display:flex;gap:14px;align-items:center;justify-content:center;
     padding:12px 20px;backdrop-filter:blur(10px);
     background:linear-gradient(to bottom, rgba(15,23,42,.55), rgba(15,23,42,.25));
-    border-bottom:1px solid var(--glass-bd)}
-  .nav a{color:var(--txt);text-decoration:none;font-weight:600;padding:10px 16px;border-radius:999px;border:1px solid transparent;transition:.25s}
+    border-bottom:1px solid var(--glass-bd)
+  }
+  .nav a{
+    color:var(--txt);text-decoration:none;font-weight:600;padding:10px 16px;border-radius:999px;
+    border:1px solid transparent;transition:.25s
+  }
   .nav a:hover{border-color:rgba(255,255,255,.25);transform:translateY(-1px)}
+
   section{padding:80px 20px}
   .wrap{max-width:1120px;margin:0 auto}
-  .hero{display:grid;gap:28px;align-items:center;grid-template-columns:140px 1fr;
-    background:var(--glass-bg);border:1px solid var(--glass-bd);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px;margin-top:28px}
-  .avatar{width:140px;height:140px;border-radius:50%;border:3px solid rgba(255,255,255,.9);overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.4);background:#fff}
+
+  .hero{
+    display:grid;gap:28px;align-items:center;grid-template-columns:140px 1fr;
+    background:var(--glass-bg);border:1px solid var(--glass-bd);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:26px;margin-top:28px
+  }
+  .avatar{
+    width:140px;height:140px;border-radius:50%;border:3px solid rgba(255,255,255,.9);
+    overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.4);background:#fff
+  }
   .avatar img{width:100%;height:100%;object-fit:cover}
+
   .title{font-size:clamp(24px,3.2vw,40px);line-height:1.1;margin:0 0 8px;font-weight:800;text-shadow:0 2px 12px rgba(0,0,0,.45)}
   .typing{border-right:2px solid var(--brand);white-space:nowrap;overflow:hidden;display:inline-block}
   .sub{color:var(--muted);margin-top:6px}
+
   .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
   .badge{font-size:14px;padding:8px 12px;border-radius:999px;background:linear-gradient(135deg, rgba(76,201,240,.25), rgba(181,23,158,.25));border:1px solid rgba(255,255,255,.25)}
+
   .player{display:flex;align-items:center;gap:14px;margin-top:16px;flex-wrap:wrap}
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1px solid var(--glass-bd);
-    background:rgba(255,255,255,.06);color:var(--txt);cursor:pointer;font-weight:700;box-shadow:var(--shadow);transition:.25s}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1px solid var(--glass-bd);
+    background:rgba(255,255,255,.06);color:var(--txt);cursor:pointer;font-weight:700;box-shadow:var(--shadow);transition:.25s
+  }
   .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.12)}
   .viz{display:flex;gap:3px;height:22px;align-items:flex-end}
   .bar{width:4px;height:6px;background:linear-gradient(180deg, var(--brand), var(--brand-2));border-radius:2px;opacity:.35;transform-origin:bottom}
   .viz.playing .bar{opacity:1;animation:beat 1s ease-in-out infinite}
   .bar:nth-child(odd){animation-delay:.1s}.bar:nth-child(3n){animation-delay:.2s}.bar:nth-child(5n){animation-delay:.3s}.bar:nth-child(7n){animation-delay:.4s}
   @keyframes beat{0%,100%{height:6px}50%{height:22px}}
-  .grid{display:grid;gap:18px;margin-top:22px;grid-template-columns:repeat(auto-fit, minmax(240px,1fr))}
+
   .card{background:rgba(2,6,23,.7);border:1px solid rgba(255,255,255,.12);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
-  .card h3{margin:0 0 8px;font-size:18px}
-  .meta{color:var(--muted);font-size:14px;margin:4px 0 10px}
-  .progress{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
-  .progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg, var(--brand), var(--brand-2))}
   .social{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
   .link{text-decoration:none;color:var(--txt);border:1px solid var(--glass-bd);border-radius:12px;padding:10px 14px;background:rgba(255,255,255,.06);transition:.25s;display:inline-flex;align-items:center;gap:8px}
   .link:hover{transform:translateY(-1px);background:rgba(255,255,255,.12)}
+
   footer{text-align:center;color:var(--muted);padding:30px 20px;border-top:1px solid var(--glass-bd);background:rgba(0,0,0,.45);backdrop-filter:blur(8px)}
   html{scroll-behavior:smooth}
   @media (max-width:700px){.hero{grid-template-columns:1fr;text-align:center}.avatar{margin:0 auto}}
@@ -83,11 +99,10 @@
 </head>
 <body>
 
-  <!-- NAV -->
+  <!-- NAV (เอา “ผลงาน” ออกแล้ว) -->
   <nav class="nav">
     <a href="#about">เกี่ยวกับฉัน</a>
     <a href="#skills">ทักษะ</a>
-    <a href="#projects">ผลงาน</a>
     <a href="#contact">ติดต่อ</a>
   </nav>
 
@@ -96,11 +111,12 @@
     <div class="wrap">
       <div class="hero">
         <div class="avatar">
-          <img src="https://i0.wp.com/lifesara.co/wp-content/uploads/2023/05/%E0%B8%AD%E0%B8%99%E0%B8%B4%E0%B9%80%E0%B8%A1%E0%B8%B0%E0%B8%88%E0%B8%B5%E0%B8%99%E0%B8%A7%E0%B8%B2%E0%B8%A2_2.png" alt="Kritsana Avatar">
+          <img src="https://i0.wp.com/lifesara.co/wp-content/uploads/2023/05/%E0%B8%AD%E0%B8%99%E0%B8%B4%E0%B9%80%E0%B8%A1%E0%B8%B0%E0%B8%88%E0%B8%B5%E0%B8%99%E0%B8%A7%E0%B8%B2%E0%B8%A2_2.png" alt="Pawarit Avatar">
         </div>
         <div>
           <h1 class="title">
-            <span class="typing" id="typing">Pawarit — Creator & Tinkerer</span>
+            <!-- ใช้ data-text เพื่อไม่ให้ชื่อไม่ตรงแล้วบั๊ก -->
+            <span class="typing" id="typing" data-text="Pawarit Sosirikul - PAT"></span>
           </h1>
           <div class="sub">อายุ 16 ปี | อาชีพ: ขายข้าว | ความสามารถ: ซอฟต์แวร์ & ฮาร์ดแวร์</div>
 
@@ -146,51 +162,25 @@
   <!-- SKILLS -->
   <section id="skills">
     <div class="wrap">
-      <h2 style="margin:0 0 12px">ทักษะ</h2>
-      <div class="grid">
-        <div class="card">
-          <h3>ซอฟต์แวร์</h3>
-          <div class="meta">สคริปต์, ออโตเมชัน, แก้ปัญหาซอฟต์แวร์</div>
-          <div class="progress"><i style="--w:92%"></i></div>
-        </div>
-        <div class="card">
-          <h3>ฮาร์ดแวร์</h3>
-          <div class="meta">แกะกล่อง/ซ่อม, วัดผล, จูนประสิทธิภาพ</div>
-          <div class="progress"><i style="--w:88%"></i></div>
-        </div>
-        <div class="card">
-          <h3>เว็บ</h3>
-          <div class="meta">HTML/CSS/JS, UI/UX เบื้องต้น</div>
-          <div class="progress"><i style="--w:80%"></i></div>
-        </div>
-        <div class="card">
-          <h3>คอมมูนิเคชัน</h3>
-          <div class="meta">แชทซัพพอร์ต, สื่อสารงาน</div>
-          <div class="progress"><i style="--w:86%"></i></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PROJECTS -->
-  <section id="projects">
-    <div class="wrap">
-      <h2 style="margin:0 0 12px">ผลงานเด่น</h2>
-      <div class="grid">
-        <div class="card">
-          <h3>โปรเจกต์ A</h3>
-          <div class="meta">ยังๆ</div>
-          <p style="margin:0">สร้างไอหน้านี้ขึ้นมา</p>
-        </div>
-        <div class="card">
-          <h3>โปรเจกต์ B</h3>
-          <div class="meta">ยังไม่ได้ทำ</div>
-          <p style="margin:0">ขี้เกียด</p>
-        </div>
-        <div class="card">
-          <h3>โปรเจกต์ C</h3>
-          <div class="meta">รอแป็บ</div>
-          <p style="margin:0">ข้อยว่ากัน / โลโก้ได้</p>
+      <div class="card">
+        <h2 style="margin:0 0 12px">ทักษะ</h2>
+        <div style="display:grid;gap:18px;margin-top:10px;grid-template-columns:repeat(auto-fit, minmax(240px,1fr))">
+          <div class="card">
+            <h3 style="margin:0 0 8px">ซอฟต์แวร์</h3>
+            <div style="color:var(--muted);font-size:14px;margin:4px 0 10px">สคริปต์, ออโตเมชัน, แก้ปัญหาซอฟต์แวร์</div>
+          </div>
+          <div class="card">
+            <h3 style="margin:0 0 8px">ฮาร์ดแวร์</h3>
+            <div style="color:var(--muted);font-size:14px;margin:4px 0 10px">แกะกล่อง/ซ่อม, วัดผล, จูนประสิทธิภาพ</div>
+          </div>
+          <div class="card">
+            <h3 style="margin:0 0 8px">เว็บ</h3>
+            <div style="color:var(--muted);font-size:14px;margin:4px 0 10px">HTML/CSS/JS, UI/UX เบื้องต้น</div>
+          </div>
+          <div class="card">
+            <h3 style="margin:0 0 8px">คอมมูนิเคชัน</h3>
+            <div style="color:var(--muted);font-size:14px;margin:4px 0 10px">แชทซัพพอร์ต, สื่อสารงาน</div>
+          </div>
         </div>
       </div>
     </div>
@@ -216,21 +206,23 @@
   </footer>
 
 <script>
-/* Typing effect (loop) */
+/* Typing effect — ป้อนจาก data-text และพิมพ์จนครบแล้วหยุด (ไม่บั๊ก) */
 (function(){
   const el = document.getElementById('typing');
-  const base = "Pawarit Sosirikul - PAT";
-  let i = 0, dir = 1;
-  function tick(){
-    i += dir;
-    if(i >= base.length){ dir = -1; setTimeout(tick, 1000); return; }
-    if(i <= 12){ dir = 1; setTimeout(tick, 600); return; }
-    el.textContent = base.slice(0, i);
-    setTimeout(tick, 65);
+  const base = el.getAttribute('data-text') || '';
+  let i = 0;
+  function type(){
+    if(i <= base.length){
+      el.textContent = base.slice(0, i);
+      i++;
+      setTimeout(type, 65);
+    }else{
+      el.style.borderRight = '0'; // เอาเคอร์เซอร์ออกเมื่อพิมพ์เสร็จ
+    }
   }
-  el.textContent = base.slice(0, 10);
-  setTimeout(tick, 700);
+  type();
 })();
+
 /* Music player + viz */
 (function(){
   const audio = document.getElementById('audio');
@@ -245,26 +237,9 @@
   audio.addEventListener('pause', () => { viz.classList.remove('playing'); btn.textContent = '▶️ เล่นเพลง'; });
   audio.addEventListener('ended', () => { viz.classList.remove('playing'); btn.textContent = '▶️ เล่นเพลง'; });
 })();
-/* Animate progress bars when visible */
-(function(){
-  const bars = Array.from(document.querySelectorAll('.progress > i'));
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        const el = e.target;
-        requestAnimationFrame(()=>{ el.style.width = el.style.getPropertyValue('--w') || '85%'; el.style.transition='width 1200ms ease'; });
-        io.unobserve(el);
-      }
-    })
-  }, {threshold:.35});
-  bars.forEach(b=>io.observe(b));
-})();
+
 /* Year */
 document.getElementById('year').textContent = new Date().getFullYear();
-/* Reduced motion */
-if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  document.documentElement.style.scrollBehavior = 'auto';
-}
 </script>
 </body>
 </html>
