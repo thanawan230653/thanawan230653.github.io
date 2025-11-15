@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>HiSports – Multi Quality</title>
+
+<style>
+    body {
+        background: #000;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        color: white;
+    }
+
+    .title {
+        margin-top: 20px;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .video-container {
+        width: 100%;
+        max-width: 1000px;
+        margin: 20px auto;
+    }
+
+    video {
+        width: 100%;
+        border-radius: 10px;
+        background: #000;
+    }
+
+    .quality-buttons {
+        margin-top: 15px;
+    }
+
+    .quality-buttons button {
+        padding: 10px 18px;
+        margin: 5px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        background: #444;
+        color: white;
+        font-size: 16px;
+    }
+
+    .quality-buttons button:hover {
+        background: #666;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+
+<body>
+
+<div class="title">HiSports</div>
+
+<div class="video-container">
+    <video id="player" controls autoplay></video>
+</div>
+
+<div class="quality-buttons">
+    <button onclick="changeQuality('1080')">1080p</button>
+    <button onclick="changeQuality('720')">720p</button>
+    <button onclick="changeQuality('480')">480p</button>
+    <button onclick="changeQuality('360')">360p</button>
+    <button onclick="changeQuality('144')">144p</button>
+</div>
+
+<script>
+    var video = document.getElementById("player");
+    var hls;
+
+    // ใส่ลิงก์ของคุณแต่ละความละเอียดตรงนี้
+    var sources = {
+        "1080": "URL_1080",
+        "720":  "URL_720",
+        "480":  "URL_480",
+        "360":  "URL_360",
+        "144":  "URL_144"
+    };
+
+    // ฟังก์ชันเปลี่ยนความละเอียด
+    function changeQuality(q) {
+        let src = sources[q];
+
+        if (hls) {
+            hls.destroy();
+        }
+
+        if (Hls.isSupported()) {
+            hls = new Hls();
+            hls.loadSource(src);
+            hls.attachMedia(video);
+            video.play();
+        } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+            video.src = src;
+            video.play();
+        }
+    }
+
+    // เริ่มต้นที่ 720p
+    changeQuality("720");
+</script>
+
+</body>
+</html>
