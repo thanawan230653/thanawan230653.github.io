@@ -9,7 +9,6 @@
       max-width: 960px;
       margin: 0 auto;
       padding: 20px;
-      /* พื้นหลังรูป */
       background: #020617 url("https://raw.githubusercontent.com/thanawan230653/Apple-ott/refs/heads/main/download%20(1).jpg") center/cover fixed no-repeat;
       color: #e5e7eb;
     }
@@ -46,7 +45,7 @@
       padding: 20px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
       margin-bottom: 20px;
-      overflow: visible; /* กัน dropdown โดนตัด */
+      overflow: visible;
     }
     label {
       display: block;
@@ -191,7 +190,6 @@
       opacity: 0.35;
       pointer-events: none;
     }
-    /* การ์ดผู้จัดทำ */
     .author-list {
       list-style: none;
       padding-left: 0;
@@ -204,7 +202,7 @@
   </style>
 </head>
 <body>
-  <!-- เพลง (ซ่อน) -->
+  <!-- เพลง (ต้องมี LIL.mp3 อยู่ใน repo เดียวกับไฟล์นี้) -->
   <audio id="bgAudio" src="https://raw.githubusercontent.com/ztb5s/mmx/refs/heads/main/ml.mp3" preload="auto" hidden></audio>
 
   <div class="top-bar">
@@ -220,7 +218,7 @@
     </div>
   </div>
 
-  <!-- INPUT SECTION -->
+  <!-- 1. Input -->
   <div class="card" id="cardInput">
     <h2 id="inputTitle">1. Input image</h2>
 
@@ -238,7 +236,7 @@
     <img id="preview" alt="Preview will appear here" style="display:none;" />
   </div>
 
-  <!-- OUTPUT GLOBAL SETTINGS -->
+  <!-- 2. Output settings -->
   <div class="card" id="cardOutput">
     <h2 id="outputSettingsTitle">2. Output settings</h2>
 
@@ -276,11 +274,11 @@
 
     <p class="info" id="noteEncoding">
       <span class="tag">Note</span>
-      Browser can truly encode PNG / JPEG / WEBP. Other extensions (BMP, TIFF, AVIF, PDF, ICO) reuse these encodings internally. ICO is built as a proper 128×128 icon file and PDF wraps the image into a single-page document.
+      Browser can natively encode PNG / JPEG / WEBP. BMP output is generated as a 16-bit RGB565 BMP file. Other extensions (TIFF, AVIF, PDF, ICO) reuse these encodings internally: ICO is a 128×128 icon and PDF wraps the image into a single-page document.
     </p>
   </div>
 
-  <!-- PRESETS SECTION -->
+  <!-- 3. Presets -->
   <div class="card" id="cardPresets">
     <h2 id="presetsTitle">3. Size presets (up to 5 outputs)</h2>
     <p class="info" id="presetsInfo">
@@ -303,7 +301,7 @@
     <div id="presetsContainer"></div>
   </div>
 
-  <!-- CONVERT -->
+  <!-- 4. Convert -->
   <div class="card" id="cardConvert">
     <h2 id="convertTitle">4. Convert & download</h2>
     <button id="convertBtn" disabled>Convert</button>
@@ -336,22 +334,20 @@
       <li>รันบน Hoot ของ Github โอเฟ้นซอส 1000%</li>
     </ul>
 
-<h3 style="margin-top:10px;">นำทางไปยังเวปของผู้ทำ</h3>
-<p style="margin:4px 0 0 0;">
-  <button type="button" onclick="window.open('https://thanawan230653.github.io/', '_blank')">
-    ไปยังเว็บไซต์ผู้จัดทำ
-  </button>
-</p>
-
+    <h3 style="margin-top:10px;">นำทางไปยังเวปของผู้ทำ</h3>
+    <p style="margin:4px 0 0 0;">
+      <button type="button" onclick="window.open('https://thanawan230653.github.io/', '_blank')">
+        ไปยังเว็บไซต์ผู้จัดทำ
+      </button>
+    </p>
   </div>
 
   <div class="footer" id="footerText">
     จัดทำโดย 9Com Studio
   </div>
 
-  <!-- JSZip for ZIP -->
+  <!-- JSZip & jsPDF -->
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-  <!-- jsPDF for PDF -->
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <script>
@@ -372,7 +368,7 @@
         extLabel: "File extension",
         qualityLabelText: "Quality (for JPEG / WEBP)",
         normalModeNote:
-          "Browser can truly encode PNG / JPEG / WEBP. Other extensions (BMP, TIFF, AVIF, PDF, ICO) reuse these encodings internally. ICO is built as a proper 128×128 icon file and PDF wraps the image into a single-page document.",
+          "Browser can natively encode PNG / JPEG / WEBP. BMP output is generated as a 16-bit RGB565 BMP file. Other extensions (TIFF, AVIF, PDF, ICO) reuse these encodings internally: ICO is a 128×128 icon and PDF wraps the image into a single-page document.",
         iconModeNote:
           "Icon mode: presets and quality are disabled. Output will be a real 128×128 ICO file.",
         presetsTitle: "3. Size presets (up to 5 outputs)",
@@ -394,7 +390,6 @@
         alertEnterUrl: "Please enter an image URL.",
         loadFromUrl: "Loading from URL...",
         loadUrlFailed: "Failed to load image from URL (CORS or invalid image).",
-        loadUrlError: "Error loading image from URL.",
         loadFileError: "Failed to read image file.",
       },
       th: {
@@ -412,7 +407,7 @@
         extLabel: "นามสกุลไฟล์ (Extension)",
         qualityLabelText: "คุณภาพ (สำหรับ JPEG / WEBP)",
         normalModeNote:
-          "เบราว์เซอร์เข้ารหัสได้จริงเฉพาะ PNG / JPEG / WEBP นามสกุลอื่น (BMP, TIFF, AVIF, PDF, ICO) จะใช้อันเหล่านี้ภายใน แต่ ICO จะถูกสร้างเป็นไฟล์ไอคอนจริงขนาด 128×128 ส่วน PDF จะเป็นไฟล์เอกสาร 1 หน้า ที่ฝังรูปภาพไว้",
+          "เบราว์เซอร์เข้ารหัสได้จริงเฉพาะ PNG / JPEG / WEBP ส่วน BMP จะถูกสร้างเป็นไฟล์ BMP 16-บิตแบบ RGB565 จริง ๆ ส่วนนามสกุลอื่น (TIFF, AVIF, PDF, ICO) จะใช้อันเหล่านี้ภายใน โดย ICO จะเป็นไอคอน 128×128 และ PDF เป็นเอกสาร 1 หน้า ที่ฝังรูปภาพไว้",
         iconModeNote:
           "โหมดไอคอน: ปิดการใช้งานการปรับขนาดและคุณภาพ ระบบจะสร้างไฟล์ .ico จริง ขนาด 128×128 โดยอัตโนมัติ",
         presetsTitle: "3. ตั้งค่าขนาด (ได้สูงสุด 5 แบบ)",
@@ -436,7 +431,6 @@
         loadFromUrl: "กำลังโหลดรูปจาก URL...",
         loadUrlFailed:
           "โหลดรูปจาก URL ไม่สำเร็จ (อาจติด CORS หรือไม่ใช่ไฟล์รูป)",
-        loadUrlError: "เกิดข้อผิดพลาดขณะโหลดรูปจาก URL",
         loadFileError: "อ่านไฟล์รูปไม่สำเร็จ",
       },
     };
@@ -652,8 +646,8 @@
           <div class="preset-title">Preset ${index + 1}</div>
           <div class="checkbox-row">
             <input type="checkbox" id="${presetId}-enabled" ${
-        index === 0 ? "checked" : ""
-      } />
+              index === 0 ? "checked" : ""
+            } />
             <label for="${presetId}-enabled" style="margin:0;">Enable</label>
           </div>
         </div>
@@ -765,6 +759,82 @@
       return canvas;
     }
 
+    // BMP 16-bit RGB565 from canvas
+    function createBmpBlobFromCanvas(canvas) {
+      const width = canvas.width;
+      const height = canvas.height;
+      const ctx = canvas.getContext("2d");
+      const imageData = ctx.getImageData(0, 0, width, height);
+      const pixels = imageData.data; // RGBA
+
+      const bpp = 16;
+      const rowSize = Math.floor((bpp * width + 31) / 32) * 4;
+      const pixelArraySize = rowSize * height;
+
+      const fileHeaderSize = 14;
+      const infoHeaderSize = 40;
+      const maskSize = 12; // 3*4 bytes (R,G,B)
+      const pixelDataOffset = fileHeaderSize + infoHeaderSize + maskSize;
+      const fileSize = pixelDataOffset + pixelArraySize;
+
+      const buffer = new ArrayBuffer(fileSize);
+      const dv = new DataView(buffer);
+      let p = 0;
+
+      // BITMAPFILEHEADER
+      dv.setUint8(p++, 0x42); // 'B'
+      dv.setUint8(p++, 0x4D); // 'M'
+      dv.setUint32(p, fileSize, true); p += 4;
+      dv.setUint16(p, 0, true); p += 2;
+      dv.setUint16(p, 0, true); p += 2;
+      dv.setUint32(p, pixelDataOffset, true); p += 4;
+
+      // BITMAPINFOHEADER
+      dv.setUint32(p, infoHeaderSize, true); p += 4;
+      dv.setInt32(p, width, true); p += 4;
+      dv.setInt32(p, height, true); p += 4; // bottom-up
+      dv.setUint16(p, 1, true); p += 2;      // planes
+      dv.setUint16(p, bpp, true); p += 2;    // 16 bpp
+      dv.setUint32(p, 3, true); p += 4;      // BI_BITFIELDS
+      dv.setUint32(p, pixelArraySize, true); p += 4;
+      dv.setInt32(p, 2835, true); p += 4;
+      dv.setInt32(p, 2835, true); p += 4;
+      dv.setUint32(p, 0, true); p += 4;
+      dv.setUint32(p, 0, true); p += 4;
+
+      // RGB565 masks
+      dv.setUint32(p, 0xF800, true); p += 4; // R
+      dv.setUint32(p, 0x07E0, true); p += 4; // G
+      dv.setUint32(p, 0x001F, true); p += 4; // B
+
+      const pad = rowSize - width * 2; // 2 bytes per pixel
+
+      // pixel data (bottom-up, RGB565)
+      for (let y = height - 1; y >= 0; y--) {
+        const rowStart = y * width * 4;
+        for (let x = 0; x < width; x++) {
+          const idx = rowStart + x * 4;
+          const r = pixels[idx];
+          const g = pixels[idx + 1];
+          const b = pixels[idx + 2];
+
+          const r5 = r >> 3;
+          const g6 = g >> 2;
+          const b5 = b >> 3;
+          const value = (r5 << 11) | (g6 << 5) | b5;
+
+          dv.setUint16(p, value, true);
+          p += 2;
+        }
+        for (let i = 0; i < pad; i++) {
+          dv.setUint8(p++, 0);
+        }
+      }
+
+      return new Blob([buffer], { type: "image/bmp" });
+    }
+
+    // ICO helpers
     function createIconCanvas() {
       const size = 128;
       const preset = { width: size, height: size, mode: "fit" };
@@ -882,6 +952,7 @@
       const ext = extSelect.value;
       const zipEntries = [];
 
+      // ---- ICO mode ----
       if (isIconMode) {
         const canvas = createIconCanvas();
         const icoBlob = createIcoBlobFromCanvas(canvas);
@@ -904,7 +975,9 @@
         downloadsDiv.appendChild(itemDiv);
 
         zipEntries.push({ filename, blob: icoBlob });
-      } else if (ext === "pdf") {
+      }
+      // ---- PDF mode ----
+      else if (ext === "pdf") {
         if (!window.jspdf || !window.jspdf.jsPDF) {
           alert("PDF library (jsPDF) is not loaded.");
           return;
@@ -973,7 +1046,9 @@
 
           zipEntries.push({ filename, blob: pdfBlob });
         }
-      } else {
+      }
+      // ---- Normal image modes (png/jpg/webp/bmp/tiff/avif...) ----
+      else {
         const mimeType = mimeSelect.value;
         const quality = parseFloat(qualityRange.value);
 
@@ -991,43 +1066,48 @@
         for (const preset of presets) {
           const canvas = createCanvasForPreset(preset);
 
-          let dataURL;
-          if (mimeType === "image/png") {
-            dataURL = canvas.toDataURL("image/png");
-          } else if (mimeType === "image/jpeg") {
-            dataURL = canvas.toDataURL("image/jpeg", quality);
-          } else {
-            dataURL = canvas.toDataURL("image/webp", quality);
-          }
-
           const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
           const baseName = lastSourceName.replace(/\.[^.]+$/, "") || "image";
           const w = canvas.width;
           const h = canvas.height;
           const filename = `${baseName}_p${preset.index + 1}_${w}x${h}_${ts}.${ext}`;
 
-          const itemDiv = document.createElement("div");
-          itemDiv.className = "download-item";
+          let blob;
+          if (ext === "bmp") {
+            // ใช้ encoder 16-bit RGB565
+            blob = createBmpBlobFromCanvas(canvas);
+          } else {
+            // encode ผ่าน canvas แล้วเปลี่ยนนามสกุลเอา (จริง ๆ ยังเป็น PNG/JPEG/WEBP ภายใน)
+            let dataURL;
+            if (mimeType === "image/png") {
+              dataURL = canvas.toDataURL("image/png");
+            } else if (mimeType === "image/jpeg") {
+              dataURL = canvas.toDataURL("image/jpeg", quality);
+            } else {
+              dataURL = canvas.toDataURL("image/webp", quality);
+            }
+            const resp = await fetch(dataURL);
+            blob = await resp.blob();
+          }
+
+          const url = URL.createObjectURL(blob);
           const link = document.createElement("a");
-          link.href = dataURL;
+          link.href = url;
           link.download = filename;
           link.textContent = `Download preset ${preset.index + 1}`;
           link.className = "download-link";
 
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "download-item";
           itemDiv.innerHTML = ` Preset ${preset.index + 1} — <code>${w}×${h}</code> → <code>${filename}</code><br/>`;
           itemDiv.appendChild(link);
           downloadsDiv.appendChild(itemDiv);
 
-          try {
-            const resp = await fetch(dataURL);
-            const blob = await resp.blob();
-            zipEntries.push({ filename, blob });
-          } catch (e) {
-            console.warn("Could not add file to ZIP", e);
-          }
+          zipEntries.push({ filename, blob });
         }
       }
 
+      // ZIP
       if (zipEntries.length > 0) {
         downloadZipBtn.disabled = false;
         downloadZipBtn.onclick = async () => {
