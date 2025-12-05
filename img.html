@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Advanced Image Converter</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #111827;
+      color: #e5e7eb;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .card {
+      background: #1f2937;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input[type="file"],
+    select,
+    input[type="number"],
+    input[type="text"],
+    input[type="range"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #4b5563;
+      background: #111827;
+      color: #e5e7eb;
+      box-sizing: border-box;
+    }
+    input[type="range"] {
+      padding: 0;
+      background: transparent;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .row > div {
+      flex: 1 1 160px;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      background: #3b82f6;
+      color: #e5e7eb;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+      margin-right: 8px;
+      margin-top: 4px;
+    }
+    button:hover {
+      background: #2563eb;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+      transform: translateY(-1px);
+    }
+    button:disabled {
+      background: #4b5563;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    #preview {
+      max-width: 100%;
+      max-height: 400px;
+      border-radius: 12px;
+      display: block;
+      margin-top: 10px;
+      border: 1px solid #374151;
+      object-fit: contain;
+      background: #030712;
+    }
+    .info {
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #111827;
+      font-size: 0.75rem;
+      margin-right: 6px;
+      margin-top: 4px;
+    }
+    .footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-top: 10px;
+    }
+    a.download-link {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #10b981;
+      color: #022c22;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    a.download-link:hover {
+      background: #059669;
+    }
+    .preset {
+      border: 1px solid #374151;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #111827;
+    }
+    .preset-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+    .preset-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .preset-header .checkbox-row {
+      margin-bottom: 0;
+    }
+    .downloads-list {
+      margin-top: 10px;
+      border-top: 1px solid #374151;
+      padding-top: 10px;
+    }
+    .download-item {
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+    .download-item code {
+      background: #020617;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Advanced Image Converter</h1>
+  <p class="info" style="text-align:center;">
+    Upload any image (JPG, PNG, GIF, WEBP, BMP, etc.), resize into multiple outputs, and save as PNG / JPG / WEBP / BMP / TIFF / AVIF.
+  </p>
+
+  <!-- INPUT SECTION -->
+  <div class="card">
+    <h2>1. Input image</h2>
+
+    <label for="fileInput">Upload from computer</label>
+    <input type="file" id="fileInput" accept="image/*" />
+
+    <div class="info" style="margin: 8px 0; text-align:center;">— or —</div>
+
+    <label for="urlInput">Load from image URL</label>
+    <input type="text" id="urlInput" placeholder="https://example.com/image.png" />
+    <button id="loadUrlBtn">Load from URL</button>
+
+    <div class="info" id="fileInfo" style="margin-top:8px;">No file loaded.</div>
+
+    <img id="preview" alt="Preview will appear here" style="display:none;" />
+  </div>
+
+  <!-- OUTPUT GLOBAL SETTINGS -->
+  <div class="card">
+    <h2>2. Output settings</h2>
+
+    <div class="row">
+      <div>
+        <label for="mimeSelect">Encoding (inside file)</label>
+        <select id="mimeSelect">
+          <option value="image/png">PNG (lossless)</option>
+          <option value="image/jpeg">JPEG (lossy)</option>
+          <option value="image/webp">WEBP (modern)</option>
+        </select>
+      </div>
+      <div>
+        <label for="extSelect">File extension</label>
+        <select id="extSelect">
+          <option value="png">.png</option>
+          <option value="jpg">.jpg</option>
+          <option value="jpeg">.jpeg</option>
+          <option value="webp">.webp</option>
+          <option value="bmp">.bmp</option>
+          <option value="tiff">.tiff</option>
+          <option value="avif">.avif</option>
+        </select>
+      </div>
+      <div>
+        <label for="qualityRange">Quality (for JPEG / WEBP)</label>
+        <input type="range" id="qualityRange" min="0.1" max="1" step="0.05" value="0.9" />
+        <div class="info">
+          <span id="qualityLabel">0.9</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="info">
+      <span class="tag">Note</span>
+      Browser can truly encode PNG / JPEG / WEBP. Other extensions (BMP, TIFF, AVIF) will be stored using one of these encodings but renamed for convenience.
+    </p>
+  </div>
+
+  <!-- PRESETS SECTION -->
+  <div class="card">
+    <h2>3. Size presets (up to 5 outputs)</h2>
+    <p class="info">
+      Configure up to <strong>5</strong> different outputs. Recommended max size: <code>1920×1080</code>. Values above will be clamped.
+    </p>
+
+    <div id="presetsContainer"></div>
+  </div>
+
+  <!-- CONVERT -->
+  <div class="card">
+    <h2>4. Convert & download</h2>
+    <button id="convertBtn" disabled>Convert selected presets</button>
+    <button id="downloadZipBtn" disabled>Download all as ZIP</button>
+
+    <div id="downloads" class="downloads-list"></div>
+
+    <p class="info" style="margin-top:10px;">
+      <span class="tag">Privacy</span>
+      Everything runs locally in your browser. No files are uploaded to any server.
+    </p>
+  </div>
+
+  <div class="footer">
+    Simple HTML + JavaScript multi-preset image converter
+  </div>
+
+  <!-- JSZip for ZIP download -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const urlInput = document.getElementById("urlInput");
+    const loadUrlBtn = document.getElementById("loadUrlBtn");
+    const fileInfo = document.getElementById("fileInfo");
+    const preview = document.getElementById("preview");
+
+    const mimeSelect = document.getElementById("mimeSelect");
+    const extSelect = document.getElementById("extSelect");
+    const qualityRange = document.getElementById("qualityRange");
+    const qualityLabel = document.getElementById("qualityLabel");
+
+    const presetsContainer = document.getElementById("presetsContainer");
+    const convertBtn = document.getElementById("convertBtn");
+    const downloadZipBtn = document.getElementById("downloadZipBtn");
+    const downloadsDiv = document.getElementById("downloads");
+
+    let originalImage = new Image();
+    let originalWidth = 0;
+    let originalHeight = 0;
+    let lastSourceName = "input";
+
+    const MAX_WIDTH = 1920;
+    const MAX_HEIGHT = 1080;
+
+    qualityRange.addEventListener("input", () => {
+      qualityLabel.textContent = qualityRange.value;
+    });
+
+    // ----- Load image from file -----
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      if (!file) {
+        fileInfo.textContent = "No file loaded.";
+        preview.style.display = "none";
+        convertBtn.disabled = true;
+        downloadZipBtn.disabled = true;
+        return;
+      }
+
+      const fileSizeKB = (file.size / 1024).toFixed(1);
+      fileInfo.textContent = `Loaded from file: ${file.name} (${fileSizeKB} KB, ${file.type || "unknown type"})`;
+      lastSourceName = file.name.replace(/[^a-zA-Z0-9_.-]/g, "_") || "input";
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        loadImageFromDataUrl(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ----- Load image from URL -----
+    loadUrlBtn.addEventListener("click", async () => {
+      const url = urlInput.value.trim();
+      if (!url) return alert("Please enter an image URL.");
+
+      try {
+        fileInfo.textContent = `Loading from URL...`;
+        lastSourceName = url.split("/").pop().split("?")[0] || "url_image";
+        lastSourceName = lastSourceName.replace(/[^a-zA-Z0-9_.-]/g, "_");
+
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          originalImage = img;
+          originalWidth = img.width;
+          originalHeight = img.height;
+          preview.src = img.src;
+          preview.style.display = "block";
+          fileInfo.textContent = `Loaded from URL: ${url} (${originalWidth}×${originalHeight})`;
+
+          enableConversion();
+        };
+        img.onerror = () => {
+          fileInfo.textContent = "Failed to load image from URL (CORS or invalid image).";
+          preview.style.display = "none";
+          disableConversion();
+        };
+        img.src = url;
+      } catch (err) {
+        console.error(err);
+        fileInfo.textContent = "Error loading image from URL.";
+        preview.style.display = "none";
+        disableConversion();
+      }
+    });
+
+    function loadImageFromDataUrl(dataUrl) {
+      const img = new Image();
+      img.onload = () => {
+        originalImage = img;
+        originalWidth = img.width;
+        originalHeight = img.height;
+        preview.src = img.src;
+        preview.style.display = "block";
+
+        fileInfo.textContent += ` | Size: ${originalWidth}×${originalHeight}`;
+        enableConversion();
+      };
+      img.onerror = () => {
+        fileInfo.textContent = "Failed to read image file.";
+        preview.style.display = "none";
+        disableConversion();
+      };
+      img.src = dataUrl;
+    }
+
+    function enableConversion() {
+      convertBtn.disabled = false;
+      downloadZipBtn.disabled = true;
+      downloadsDiv.innerHTML = "";
+    }
+
+    function disableConversion() {
+      convertBtn.disabled = true;
+      downloadZipBtn.disabled = true;
+      downloadsDiv.innerHTML = "";
+    }
+
+    // ----- Presets -----
+    const MODES = [
+      { value: "fit", label: "Fit inside (keep aspect)" },
+      { value: "stretch", label: "Exact stretch" },
+      { value: "fill", label: "Crop center to fill" },
+    ];
+
+    function createPresetElement(index) {
+      const presetId = `preset-${index}`;
+      const wrapper = document.createElement("div");
+      wrapper.className = "preset";
+      wrapper.dataset.index = index;
+
+      wrapper.innerHTML = `
+        <div class="preset-header">
+          <div class="preset-title">Preset ${index + 1}</div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="${presetId}-enabled" ${index === 0 ? "checked" : ""} />
+            <label for="${presetId}-enabled" style="margin:0;">Enable</label>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="${presetId}-width">Width (px)</label>
+            <input type="number" id="${presetId}-width" min="1" placeholder="${MAX_WIDTH}" />
+          </div>
+          <div>
+            <label for="${presetId}-height">Height (px)</label>
+            <input type="number" id="${presetId}-height" min="1" placeholder="${MAX_HEIGHT}" />
+          </div>
+          <div>
+            <label for="${presetId}-mode">Mode</label>
+            <select id="${presetId}-mode">
+              ${MODES.map(m => `<option value="${m.value}">${m.label}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+        <p class="info" style="margin-top:4px;">
+          Leave width or height empty to auto-calc using aspect ratio. Max size will be clamped to 1920×1080.
+        </p>
+      `;
+
+      presetsContainer.appendChild(wrapper);
+    }
+
+    for (let i = 0; i < 5; i++) {
+      createPresetElement(i);
+    }
+
+    function getPresetsConfig() {
+      const presets = [];
+      const children = presetsContainer.querySelectorAll(".preset");
+      children.forEach((presetDiv) => {
+        const index = parseInt(presetDiv.dataset.index, 10);
+        const enabled = presetDiv.querySelector(`#preset-${index}-enabled`).checked;
+        if (!enabled) return;
+
+        let widthValue = presetDiv.querySelector(`#preset-${index}-width`).value;
+        let heightValue = presetDiv.querySelector(`#preset-${index}-height`).value;
+        const mode = presetDiv.querySelector(`#preset-${index}-mode`).value;
+
+        let w = parseInt(widthValue, 10);
+        let h = parseInt(heightValue, 10);
+
+        if (!Number.isFinite(w) || w <= 0) w = null;
+        if (!Number.isFinite(h) || h <= 0) h = null;
+
+        // clamp to max
+        if (w !== null && w > MAX_WIDTH) w = MAX_WIDTH;
+        if (h !== null && h > MAX_HEIGHT) h = MAX_HEIGHT;
+
+        presets.push({
+          index,
+          width: w,
+          height: h,
+          mode,
+        });
+      });
+      return presets;
+    }
+
+    // ----- Resize logic -----
+    function createCanvasForPreset(preset) {
+      let targetWidth, targetHeight;
+      let srcX = 0, srcY = 0, srcW = originalWidth, srcH = originalHeight;
+
+      const w = preset.width;
+      const h = preset.height;
+
+      // If both width and height are null, treat as original size (clamped to max)
+      if (!w && !h) {
+        targetWidth = Math.min(originalWidth, MAX_WIDTH);
+        targetHeight = Math.min(originalHeight, MAX_HEIGHT);
+      } else if (preset.mode === "stretch") {
+        // stretch
+        targetWidth = w || Math.round(originalWidth * (h / originalHeight));
+        targetHeight = h || Math.round(originalHeight * (w / originalWidth));
+
+        targetWidth = Math.min(targetWidth, MAX_WIDTH);
+        targetHeight = Math.min(targetHeight, MAX_HEIGHT);
+      } else if (preset.mode === "fit") {
+        // fit inside box, keep aspect ratio
+        let boxWidth = w || MAX_WIDTH;
+        let boxHeight = h || MAX_HEIGHT;
+
+        boxWidth = Math.min(boxWidth, MAX_WIDTH);
+        boxHeight = Math.min(boxHeight, MAX_HEIGHT);
+
+        const scale = Math.min(boxWidth / originalWidth, boxHeight / originalHeight);
+        targetWidth = Math.round(originalWidth * scale);
+        targetHeight = Math.round(originalHeight * scale);
+      } else if (preset.mode === "fill") {
+        // crop center to fill given box
+        let boxWidth = w || MAX_WIDTH;
+        let boxHeight = h || MAX_HEIGHT;
+
+        boxWidth = Math.min(boxWidth, MAX_WIDTH);
+        boxHeight = Math.min(boxHeight, MAX_HEIGHT);
+
+        const scale = Math.max(boxWidth / originalWidth, boxHeight / originalHeight);
+
+        const scaledW = originalWidth * scale;
+        const scaledH = originalHeight * scale;
+
+        targetWidth = boxWidth;
+        targetHeight = boxHeight;
+
+        srcW = boxWidth / scale;
+        srcH = boxHeight / scale;
+        srcX = (originalWidth - srcW) / 2;
+        srcY = (originalHeight - srcH) / 2;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(
+        originalImage,
+        srcX, srcY, srcW, srcH,
+        0, 0, targetWidth, targetHeight
+      );
+
+      return canvas;
+    }
+
+    // ----- Convert & download -----
+    convertBtn.addEventListener("click", async () => {
+      if (!originalImage.src) return;
+
+      const presets = getPresetsConfig();
+      if (presets.length === 0) {
+        alert("Please enable at least one preset.");
+        return;
+      }
+
+      downloadsDiv.innerHTML = "";
+      downloadZipBtn.disabled = true;
+
+      const mimeType = mimeSelect.value;
+      const ext = extSelect.value;
+      const quality = parseFloat(qualityRange.value);
+
+      const zipEntries = [];
+
+      for (const preset of presets) {
+        const canvas = createCanvasForPreset(preset);
+
+        let dataURL;
+        if (mimeType === "image/png") {
+          dataURL = canvas.toDataURL("image/png");
+        } else if (mimeType === "image/jpeg") {
+          dataURL = canvas.toDataURL("image/jpeg", quality);
+        } else {
+          // image/webp & others
+          dataURL = canvas.toDataURL("image/webp", quality);
+        }
+
+        const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+        const baseName = lastSourceName.replace(/\.[^.]+$/, "") || "image";
+        const infoWidth = canvas.width;
+        const infoHeight = canvas.height;
+        const filename = `${baseName}_p${preset.index + 1}_${infoWidth}x${infoHeight}_${ts}.${ext}`;
+
+        // create download link
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "download-item";
+
+        const link = document.createElement("a");
+        link.href = dataURL;
+        link.download = filename;
+        link.textContent = `Download preset ${preset.index + 1}`;
+        link.className = "download-link";
+
+        const infoSpan = document.createElement("span");
+        infoSpan.innerHTML = ` Preset ${preset.index + 1} — <code>${infoWidth}×${infoHeight}</code> → <code>${filename}</code>`;
+
+        itemDiv.appendChild(infoSpan);
+        itemDiv.appendChild(document.createElement("br"));
+        itemDiv.appendChild(link);
+        downloadsDiv.appendChild(itemDiv);
+
+        // Prepare for ZIP
+        try {
+          const resp = await fetch(dataURL);
+          const blob = await resp.blob();
+          zipEntries.push({ filename, blob });
+        } catch (e) {
+          console.warn("Could not add file to ZIP", e);
+        }
+      }
+
+      if (zipEntries.length > 0) {
+        downloadZipBtn.disabled = false;
+        downloadZipBtn.onclick = async () => {
+          const zip = new JSZip();
+          zipEntries.forEach(entry => {
+            zip.file(entry.filename, entry.blob);
+          });
+          const zipBlob = await zip.generateAsync({ type: "blob" });
+          const zipUrl = URL.createObjectURL(zipBlob);
+          const a = document.createElement("a");
+          const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+          const baseName = lastSourceName.replace(/\.[^.]+$/, "") || "images";
+          a.href = zipUrl;
+          a.download = `${baseName}_converted_${ts}.zip`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(zipUrl);
+        };
+      }
+    });
+  </script>
+</body>
+</html>
