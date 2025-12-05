@@ -1,186 +1,1035 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ตัวเล่นเพลงบนเว็บ</title>
+  <meta charset="UTF-8" />
+  <title>Advanced Image Converter</title>
   <style>
-    :root { --bg:#0b0f16; --card:#121826; --text:#e6edf6; --muted:#9fb0c3; --accent:#4da3ff; }
-    *{box-sizing:border-box}
-    body{
-      margin:0; min-height:100dvh; display:grid; place-items:center;
-      background:radial-gradient(1200px 800px at 70% 20%, #1b2436 0%, #0b0f16 60%);
-      color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans Thai",sans-serif;
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px;
+      /* พื้นหลังรูป */
+      background: #020617 url("https://raw.githubusercontent.com/thanawan230653/Apple-ott/refs/heads/main/download%20(1).jpg") center/cover fixed no-repeat;
+      color: #e5e7eb;
     }
-    .card{
-      width:min(92vw,700px); background:linear-gradient(180deg, rgba(255,255,255,.05), transparent);
-      border:1px solid rgba(255,255,255,.08); border-radius:20px; padding:22px;
-      box-shadow:0 20px 60px rgba(0,0,0,.45);
-      backdrop-filter: blur(8px);
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
     }
-    h1{font-size:1.25rem; margin:0 0 .25rem}
-    p{margin:.25rem 0 1rem; color:var(--muted); font-size:.95rem}
-    .controls{display:grid; gap:14px}
-    .row{display:flex; align-items:center; gap:10px}
-    .btn{
-      border:1px solid rgba(255,255,255,.15); background:#1a2233; color:var(--text);
-      padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600;
-      transition:.15s transform, .15s background;
+    h1 {
+      margin-bottom: 4px;
     }
-    .btn:hover{ background:#223049 }
-    .btn:active{ transform:scale(.98) }
-    .grow{flex:1}
-    input[type="range"]{
-      -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:999px;
-      background:linear-gradient(90deg, var(--accent) var(--pct,0%), #334158 var(--pct,0%));
-      outline:none;
+    .lang-switch {
+      display: flex;
+      gap: 6px;
     }
-    input[type="range"]::-webkit-slider-thumb{
-      -webkit-appearance:none; appearance:none; width:16px; height:16px; border-radius:50%;
-      background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.3); cursor:pointer;
+    .lang-btn {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      background: #111827;
+      color: #e5e7eb;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
     }
-    .time{min-width:88px; text-align:right; color:var(--muted); font-variant-numeric:tabular-nums}
-    .badges{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
-    .badge{font-size:.8rem; color:#cfe4ff; background:#183252; border:1px solid #265a93; padding:6px 10px; border-radius:999px}
-    .foot{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:12px; color:var(--muted)}
-    a.dl{color:#cfe4ff; text-decoration:none; font-weight:600}
+    .lang-btn.active {
+      background: #3b82f6;
+      border-color: #3b82f6;
+    }
+    .card {
+      background: #1f2937;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      margin-bottom: 20px;
+      overflow: visible; /* กัน dropdown โดนตัด */
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input[type="file"],
+    select,
+    input[type="number"],
+    input[type="text"],
+    input[type="range"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #4b5563;
+      background: #111827;
+      color: #e5e7eb;
+      box-sizing: border-box;
+    }
+    input[type="range"] {
+      padding: 0;
+      background: transparent;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .row > div {
+      flex: 1 1 160px;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      background: #3b82f6;
+      color: #e5e7eb;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+      margin-right: 8px;
+      margin-top: 4px;
+    }
+    button:hover {
+      background: #2563eb;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+      transform: translateY(-1px);
+    }
+    button:disabled {
+      background: #4b5563;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    #preview {
+      max-width: 100%;
+      max-height: 400px;
+      border-radius: 12px;
+      display: block;
+      margin-top: 10px;
+      border: 1px solid #374151;
+      object-fit: contain;
+      background: #030712;
+    }
+    .info {
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #111827;
+      font-size: 0.75rem;
+      margin-right: 6px;
+      margin-top: 4px;
+    }
+    .footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 10px;
+    }
+    a.download-link {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #10b981;
+      color: #022c22;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    a.download-link:hover {
+      background: #059669;
+    }
+    .preset {
+      border: 1px solid #374151;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #111827;
+    }
+    .preset-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+    .preset-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .preset-header .checkbox-row {
+      margin-bottom: 0;
+    }
+    .downloads-list {
+      margin-top: 10px;
+      border-top: 1px solid #374151;
+      padding-top: 10px;
+    }
+    .download-item {
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+    .download-item code {
+      background: #020617;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-size: 0.8rem;
+    }
+    .dimmed {
+      opacity: 0.35;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
-  <main class="card">
-    <h1>🎵 ตัวเล่นเพลงบนเว็บ</h1>
-    <p>กดปุ่มเล่นเพื่อเริ่มฟัง (บางเบราว์เซอร์อาจไม่ยอมเล่นอัตโนมัติจนกว่าจะมีการคลิก)</p>
+  <!-- เพลง (ซ่อน) -->
+  <audio id="bgAudio" src="http://49.228.131.69:3661/LIL.mp3" preload="auto" hidden></audio>
 
-    <!-- ตัวเล่นหลัก (ซ่อนคอนโทรลเดิม) -->
-    <audio id="player" preload="metadata" crossorigin="anonymous">
-      <!-- ลอง URL ที่ให้มาก่อน -->
-      <source src="https://raw.githubusercontent.com/Mr-xcam/mmm/refs/heads/main/3.mp3" type="audio/mpeg" />
-      <!-- URL สำรองรูปแบบมาตรฐานของ GitHub (เผื่อบางกรณี) -->
-      <source src="https://raw.githubusercontent.com/Mr-xcam/mmm/main/3.mp3" type="audio/mpeg" />
-      เบราว์เซอร์ของคุณไม่รองรับการเล่นเสียง
-    </audio>
-
-    <section class="controls">
-      <!-- แถวควบคุมหลัก -->
-      <div class="row">
-        <button class="btn" id="playPause">▶️ เล่น</button>
-        <button class="btn" id="mute">🔇 ปิดเสียง</button>
-        <label class="row" style="gap:8px;">
-          <span style="color:var(--muted);">เสียง</span>
-          <input type="range" id="volume" min="0" max="1" step="0.01" value="1" style="width:140px;">
-        </label>
-        <button class="btn" id="loop">🔁 ไม่วน</button>
-        <span class="time" id="time">00:00 / 00:00</span>
-      </div>
-
-      <!-- แถบไทม์ไลน์ -->
-      <div class="row">
-        <input class="grow" type="range" id="seek" min="0" max="100" value="0">
-      </div>
-    </section>
-
-    <div class="foot">
-      <div class="badges">
-        <span class="badge">MP3</span>
-        <span class="badge">Streaming</span>
-        <span class="badge">HTML Only</span>
-      </div>
-      <a class="dl" id="download" href="https://raw.githubusercontent.com/Mr-xcam/mmm/refs/heads/main/3.mp3" download>⬇️ ดาวน์โหลดไฟล์</a>
+  <div class="top-bar">
+    <div>
+      <h1 id="title">Advanced Image Converter</h1>
+      <p class="info" id="subtitle">
+        Upload any image, resize up to 5 outputs, and save as PNG / JPG / WEBP / BMP / TIFF / AVIF / ICO / PDF. Recommended max size: 3840×2160 (4K).
+      </p>
     </div>
-  </main>
+    <div class="lang-switch">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="th">TH</button>
+    </div>
+  </div>
+
+  <!-- INPUT SECTION -->
+  <div class="card" id="cardInput">
+    <h2 id="inputTitle">1. Input image</h2>
+
+    <label for="fileInput" id="uploadLabel">Upload from computer</label>
+    <input type="file" id="fileInput" accept="image/*" />
+
+    <div class="info" style="margin: 8px 0; text-align:center;" id="orText">— or —</div>
+
+    <label for="urlInput" id="urlLabel">Load from image URL</label>
+    <input type="text" id="urlInput" placeholder="https://example.com/image.png" />
+    <button id="loadUrlBtn">Load from URL</button>
+
+    <div class="info" id="fileInfo" style="margin-top:8px;">No file loaded.</div>
+
+    <img id="preview" alt="Preview will appear here" style="display:none;" />
+  </div>
+
+  <!-- OUTPUT GLOBAL SETTINGS -->
+  <div class="card" id="cardOutput">
+    <h2 id="outputSettingsTitle">2. Output settings</h2>
+
+    <div class="row">
+      <div>
+        <label for="mimeSelect" id="encodingLabel">Encoding (inside file)</label>
+        <select id="mimeSelect">
+          <option value="image/png">PNG (lossless)</option>
+          <option value="image/jpeg">JPEG (lossy)</option>
+          <option value="image/webp">WEBP (modern)</option>
+        </select>
+      </div>
+      <div>
+        <label for="extSelect" id="extLabel">File extension</label>
+        <select id="extSelect">
+          <option value="png">.png</option>
+          <option value="jpg">.jpg</option>
+          <option value="jpeg">.jpeg</option>
+          <option value="webp">.webp</option>
+          <option value="bmp">.bmp</option>
+          <option value="tiff">.tiff</option>
+          <option value="avif">.avif</option>
+          <option value="pdf">.pdf</option>
+          <option value="ico">.ico</option>
+        </select>
+      </div>
+      <div>
+        <label for="qualityRange" id="qualityLabelText">Quality (for JPEG / WEBP)</label>
+        <input type="range" id="qualityRange" min="0.1" max="1" step="0.05" value="0.9" />
+        <div class="info">
+          <span id="qualityLabel">0.9</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="info" id="noteEncoding">
+      <span class="tag">Note</span>
+      Browser can truly encode PNG / JPEG / WEBP. Other extensions (BMP, TIFF, AVIF, PDF, ICO) reuse these encodings internally. ICO is built as a proper 128×128 icon file and PDF wraps the image into a single-page document.
+    </p>
+  </div>
+
+  <!-- PRESETS SECTION -->
+  <div class="card" id="cardPresets">
+    <h2 id="presetsTitle">3. Size presets (up to 5 outputs)</h2>
+    <p class="info" id="presetsInfo">
+      Configure up to 5 different outputs. Recommended max size: <code>3840×2160</code> (4K). Values above will be clamped.
+    </p>
+
+    <div class="row" style="margin-bottom:10px;">
+      <div style="flex:1;">
+        <label for="codeInput" id="codeLabel">Resize unlock code</label>
+        <input type="text" id="codeInput" placeholder="Enter 9com to unlock resizing" />
+      </div>
+      <div style="display:flex;align-items:flex-end;">
+        <button id="codeApplyBtn">Apply</button>
+      </div>
+    </div>
+    <p class="info" id="codeStatus">
+      Resizing is locked. You can still convert format without changing size. (Use code: 9com)
+    </p>
+
+    <div id="presetsContainer"></div>
+  </div>
+
+  <!-- CONVERT -->
+  <div class="card" id="cardConvert">
+    <h2 id="convertTitle">4. Convert & download</h2>
+    <button id="convertBtn" disabled>Convert</button>
+    <button id="downloadZipBtn" disabled>Download all as ZIP</button>
+
+    <div id="downloads" class="downloads-list"></div>
+
+    <p class="info" style="margin-top:10px;" id="privacyNote">
+      <span class="tag">Privacy</span>
+      Everything runs locally in your browser. No files are uploaded to any server.
+    </p>
+  </div>
+
+  <div class="footer" id="footerText">
+    จัดทำโดย 9Com Studio
+  </div>
+
+  <!-- JSZip for ZIP -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <!-- jsPDF for PDF -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <script>
-    const $ = (q)=>document.querySelector(q);
-    const audio = $('#player');
-    const playPause = $('#playPause');
-    const muteBtn = $('#mute');
-    const volume = $('#volume');
-    const loopBtn = $('#loop');
-    const seek = $('#seek');
-    const time = $('#time');
-
-    // ช่วยคำนวณเวลา mm:ss
-    const fmt = s=>{
-      if (!isFinite(s)) return '00:00';
-      s = Math.max(0, Math.floor(s));
-      const m = String(Math.floor(s/60)).padStart(2,'0');
-      const ss = String(s%60).padStart(2,'0');
-      return `${m}:${ss}`;
+    // ---------- i18n ----------
+    const translations = {
+      en: {
+        title: "Advanced Image Converter",
+        subtitle:
+          "Upload any image, resize up to 5 outputs, and save as PNG / JPG / WEBP / BMP / TIFF / AVIF / ICO / PDF. Recommended max size: 3840×2160 (4K).",
+        inputTitle: "1. Input image",
+        uploadLabel: "Upload from computer",
+        orText: "— or —",
+        urlLabel: "Load from image URL",
+        loadUrlBtn: "Load from URL",
+        noFile: "No file loaded.",
+        outputSettingsTitle: "2. Output settings",
+        encodingLabel: "Encoding (inside file)",
+        extLabel: "File extension",
+        qualityLabelText: "Quality (for JPEG / WEBP)",
+        normalModeNote:
+          "Browser can truly encode PNG / JPEG / WEBP. Other extensions (BMP, TIFF, AVIF, PDF, ICO) reuse these encodings internally. ICO is built as a proper 128×128 icon file and PDF wraps the image into a single-page document.",
+        iconModeNote:
+          "Icon mode: presets and quality are disabled. Output will be a real 128×128 ICO file.",
+        presetsTitle: "3. Size presets (up to 5 outputs)",
+        presetsInfo:
+          "Configure up to 5 different outputs. Recommended max size: 3840×2160 (4K). Values above will be clamped.",
+        codeLabel: "Resize unlock code",
+        codePlaceholder: "Enter 9com to unlock resizing",
+        codeStatusLocked:
+          "Resizing is locked. You can still convert format without changing size. (Use code: 9com)",
+        codeStatusUnlocked: "Resizing unlocked.",
+        codeApplyBtn: "Apply",
+        convertTitle: "4. Convert & download",
+        convertBtn: "Convert",
+        downloadZipBtn: "Download all as ZIP",
+        privacyNote:
+          "Everything runs locally in your browser. No files are uploaded to any server.",
+        footerText: "Created by 9Com Studio",
+        alertEnablePreset: "Please enable at least one preset or use icon mode.",
+        alertEnterUrl: "Please enter an image URL.",
+        loadFromUrl: "Loading from URL...",
+        loadUrlFailed: "Failed to load image from URL (CORS or invalid image).",
+        loadUrlError: "Error loading image from URL.",
+        loadFileError: "Failed to read image file.",
+      },
+      th: {
+        title: "โปรแกรมแปลงไฟล์รูปภาพขั้นสูง",
+        subtitle:
+          "อัปโหลดรูปภาพ ปรับขนาดได้สูงสุด 5 แบบ และบันทึกเป็น PNG / JPG / WEBP / BMP / TIFF / AVIF / ICO / PDF แนะนำขนาดสูงสุด 3840×2160 (4K).",
+        inputTitle: "1. เลือกรูปภาพต้นฉบับ",
+        uploadLabel: "อัปโหลดจากคอมพิวเตอร์",
+        orText: "— หรือ —",
+        urlLabel: "โหลดจากลิงก์รูปภาพ (URL)",
+        loadUrlBtn: "โหลดจาก URL",
+        noFile: "ยังไม่ได้เลือกรูปภาพ",
+        outputSettingsTitle: "2. ตั้งค่าการบันทึกไฟล์",
+        encodingLabel: "รูปแบบการเข้ารหัสภายในไฟล์",
+        extLabel: "นามสกุลไฟล์ (Extension)",
+        qualityLabelText: "คุณภาพ (สำหรับ JPEG / WEBP)",
+        normalModeNote:
+          "เบราว์เซอร์เข้ารหัสได้จริงเฉพาะ PNG / JPEG / WEBP นามสกุลอื่น (BMP, TIFF, AVIF, PDF, ICO) จะใช้อันเหล่านี้ภายใน แต่ ICO จะถูกสร้างเป็นไฟล์ไอคอนจริงขนาด 128×128 ส่วน PDF จะเป็นไฟล์เอกสาร 1 หน้า ที่ฝังรูปภาพไว้",
+        iconModeNote:
+          "โหมดไอคอน: ปิดการใช้งานการปรับขนาดและคุณภาพ ระบบจะสร้างไฟล์ .ico จริง ขนาด 128×128 โดยอัตโนมัติ",
+        presetsTitle: "3. ตั้งค่าขนาด (ได้สูงสุด 5 แบบ)",
+        presetsInfo:
+          "สามารถตั้งขนาดได้สูงสุด 5 แบบ แนะนำไม่เกิน 3840×2160 (4K) ถ้าใส่เกินระบบจะลดลงให้อยู่ในช่วงนี้",
+        codeLabel: "โค้ดปลดล็อกการปรับขนาด",
+        codePlaceholder: "ใส่ 9com เพื่อปลดล็อกการปรับขนาด",
+        codeStatusLocked:
+          "ตอนนี้ยังล็อกการปรับขนาดอยู่ คุณยังสามารถแปลงนามสกุลไฟล์ได้แต่จะใช้ขนาดเดิมเท่านั้น (โค้ด: 9com)",
+        codeStatusUnlocked: "ปลดล็อกการปรับขนาดแล้ว",
+        codeApplyBtn: "ยืนยันโค้ด",
+        convertTitle: "4. แปลงไฟล์และดาวน์โหลด",
+        convertBtn: "แปลงไฟล์",
+        downloadZipBtn: "ดาวน์โหลดทั้งหมดเป็น ZIP",
+        privacyNote:
+          "ทุกอย่างทำงานในเบราว์เซอร์ของคุณเอง ไฟล์จะไม่ถูกอัปโหลดไปยังเซิร์ฟเวอร์",
+        footerText: "จัดทำโดย 9Com Studio",
+        alertEnablePreset:
+          "กรุณาเปิดใช้งานอย่างน้อย 1 พรีเซ็ต หรือใช้โหมดไอคอน (.ico)",
+        alertEnterUrl: "กรุณาใส่ลิงก์รูปภาพ (URL)",
+        loadFromUrl: "กำลังโหลดรูปจาก URL...",
+        loadUrlFailed:
+          "โหลดรูปจาก URL ไม่สำเร็จ (อาจติด CORS หรือไม่ใช่ไฟล์รูป)",
+        loadUrlError: "เกิดข้อผิดพลาดขณะโหลดรูปจาก URL",
+        loadFileError: "อ่านไฟล์รูปไม่สำเร็จ",
+      },
     };
 
-    // ปุ่มเล่น/หยุด
-    playPause.addEventListener('click', async ()=>{
-      try{
-        if (audio.paused) {
-          await audio.play();
-        } else {
-          audio.pause();
+    let currentLang = "en";
+    let presetsUnlocked = false;
+    let isIconMode = false;
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      const t = translations[lang];
+
+      document.getElementById("title").textContent = t.title;
+      document.getElementById("subtitle").textContent = t.subtitle;
+      document.getElementById("inputTitle").textContent = t.inputTitle;
+      document.getElementById("uploadLabel").textContent = t.uploadLabel;
+      document.getElementById("orText").textContent = t.orText;
+      document.getElementById("urlLabel").textContent = t.urlLabel;
+      document.getElementById("loadUrlBtn").textContent = t.loadUrlBtn;
+      if (!originalImage.src) {
+        document.getElementById("fileInfo").textContent = t.noFile;
+      }
+      document.getElementById("outputSettingsTitle").textContent =
+        t.outputSettingsTitle;
+      document.getElementById("encodingLabel").textContent = t.encodingLabel;
+      document.getElementById("extLabel").textContent = t.extLabel;
+      document.getElementById("qualityLabelText").textContent =
+        t.qualityLabelText;
+
+      const noteEncoding = document.getElementById("noteEncoding");
+      const note = isIconMode ? t.iconModeNote : t.normalModeNote;
+      noteEncoding.innerHTML = `<span class="tag">${
+        lang === "th" ? "หมายเหตุ" : "Note"
+      }</span> ${note}`;
+
+      document.getElementById("presetsTitle").textContent = t.presetsTitle;
+      document.getElementById("presetsInfo").textContent = t.presetsInfo;
+      document.getElementById("codeLabel").textContent = t.codeLabel;
+      document.getElementById("codeInput").placeholder = t.codePlaceholder;
+      document.getElementById("codeApplyBtn").textContent = t.codeApplyBtn;
+      document.getElementById("codeStatus").textContent = presetsUnlocked
+        ? t.codeStatusUnlocked
+        : t.codeStatusLocked;
+      document.getElementById("convertTitle").textContent = t.convertTitle;
+      document.getElementById("convertBtn").textContent = t.convertBtn;
+      document.getElementById("downloadZipBtn").textContent =
+        t.downloadZipBtn;
+      document.getElementById("privacyNote").innerHTML = `<span class="tag">${
+        lang === "th" ? "ความเป็นส่วนตัว" : "Privacy"
+      }</span> ${t.privacyNote}`;
+      document.getElementById("footerText").textContent = t.footerText;
+    }
+
+    document.querySelectorAll(".lang-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const lang = btn.dataset.lang;
+        document
+          .querySelectorAll(".lang-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        applyLanguage(lang);
+      });
+    });
+
+    // ---------- core ----------
+    const fileInput = document.getElementById("fileInput");
+    const urlInput = document.getElementById("urlInput");
+    const loadUrlBtn = document.getElementById("loadUrlBtn");
+    const fileInfo = document.getElementById("fileInfo");
+    const preview = document.getElementById("preview");
+
+    const mimeSelect = document.getElementById("mimeSelect");
+    const extSelect = document.getElementById("extSelect");
+    const qualityRange = document.getElementById("qualityRange");
+    const qualityLabel = document.getElementById("qualityLabel");
+
+    const presetsContainer = document.getElementById("presetsContainer");
+    const convertBtn = document.getElementById("convertBtn");
+    const downloadZipBtn = document.getElementById("downloadZipBtn");
+    const downloadsDiv = document.getElementById("downloads");
+
+    const codeInput = document.getElementById("codeInput");
+    const codeApplyBtn = document.getElementById("codeApplyBtn");
+    const codeStatus = document.getElementById("codeStatus");
+
+    let originalImage = new Image();
+    let originalWidth = 0;
+    let originalHeight = 0;
+    let lastSourceName = "input";
+
+    const MAX_WIDTH = 3840;
+    const MAX_HEIGHT = 2160;
+
+    qualityRange.addEventListener("input", () => {
+      qualityLabel.textContent = qualityRange.value;
+    });
+
+    function updatePresetLockUI() {
+      if (presetsUnlocked && !isIconMode) {
+        presetsContainer.classList.remove("dimmed");
+        codeStatus.textContent = translations[currentLang].codeStatusUnlocked;
+      } else {
+        presetsContainer.classList.add("dimmed");
+        codeStatus.textContent = translations[currentLang].codeStatusLocked;
+      }
+    }
+
+    codeApplyBtn.addEventListener("click", () => {
+      const val = codeInput.value.trim().toLowerCase();
+      presetsUnlocked = val === "9com";
+      updatePresetLockUI();
+    });
+
+    function loadImageFromDataUrl(dataUrl) {
+      const img = new Image();
+      img.onload = () => {
+        originalImage = img;
+        originalWidth = img.width;
+        originalHeight = img.height;
+        preview.src = img.src;
+        preview.style.display = "block";
+        fileInfo.textContent += ` | Size: ${originalWidth}×${originalHeight}`;
+        enableConversion();
+      };
+      img.onerror = () => {
+        fileInfo.textContent = translations[currentLang].loadFileError;
+        preview.style.display = "none";
+        disableConversion();
+      };
+      img.src = dataUrl;
+    }
+
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      downloadsDiv.innerHTML = "";
+      downloadZipBtn.disabled = true;
+
+      if (!file) {
+        fileInfo.textContent = translations[currentLang].noFile;
+        preview.style.display = "none";
+        convertBtn.disabled = true;
+        return;
+      }
+
+      const kb = (file.size / 1024).toFixed(1);
+      fileInfo.textContent = `Loaded from file: ${
+        file.name
+      } (${kb} KB, ${file.type || "unknown type"})`;
+      lastSourceName = file.name.replace(/[^a-zA-Z0-9_.-]/g, "_") || "input";
+
+      const reader = new FileReader();
+      reader.onload = (e) => loadImageFromDataUrl(e.target.result);
+      reader.readAsDataURL(file);
+    });
+
+    loadUrlBtn.addEventListener("click", () => {
+      const url = urlInput.value.trim();
+      if (!url) {
+        alert(translations[currentLang].alertEnterUrl);
+        return;
+      }
+
+      fileInfo.textContent = translations[currentLang].loadFromUrl;
+      downloadsDiv.innerHTML = "";
+      downloadZipBtn.disabled = true;
+
+      lastSourceName = url.split("/").pop().split("?")[0] || "url_image";
+      lastSourceName = lastSourceName.replace(/[^a-zA-Z0-9_.-]/g, "_");
+
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        originalImage = img;
+        originalWidth = img.width;
+        originalHeight = img.height;
+        preview.src = img.src;
+        preview.style.display = "block";
+        fileInfo.textContent = `Loaded from URL: ${url} (${originalWidth}×${originalHeight})`;
+        enableConversion();
+      };
+      img.onerror = () => {
+        fileInfo.textContent = translations[currentLang].loadUrlFailed;
+        preview.style.display = "none";
+        disableConversion();
+      };
+      img.src = url;
+    });
+
+    function enableConversion() {
+      convertBtn.disabled = false;
+      downloadZipBtn.disabled = true;
+      downloadsDiv.innerHTML = "";
+    }
+    function disableConversion() {
+      convertBtn.disabled = true;
+      downloadZipBtn.disabled = true;
+      downloadsDiv.innerHTML = "";
+    }
+
+    const MODES = [
+      { value: "fit", label: "Fit inside (keep aspect)" },
+      { value: "stretch", label: "Exact stretch" },
+      { value: "fill", label: "Crop center to fill" },
+    ];
+
+    function createPresetElement(index) {
+      const presetId = `preset-${index}`;
+      const wrapper = document.createElement("div");
+      wrapper.className = "preset";
+      wrapper.dataset.index = index;
+      wrapper.innerHTML = `
+        <div class="preset-header">
+          <div class="preset-title">Preset ${index + 1}</div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="${presetId}-enabled" ${
+        index === 0 ? "checked" : ""
+      } />
+            <label for="${presetId}-enabled" style="margin:0;">Enable</label>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="${presetId}-width">Width (px)</label>
+            <input type="number" id="${presetId}-width" min="1" placeholder="3840" />
+          </div>
+          <div>
+            <label for="${presetId}-height">Height (px)</label>
+            <input type="number" id="${presetId}-height" min="1" placeholder="2160" />
+          </div>
+          <div>
+            <label for="${presetId}-mode">Mode</label>
+            <select id="${presetId}-mode">
+              ${MODES.map((m) => `<option value="${m.value}">${m.label}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+        <p class="info" style="margin-top:4px;">
+          Leave width or height empty to auto-calc using aspect ratio. Max size will be clamped to 3840×2160.
+        </p>
+      `;
+      presetsContainer.appendChild(wrapper);
+    }
+    for (let i = 0; i < 5; i++) createPresetElement(i);
+
+    function getPresetsConfig() {
+      const presets = [];
+      presetsContainer.querySelectorAll(".preset").forEach((presetDiv) => {
+        const index = parseInt(presetDiv.dataset.index, 10);
+        const enabled = presetDiv.querySelector(
+          `#preset-${index}-enabled`
+        ).checked;
+        if (!enabled) return;
+
+        let wVal = presetDiv.querySelector(`#preset-${index}-width`).value;
+        let hVal = presetDiv.querySelector(`#preset-${index}-height`).value;
+        const mode = presetDiv.querySelector(`#preset-${index}-mode`).value;
+
+        let w = parseInt(wVal, 10);
+        let h = parseInt(hVal, 10);
+        if (!Number.isFinite(w) || w <= 0) w = null;
+        if (!Number.isFinite(h) || h <= 0) h = null;
+
+        if (w !== null && w > MAX_WIDTH) w = MAX_WIDTH;
+        if (h !== null && h > MAX_HEIGHT) h = MAX_HEIGHT;
+
+        presets.push({ index, width: w, height: h, mode });
+      });
+      return presets;
+    }
+
+    function createCanvasForPreset(preset) {
+      let targetWidth, targetHeight;
+      let srcX = 0,
+        srcY = 0,
+        srcW = originalWidth,
+        srcH = originalHeight;
+
+      const w = preset.width;
+      const h = preset.height;
+
+      if (!w && !h) {
+        targetWidth = Math.min(originalWidth, MAX_WIDTH);
+        targetHeight = Math.min(originalHeight, MAX_HEIGHT);
+      } else if (preset.mode === "stretch") {
+        targetWidth = w || Math.round(originalWidth * (h / originalHeight));
+        targetHeight = h || Math.round(originalHeight * (w / originalWidth));
+        targetWidth = Math.min(targetWidth, MAX_WIDTH);
+        targetHeight = Math.min(targetHeight, MAX_HEIGHT);
+      } else if (preset.mode === "fit") {
+        let boxW = w || MAX_WIDTH;
+        let boxH = h || MAX_HEIGHT;
+        boxW = Math.min(boxW, MAX_WIDTH);
+        boxH = Math.min(boxH, MAX_HEIGHT);
+        const scale = Math.min(boxW / originalWidth, boxH / originalHeight);
+        targetWidth = Math.round(originalWidth * scale);
+        targetHeight = Math.round(originalHeight * scale);
+      } else {
+        let boxW = w || MAX_WIDTH;
+        let boxH = h || MAX_HEIGHT;
+        boxW = Math.min(boxW, MAX_WIDTH);
+        boxH = Math.min(boxH, MAX_HEIGHT);
+        const scale = Math.max(boxW / originalWidth, boxH / originalHeight);
+        targetWidth = boxW;
+        targetHeight = boxH;
+        srcW = boxW / scale;
+        srcH = boxH / scale;
+        srcX = (originalWidth - srcW) / 2;
+        srcY = (originalHeight - srcH) / 2;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(
+        originalImage,
+        srcX,
+        srcY,
+        srcW,
+        srcH,
+        0,
+        0,
+        targetWidth,
+        targetHeight
+      );
+      return canvas;
+    }
+
+    function createIconCanvas() {
+      const size = 128;
+      const preset = { width: size, height: size, mode: "fit" };
+      const fitCanvas = createCanvasForPreset(preset);
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, size, size);
+      const sx = (size - fitCanvas.width) / 2;
+      const sy = (size - fitCanvas.height) / 2;
+      ctx.drawImage(fitCanvas, sx, sy);
+      return canvas;
+    }
+
+    function createIcoBlobFromCanvas(canvas) {
+      const size = canvas.width;
+      const ctx = canvas.getContext("2d");
+      const imageData = ctx.getImageData(0, 0, size, size);
+      const pixels = imageData.data;
+
+      const width = size;
+      const height = size;
+      const rowSize = width * 4;
+      const xorSize = rowSize * height;
+
+      const andRowBits = ((width + 31) >> 5) << 5;
+      const andRowBytes = andRowBits >> 3;
+      const andSize = andRowBytes * height;
+
+      const bmpInfoHeaderSize = 40;
+      const dibSize = bmpInfoHeaderSize + xorSize + andSize;
+      const totalSize = 6 + 16 + dibSize;
+
+      const buf = new ArrayBuffer(totalSize);
+      const dv = new DataView(buf);
+      let p = 0;
+
+      dv.setUint16(p, 0, true); p += 2;
+      dv.setUint16(p, 1, true); p += 2;
+      dv.setUint16(p, 1, true); p += 2;
+
+      dv.setUint8(p++, width === 256 ? 0 : width);
+      dv.setUint8(p++, height === 256 ? 0 : height);
+      dv.setUint8(p++, 0);
+      dv.setUint8(p++, 0);
+      dv.setUint16(p, 1, true); p += 2;
+      dv.setUint16(p, 32, true); p += 2;
+      dv.setUint32(p, dibSize, true); p += 4;
+      dv.setUint32(p, 6 + 16, true); p += 4;
+
+      dv.setUint32(p, bmpInfoHeaderSize, true); p += 4;
+      dv.setInt32(p, width, true); p += 4;
+      dv.setInt32(p, height * 2, true); p += 4;
+      dv.setUint16(p, 1, true); p += 2;
+      dv.setUint16(p, 32, true); p += 2;
+      dv.setUint32(p, 0, true); p += 4;
+      dv.setUint32(p, xorSize + andSize, true); p += 4;
+      dv.setInt32(p, 0, true); p += 4;
+      dv.setInt32(p, 0, true); p += 4;
+      dv.setUint32(p, 0, true); p += 4;
+      dv.setUint32(p, 0, true); p += 4;
+
+      for (let y = height - 1; y >= 0; y--) {
+        const srcRowStart = y * width * 4;
+        for (let x = 0; x < width; x++) {
+          const si = srcRowStart + x * 4;
+          const r = pixels[si];
+          const g = pixels[si + 1];
+          const b = pixels[si + 2];
+          const a = pixels[si + 3];
+          dv.setUint8(p++, b);
+          dv.setUint8(p++, g);
+          dv.setUint8(p++, r);
+          dv.setUint8(p++, a);
         }
-      }catch(e){ console.warn(e); }
+      }
+
+      for (let i = 0; i < andSize; i++) {
+        dv.setUint8(p++, 0);
+      }
+
+      return new Blob([buf], { type: "image/x-icon" });
+    }
+
+    extSelect.addEventListener("change", () => {
+      const ext = extSelect.value;
+      const t = translations[currentLang];
+      if (ext === "ico") {
+        isIconMode = true;
+        mimeSelect.disabled = true;
+        qualityRange.disabled = true;
+        mimeSelect.classList.add("dimmed");
+        qualityRange.classList.add("dimmed");
+        document.getElementById("noteEncoding").innerHTML =
+          `<span class="tag">${currentLang === "th" ? "หมายเหตุ" : "Note"}</span> ${t.iconModeNote}`;
+      } else {
+        isIconMode = false;
+        mimeSelect.disabled = false;
+        qualityRange.disabled = false;
+        mimeSelect.classList.remove("dimmed");
+        qualityRange.classList.remove("dimmed");
+        document.getElementById("noteEncoding").innerHTML =
+          `<span class="tag">${currentLang === "th" ? "หมายเหตุ" : "Note"}</span> ${t.normalModeNote}`;
+      }
+      updatePresetLockUI();
     });
 
-    // อัปเดตป้ายปุ่มเมื่อสถานะเปลี่ยน
-    audio.addEventListener('play', ()=>{ playPause.textContent = '⏸️ หยุด'; });
-    audio.addEventListener('pause', ()=>{ playPause.textContent = '▶️ เล่น'; });
+    convertBtn.addEventListener("click", async () => {
+      if (!originalImage.src) return;
 
-    // ควบคุมเสียง
-    volume.addEventListener('input', ()=>{
-      audio.volume = +volume.value;
-      audio.muted = (audio.volume === 0);
-      muteBtn.textContent = audio.muted ? '🔇 ปิดเสียง' : '🔊 เปิดเสียง';
-    });
+      downloadsDiv.innerHTML = "";
+      downloadZipBtn.disabled = true;
 
-    muteBtn.addEventListener('click', ()=>{
-      audio.muted = !audio.muted;
-      muteBtn.textContent = audio.muted ? '🔇 ปิดเสียง' : '🔊 เปิดเสียง';
-    });
+      const ext = extSelect.value;
+      const zipEntries = [];
 
-    // วนซ้ำ
-    loopBtn.addEventListener('click', ()=>{
-      audio.loop = !audio.loop;
-      loopBtn.textContent = audio.loop ? '🔁 วน' : '🔁 ไม่วน';
-    });
+      if (isIconMode) {
+        const canvas = createIconCanvas();
+        const icoBlob = createIcoBlobFromCanvas(canvas);
 
-    // อัปเดตระยะและเวลา
-    const updateSeek = ()=>{
-      if (!isFinite(audio.duration) || audio.duration === 0) return;
-      const pct = (audio.currentTime / audio.duration) * 100;
-      seek.value = pct;
-      seek.style.setProperty('--pct', pct + '%');
-      time.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
-    };
+        const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+        const baseName = lastSourceName.replace(/\.[^.]+$/, "") || "icon";
+        const filename = `${baseName}_128x128_${ts}.ico`;
 
-    audio.addEventListener('timeupdate', updateSeek);
-    audio.addEventListener('loadedmetadata', updateSeek);
-    audio.addEventListener('durationchange', updateSeek);
+        const url = URL.createObjectURL(icoBlob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.textContent = `Download icon (${filename})`;
+        link.className = "download-link";
 
-    // ลาก seek bar เพื่อเลื่อน
-    let seeking=false;
-    seek.addEventListener('input', ()=>{
-      seeking=true;
-      const pct = +seek.value;
-      seek.style.setProperty('--pct', pct + '%');
-      if (isFinite(audio.duration)) {
-        const t = (pct/100)*audio.duration;
-        time.textContent = `${fmt(t)} / ${fmt(audio.duration)}`;
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "download-item";
+        itemDiv.innerHTML = ` ICO — <code>128×128</code> → <code>${filename}</code><br/>`;
+        itemDiv.appendChild(link);
+        downloadsDiv.appendChild(itemDiv);
+
+        zipEntries.push({ filename, blob: icoBlob });
+      } else if (ext === "pdf") {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          alert("PDF library (jsPDF) is not loaded.");
+          return;
+        }
+        const t = translations[currentLang];
+        let presets;
+        if (presetsUnlocked) {
+          presets = getPresetsConfig();
+          if (presets.length === 0) {
+            alert(t.alertEnablePreset);
+            return;
+          }
+        } else {
+          presets = [{ index: 0, width: null, height: null, mode: "fit" }];
+        }
+
+        const mimeType = mimeSelect.value;
+        const quality = parseFloat(qualityRange.value);
+        const imgType = mimeType === "image/jpeg" ? "JPEG" : "PNG";
+        const dataMime = imgType === "JPEG" ? "image/jpeg" : "image/png";
+
+        for (const preset of presets) {
+          const canvas = createCanvasForPreset(preset);
+          const dataURL = canvas.toDataURL(
+            dataMime,
+            imgType === "JPEG" ? quality : 1.0
+          );
+
+          const orientation = canvas.width >= canvas.height ? "l" : "p";
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF({
+            orientation,
+            unit: "px",
+            format: [canvas.width, canvas.height],
+          });
+
+          doc.addImage(
+            dataURL,
+            imgType,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
+
+          const pdfBlob = doc.output("blob");
+
+          const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+          const baseName = lastSourceName.replace(/\.[^.]+$/, "") || "image";
+          const w = canvas.width;
+          const h = canvas.height;
+          const filename = `${baseName}_p${preset.index + 1}_${w}x${h}_${ts}.pdf`;
+
+          const url = URL.createObjectURL(pdfBlob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = filename;
+          link.textContent = `Download preset ${preset.index + 1} (PDF)`;
+          link.className = "download-link";
+
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "download-item";
+          itemDiv.innerHTML = ` Preset ${preset.index + 1} — <code>${w}×${h}</code> → <code>${filename}</code><br/>`;
+          itemDiv.appendChild(link);
+          downloadsDiv.appendChild(itemDiv);
+
+          zipEntries.push({ filename, blob: pdfBlob });
+        }
+      } else {
+        const mimeType = mimeSelect.value;
+        const quality = parseFloat(qualityRange.value);
+
+        let presets;
+        if (presetsUnlocked) {
+          presets = getPresetsConfig();
+          if (presets.length === 0) {
+            alert(translations[currentLang].alertEnablePreset);
+            return;
+          }
+        } else {
+          presets = [{ index: 0, width: null, height: null, mode: "fit" }];
+        }
+
+        for (const preset of presets) {
+          const canvas = createCanvasForPreset(preset);
+
+          let dataURL;
+          if (mimeType === "image/png") {
+            dataURL = canvas.toDataURL("image/png");
+          } else if (mimeType === "image/jpeg") {
+            dataURL = canvas.toDataURL("image/jpeg", quality);
+          } else {
+            dataURL = canvas.toDataURL("image/webp", quality);
+          }
+
+          const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+          const baseName = lastSourceName.replace(/\.[^.]+$/, "") || "image";
+          const w = canvas.width;
+          const h = canvas.height;
+          const filename = `${baseName}_p${preset.index + 1}_${w}x${h}_${ts}.${ext}`;
+
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "download-item";
+          const link = document.createElement("a");
+          link.href = dataURL;
+          link.download = filename;
+          link.textContent = `Download preset ${preset.index + 1}`;
+          link.className = "download-link";
+
+          itemDiv.innerHTML = ` Preset ${preset.index + 1} — <code>${w}×${h}</code> → <code>${filename}</code><br/>`;
+          itemDiv.appendChild(link);
+          downloadsDiv.appendChild(itemDiv);
+
+          try {
+            const resp = await fetch(dataURL);
+            const blob = await resp.blob();
+            zipEntries.push({ filename, blob });
+          } catch (e) {
+            console.warn("Could not add file to ZIP", e);
+          }
+        }
+      }
+
+      if (zipEntries.length > 0) {
+        downloadZipBtn.disabled = false;
+        downloadZipBtn.onclick = async () => {
+          const zip = new JSZip();
+          zipEntries.forEach((entry) => {
+            zip.file(entry.filename, entry.blob);
+          });
+          const zipBlob = await zip.generateAsync({ type: "blob" });
+          const zipUrl = URL.createObjectURL(zipBlob);
+          const a = document.createElement("a");
+          const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+          const baseName = lastSourceName.replace(/\.[^.]+$/, "") || "images";
+          a.href = zipUrl;
+          a.download = `${baseName}_converted_${ts}.zip`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(zipUrl);
+        };
       }
     });
-    seek.addEventListener('change', ()=>{
-      if (isFinite(audio.duration)) audio.currentTime = (+seek.value/100)*audio.duration;
-      seeking=false;
+
+    // เล่นเพลงเมื่อแตะ/คลิกครั้งแรก
+    document.addEventListener("DOMContentLoaded", () => {
+      const audio = document.getElementById("bgAudio");
+      let started = false;
+      const starter = () => {
+        if (started) return;
+        started = true;
+        audio.play().catch(() => {});
+        document.removeEventListener("click", starter);
+        document.removeEventListener("touchstart", starter);
+      };
+      document.addEventListener("click", starter);
+      document.addEventListener("touchstart", starter);
     });
 
-    // ปรับค่าเริ่มต้น
-    (function init(){
-      volume.value = 1;
-      audio.volume = 1;
-      // เผื่อ auto-play หลังผู้ใช้แตะที่หน้า (นโยบายเบราว์เซอร์ส่วนใหญ่ต้องมี interaction)
-      document.addEventListener('click', function once(){
-        document.removeEventListener('click', once);
-        // ไม่บังคับเล่น แค่ให้พร้อม
-        audio.load();
-      }, {once:true});
-    })();
+    // init
+    applyLanguage("en");
+    updatePresetLockUI();
   </script>
 </body>
 </html>
