@@ -2,14 +2,13 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <title>BEMO Image Studio – PNG Editor</title>
+  <title>BEMO Image Studio Pro – PNG Editor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
       --bg-main: #05070b;
       --bg-panel: #111827;
       --bg-panel-alt: #020617;
-      --bg-toolbar: #020617;
       --accent: #3b82f6;
       --accent-soft: #1d4ed8;
       --border-subtle: #1f2937;
@@ -119,16 +118,17 @@
       color: #9ca3af;
     }
 
-    /* Main Layout */
+    /* Main layout */
     .main {
       flex: 1;
       display: grid;
-      grid-template-columns: 60px minmax(0, 1fr) 280px;
+      grid-template-columns: 68px minmax(0, 1fr) 290px;
       gap: 0;
       height: calc(100% - 44px);
-      backdrop-filter: blur(28px);
-      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 50%),
-                  radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.15), transparent 55%);
+      backdrop-filter: blur(26px);
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.18), transparent 60%);
     }
 
     /* Toolbar */
@@ -139,7 +139,7 @@
       flex-direction: column;
       align-items: center;
       padding: 8px 6px;
-      gap: 8px;
+      gap: 6px;
       box-shadow: 6px 0 30px rgba(0, 0, 0, 0.7);
     }
 
@@ -153,8 +153,8 @@
     }
 
     .tool-button {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 12px;
       border: 1px solid transparent;
       background: radial-gradient(circle at 20% 0, #111827, #020617 80%);
@@ -188,7 +188,7 @@
 
     .tool-tooltip {
       position: absolute;
-      left: 46px;
+      left: 48px;
       top: 50%;
       transform: translateY(-50%);
       background: #020617;
@@ -338,6 +338,17 @@
       pointer-events: none;
     }
 
+    .canvas-scroll {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
     .canvas-inner {
       position: relative;
       max-width: 100%;
@@ -370,6 +381,7 @@
       display: block;
       max-width: 100%;
       height: auto;
+      background: transparent;
     }
 
     #selectionRect {
@@ -427,7 +439,7 @@
       accent-color: var(--accent);
     }
 
-    /* Right Panel */
+    /* Right Side Panel */
     .sidepanel {
       border-left: 1px solid #1f2937;
       background: radial-gradient(circle at 0 0, #020617, #020617 55%, #020617);
@@ -572,10 +584,6 @@
       transform: translateY(-0.5px);
     }
 
-    .btn-xs[data-effect] {
-      border-style: dashed;
-    }
-
     .btn-xs:disabled {
       opacity: 0.4;
       cursor: not-allowed;
@@ -611,11 +619,90 @@
       margin-top: 4px;
     }
 
-    /* Scroll for small screens */
+    .layers-list {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .layer-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      padding: 4px 6px;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .layer-item span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .layer-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .settings-block {
+      margin-top: 4px;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px dashed #1f2937;
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 11px;
+      display: none;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .settings-row label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .settings-row input[type="color"] {
+      width: 32px;
+      height: 18px;
+      padding: 0;
+      border-radius: 5px;
+      border: 1px solid #374151;
+      background: transparent;
+    }
+
+    .settings-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+
+    .settings-row span.value {
+      width: 40px;
+      text-align: right;
+      font-size: 11px;
+      color: var(--text-main);
+    }
+
+    .settings-row input[type="checkbox"] {
+      margin-right: 4px;
+    }
+
     @media (max-width: 980px) {
       .main {
-        grid-template-columns: 52px minmax(0, 1fr) 260px;
+        grid-template-columns: 54px minmax(0, 1fr) 260px;
       }
+
       .canvas-frame {
         padding: 12px;
       }
@@ -625,10 +712,12 @@
       body {
         overflow: auto;
       }
+
       .main {
-        grid-template-columns: 52px minmax(0, 1fr);
+        grid-template-columns: 54px minmax(0, 1fr);
         grid-template-rows: minmax(0, 1fr) auto;
       }
+
       .sidepanel {
         grid-column: 1 / -1;
         border-left: none;
@@ -637,6 +726,7 @@
         gap: 10px;
         overflow-x: auto;
       }
+
       .panel-card {
         min-width: 220px;
       }
@@ -648,14 +738,14 @@
     <div class="topbar-left">
       <div class="app-logo"><span>B</span></div>
       <div>
-        <span class="app-title-main">BEMO Image Studio</span>
-        <span class="app-title-sub">PNG-ONLY • NON-DESTRUCTIVE UI STYLE</span>
+        <span class="app-title-main">BEMO Image Studio Pro</span>
+        <span class="app-title-sub">PNG-ONLY • BRUSH • TEXT • SHAPE • EFFECTS</span>
       </div>
     </div>
     <div class="topbar-right">
       <div class="pill">
-        <span>ส่งออกเป็น</span>
-        <strong>PNG</strong>
+        <span>ส่งออก</span>
+        <strong>PNG เท่านั้น</strong>
       </div>
       <div class="pill">
         <span>Shortcuts</span>
@@ -666,28 +756,43 @@
   </header>
 
   <main class="main">
-    <!-- Left Toolbar -->
+    <!-- Left toolbar -->
     <aside class="toolbar">
       <div class="toolbar-group-label">Tools</div>
 
-      <button class="tool-button active" data-tool="pointer">
+      <button class="tool-button active" data-tool="pointer" title="Move / Pointer">
         <span>🖱️</span>
-        <div class="tool-tooltip">Pointer (ดูตัวอย่าง / เลือกค่า)</div>
+        <div class="tool-tooltip">Pointer – เลือกและใช้งานทั่วไป</div>
       </button>
 
-      <button class="tool-button" data-tool="crop">
+      <button class="tool-button" data-tool="crop" title="Crop">
         <span>✂️</span>
-        <div class="tool-tooltip">Crop (ครอบภาพ) – จะรีเซ็ต Zoom เป็น 100%</div>
+        <div class="tool-tooltip">Crop – ครอบภาพ (Zoom จะถูกรีเซ็ตเป็น 100%)</div>
       </button>
 
-      <button class="tool-button disabled">
-        <span>🪄</span>
-        <div class="tool-tooltip">Coming soon…</div>
+      <button class="tool-button" data-tool="brush" title="Brush">
+        <span>🖌️</span>
+        <div class="tool-tooltip">Brush – วาดเส้น ลงสี</div>
       </button>
 
-      <button class="tool-button disabled">
-        <span>📝</span>
-        <div class="tool-tooltip">Coming soon…</div>
+      <button class="tool-button" data-tool="eraser" title="Eraser">
+        <span>🧽</span>
+        <div class="tool-tooltip">Eraser – ลบแบบโปร่งใส (รักษา PNG alpha)</div>
+      </button>
+
+      <button class="tool-button" data-tool="text" title="Text">
+        <span>🅣</span>
+        <div class="tool-tooltip">Text – คลิกบนภาพเพื่อเพิ่มข้อความ</div>
+      </button>
+
+      <button class="tool-button" data-tool="shape-rect" title="Rectangle">
+        <span>▭</span>
+        <div class="tool-tooltip">Shape – ลากเพื่อสร้างกรอบสี่เหลี่ยม</div>
+      </button>
+
+      <button class="tool-button" data-tool="eyedropper" title="Eyedropper">
+        <span>🎯</span>
+        <div class="tool-tooltip">Eyedropper – ดูดสีจากพิกเซล</div>
       </button>
 
       <div class="toolbar-group-label" style="margin-top: 10px;">PNG</div>
@@ -696,22 +801,22 @@
       </div>
     </aside>
 
-    <!-- Center Workspace -->
+    <!-- Center workspace -->
     <section class="workspace">
       <div class="workspace-top">
         <div class="breadcrumbs">
           <span>Projects</span>
           <span>/</span>
-          <span class="breadcrumb-active">Untitled PNG</span>
+          <span class="breadcrumb-active" id="docName">Untitled PNG</span>
           <span>/</span>
-          <span id="metaBitDepth">8-bit RGBA</span>
+          <span id="metaBitDepth">8-bit RGBA (virtual)</span>
         </div>
         <div class="workspace-actions">
           <button class="btn btn-ghost" id="btnUndo" disabled>
             <span class="icon">↩️</span> Undo
           </button>
           <button class="btn" id="btnReset">
-            <span class="icon">🧼</span> เคลียร์ผืนงาน
+            <span class="icon">🧼</span> เคลียร์การปรับ
           </button>
           <button class="btn btn-primary" id="btnExport" disabled>
             <span class="icon">⬇️</span> ส่งออก PNG
@@ -721,85 +826,15 @@
 
       <div class="workspace-main">
         <div class="canvas-shell">
-          <div class="canvas-inner" id="canvasInner">
-            <div class="canvas-frame">
-              <div class="checkerboard">
-                <canvas id="editorCanvas" width="960" height="540"></canvas>
-                <div id="selectionRect"></div>
+          <div class="canvas-scroll" id="canvasScroll">
+            <div class="canvas-inner" id="canvasInner">
+              <div class="canvas-frame">
+                <div class="checkerboard">
+                  <canvas id="editorCanvas" width="960" height="540"></canvas>
+                  <div id="selectionRect"></div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="canvas-status" id="canvasStatus">
-            <div class="dot"></div>
-            <span id="statusText">รออัปโหลด PNG…</span>
-            <span id="sizeLabel">0 × 0 px</span>
-          </div>
-
-          <div class="zoom-control">
-            <span>Zoom</span>
-            <input type="range" id="zoomRange" min="0.3" max="2.5" step="0.05" value="1" />
-            <span id="zoomLabel">100%</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Right Panel -->
-    <aside class="sidepanel">
-      <div class="panel-card">
-        <div class="panel-header">
-          <span class="panel-title">File</span>
-          <span class="panel-tag">PNG Workflow</span>
-        </div>
-
-        <div class="field-group">
-          <button class="btn btn-primary" id="btnOpen">
-            <span class="icon">📂</span> เปิด PNG
-          </button>
-          <input type="file" id="fileInput" accept="image/png" hidden />
-
-          <div class="hint-text">รองรับเฉพาะ <strong>ไฟล์ .png</strong> เท่านั้น</div>
-
-          <div class="meta-row" style="margin-top: 4px;">
-            <span class="meta-label">ไฟล์:</span>
-            <span class="meta-value" id="fileNameLabel">ยังไม่ได้เลือก</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">ขนาด:</span>
-            <span class="meta-value" id="fileSizeLabel">–</span>
-          </div>
-        </div>
-
-        <p class="error-text" id="fileError">⚠️ กรุณาเลือกไฟล์ PNG เท่านั้น</p>
-
-        <div class="notice">
-          Tip: ลาก PNG มาวางบนหน้าต่างนี้ก็ได้เช่นกัน (Drag & Drop)
-        </div>
-
-        <div class="panel-footer">
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <div class="status-dot" id="fileStatusDot"></div>
-            <span>Ready</span>
-          </div>
-          <span style="font-size: 9px;">BEMO Datacenter</span>
-        </div>
-      </div>
-
-      <div class="panel-card">
-        <div class="panel-header">
-          <span class="panel-title">Canvas</span>
-          <span class="panel-tag">Non-Destructive</span>
-        </div>
-
-        <div class="meta-row">
-          <span class="meta-label">Resolution</span>
-          <span class="meta-value" id="metaResolution">0 × 0 px</span>
-        </div>
-        <div class="meta-row">
-          <span class="meta-label">Aspect</span>
-          <span class="meta-value" id="metaAspect">–</span>
-        </div>
-
-        <div class="section-label">Crop & Align</div>
-    
+        
