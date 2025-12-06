@@ -107,16 +107,6 @@
       box-shadow: none;
       transform: none;
     }
-    #preview {
-      max-width: 100%;
-      max-height: 400px;
-      border-radius: 12px;
-      display: block;
-      margin-top: 10px;
-      border: 1px solid #374151;
-      object-fit: contain;
-      background: #030712;
-    }
     .info {
       font-size: 0.9rem;
       color: #9ca3af;
@@ -203,13 +193,13 @@
 </head>
 <body>
   <!-- เพลง (ต้องมี LIL.mp3 อยู่ใน repo เดียวกับไฟล์นี้) -->
-  <audio id="bgAudio" src="https://raw.githubusercontent.com/ztb5s/mmx/refs/heads/main/ml.mp3" preload="auto" hidden></audio>
+  <audio id="bgAudio" src="./LIL.mp3" preload="auto" hidden></audio>
 
   <div class="top-bar">
     <div>
       <h1 id="title">Advanced Image Converter</h1>
       <p class="info" id="subtitle">
-        Upload any image, resize up to 5 outputs, and save as PNG / JPG / WEBP / BMP / TIFF / AVIF / ICO / PDF. Recommended max size: 3840×2160 (4K).
+        Upload multiple images, resize up to 5 outputs, and save as PNG / JPG / WEBP / BMP / TIFF / AVIF / ICO / PDF. Recommended max size: 3840×2160 (4K).
       </p>
     </div>
     <div class="lang-switch">
@@ -220,20 +210,18 @@
 
   <!-- 1. Input -->
   <div class="card" id="cardInput">
-    <h2 id="inputTitle">1. Input image</h2>
+    <h2 id="inputTitle">1. Input images</h2>
 
-    <label for="fileInput" id="uploadLabel">Upload from computer</label>
-    <input type="file" id="fileInput" accept="image/*" />
+    <label for="fileInput" id="uploadLabel">Upload from computer (multiple files)</label>
+    <input type="file" id="fileInput" accept="image/*" multiple />
 
     <div class="info" style="margin: 8px 0; text-align:center;" id="orText">— or —</div>
 
-    <label for="urlInput" id="urlLabel">Load from image URL</label>
+    <label for="urlInput" id="urlLabel">Load a single image from URL</label>
     <input type="text" id="urlInput" placeholder="https://example.com/image.png" />
     <button id="loadUrlBtn">Load from URL</button>
 
     <div class="info" id="fileInfo" style="margin-top:8px;">No file loaded.</div>
-
-    <img id="preview" alt="Preview will appear here" style="display:none;" />
   </div>
 
   <!-- 2. Output settings -->
@@ -274,7 +262,7 @@
 
     <p class="info" id="noteEncoding">
       <span class="tag">Note</span>
-      Browser can natively encode PNG / JPEG / WEBP. BMP output is generated as a 16-bit RGB565 BMP file. Other extensions (TIFF, AVIF, PDF, ICO) reuse these encodings internally: ICO is a 128×128 icon and PDF wraps the image into a single-page document.
+      Browser can natively encode PNG / JPEG / WEBP. BMP output is generated as a 16-bit RGB565 BMP file. Other extensions (TIFF, AVIF, PDF, ICO) reuse these encodings internally: ICO is a 128×128 icon and PDF wraps images into a multi-page single document.
     </p>
   </div>
 
@@ -356,21 +344,22 @@
       en: {
         title: "Advanced Image Converter",
         subtitle:
-          "Upload any image, resize up to 5 outputs, and save as PNG / JPG / WEBP / BMP / TIFF / AVIF / ICO / PDF. Recommended max size: 3840×2160 (4K).",
-        inputTitle: "1. Input image",
-        uploadLabel: "Upload from computer",
+          "Upload multiple images, resize up to 5 outputs, and save as PNG / JPG / WEBP / BMP / TIFF / AVIF / ICO / PDF. Recommended max size: 3840×2160 (4K).",
+        inputTitle: "1. Input images",
+        uploadLabel: "Upload from computer (multiple files)",
         orText: "— or —",
-        urlLabel: "Load from image URL",
+        urlLabel: "Load a single image from URL",
         loadUrlBtn: "Load from URL",
         noFile: "No file loaded.",
+        filesLoaded: (n) => `Loaded ${n} image(s).`,
         outputSettingsTitle: "2. Output settings",
         encodingLabel: "Encoding (inside file)",
         extLabel: "File extension",
         qualityLabelText: "Quality (for JPEG / WEBP)",
         normalModeNote:
-          "Browser can natively encode PNG / JPEG / WEBP. BMP output is generated as a 16-bit RGB565 BMP file. Other extensions (TIFF, AVIF, PDF, ICO) reuse these encodings internally: ICO is a 128×128 icon and PDF wraps the image into a single-page document.",
+          "Browser can natively encode PNG / JPEG / WEBP. BMP output is generated as a 16-bit RGB565 BMP file. Other extensions (TIFF, AVIF, PDF, ICO) reuse these encodings internally: ICO is a 128×128 icon and PDF wraps images into a multi-page single document.",
         iconModeNote:
-          "Icon mode: presets and quality are disabled. Output will be a real 128×128 ICO file.",
+          "Icon mode: presets and quality are disabled. Output will be 128×128 ICO icons for all images.",
         presetsTitle: "3. Size presets (up to 5 outputs)",
         presetsInfo:
           "Configure up to 5 different outputs. Recommended max size: 3840×2160 (4K). Values above will be clamped.",
@@ -395,21 +384,22 @@
       th: {
         title: "โปรแกรมแปลงไฟล์รูปภาพขั้นสูง",
         subtitle:
-          "อัปโหลดรูปภาพ ปรับขนาดได้สูงสุด 5 แบบ และบันทึกเป็น PNG / JPG / WEBP / BMP / TIFF / AVIF / ICO / PDF แนะนำขนาดสูงสุด 3840×2160 (4K).",
-        inputTitle: "1. เลือกรูปภาพต้นฉบับ",
-        uploadLabel: "อัปโหลดจากคอมพิวเตอร์",
+          "อัปโหลดรูปภาพหลายไฟล์ ปรับขนาดได้สูงสุด 5 แบบ และบันทึกเป็น PNG / JPG / WEBP / BMP / TIFF / AVIF / ICO / PDF แนะนำขนาดสูงสุด 3840×2160 (4K).",
+        inputTitle: "1. เลือกรูปภาพหลายไฟล์",
+        uploadLabel: "อัปโหลดจากคอมพิวเตอร์ (หลายไฟล์)",
         orText: "— หรือ —",
-        urlLabel: "โหลดจากลิงก์รูปภาพ (URL)",
+        urlLabel: "โหลดรูปจากลิงก์ (ทีละรูป)",
         loadUrlBtn: "โหลดจาก URL",
         noFile: "ยังไม่ได้เลือกรูปภาพ",
+        filesLoaded: (n) => `โหลดรูปแล้วทั้งหมด ${n} รูป`,
         outputSettingsTitle: "2. ตั้งค่าการบันทึกไฟล์",
         encodingLabel: "รูปแบบการเข้ารหัสภายในไฟล์",
         extLabel: "นามสกุลไฟล์ (Extension)",
         qualityLabelText: "คุณภาพ (สำหรับ JPEG / WEBP)",
         normalModeNote:
-          "เบราว์เซอร์เข้ารหัสได้จริงเฉพาะ PNG / JPEG / WEBP ส่วน BMP จะถูกสร้างเป็นไฟล์ BMP 16-บิตแบบ RGB565 จริง ๆ ส่วนนามสกุลอื่น (TIFF, AVIF, PDF, ICO) จะใช้อันเหล่านี้ภายใน โดย ICO จะเป็นไอคอน 128×128 และ PDF เป็นเอกสาร 1 หน้า ที่ฝังรูปภาพไว้",
+          "เบราว์เซอร์เข้ารหัสได้จริงเฉพาะ PNG / JPEG / WEBP ส่วน BMP จะถูกสร้างเป็นไฟล์ BMP 16-บิตแบบ RGB565 จริง ๆ ส่วนนามสกุลอื่น (TIFF, AVIF, PDF, ICO) จะใช้อันเหล่านี้ภายใน โดย ICO จะเป็นไอคอน 128×128 และ PDF รวมรูปทั้งหมดเป็นไฟล์เอกสารหลายหน้าไฟล์เดียว",
         iconModeNote:
-          "โหมดไอคอน: ปิดการใช้งานการปรับขนาดและคุณภาพ ระบบจะสร้างไฟล์ .ico จริง ขนาด 128×128 โดยอัตโนมัติ",
+          "โหมดไอคอน: ปิดการใช้งานการปรับขนาดและคุณภาพ ระบบจะสร้างไอคอน .ico ขนาด 128×128 สำหรับทุกรูป",
         presetsTitle: "3. ตั้งค่าขนาด (ได้สูงสุด 5 แบบ)",
         presetsInfo:
           "สามารถตั้งขนาดได้สูงสุด 5 แบบ แนะนำไม่เกิน 3840×2160 (4K) ถ้าใส่เกินระบบจะลดลงให้อยู่ในช่วงนี้",
@@ -439,6 +429,29 @@
     let presetsUnlocked = false;
     let isIconMode = false;
 
+    const fileInput = document.getElementById("fileInput");
+    const urlInput = document.getElementById("urlInput");
+    const loadUrlBtn = document.getElementById("loadUrlBtn");
+    const fileInfo = document.getElementById("fileInfo");
+    const mimeSelect = document.getElementById("mimeSelect");
+    const extSelect = document.getElementById("extSelect");
+    const qualityRange = document.getElementById("qualityRange");
+    const qualityLabel = document.getElementById("qualityLabel");
+    const presetsContainer = document.getElementById("presetsContainer");
+    const convertBtn = document.getElementById("convertBtn");
+    const downloadZipBtn = document.getElementById("downloadZipBtn");
+    const downloadsDiv = document.getElementById("downloads");
+    const codeInput = document.getElementById("codeInput");
+    const codeApplyBtn = document.getElementById("codeApplyBtn");
+    const codeStatus = document.getElementById("codeStatus");
+
+    const MAX_WIDTH = 3840;
+    const MAX_HEIGHT = 2160;
+
+    // list of images: { name, baseName, img, width, height }
+    let imagesList = [];
+
+    // ---------- language ----------
     function applyLanguage(lang) {
       currentLang = lang;
       const t = translations[lang];
@@ -450,9 +463,13 @@
       document.getElementById("orText").textContent = t.orText;
       document.getElementById("urlLabel").textContent = t.urlLabel;
       document.getElementById("loadUrlBtn").textContent = t.loadUrlBtn;
-      if (!originalImage.src) {
-        document.getElementById("fileInfo").textContent = t.noFile;
+
+      if (imagesList.length === 0) {
+        fileInfo.textContent = t.noFile;
+      } else {
+        fileInfo.textContent = t.filesLoaded(imagesList.length);
       }
+
       document.getElementById("outputSettingsTitle").textContent =
         t.outputSettingsTitle;
       document.getElementById("encodingLabel").textContent = t.encodingLabel;
@@ -469,15 +486,15 @@
       document.getElementById("presetsTitle").textContent = t.presetsTitle;
       document.getElementById("presetsInfo").textContent = t.presetsInfo;
       document.getElementById("codeLabel").textContent = t.codeLabel;
-      document.getElementById("codeInput").placeholder = t.codePlaceholder;
-      document.getElementById("codeApplyBtn").textContent = t.codeApplyBtn;
-      document.getElementById("codeStatus").textContent = presetsUnlocked
+      codeInput.placeholder = t.codePlaceholder;
+      codeApplyBtn.textContent = t.codeApplyBtn;
+      codeStatus.textContent = presetsUnlocked
         ? t.codeStatusUnlocked
         : t.codeStatusLocked;
+
       document.getElementById("convertTitle").textContent = t.convertTitle;
-      document.getElementById("convertBtn").textContent = t.convertBtn;
-      document.getElementById("downloadZipBtn").textContent =
-        t.downloadZipBtn;
+      convertBtn.textContent = t.convertBtn;
+      downloadZipBtn.textContent = t.downloadZipBtn;
       document.getElementById("privacyNote").innerHTML = `<span class="tag">${
         lang === "th" ? "ความเป็นส่วนตัว" : "Privacy"
       }</span> ${t.privacyNote}`;
@@ -495,39 +512,34 @@
       });
     });
 
-    // ---------- core ----------
-    const fileInput = document.getElementById("fileInput");
-    const urlInput = document.getElementById("urlInput");
-    const loadUrlBtn = document.getElementById("loadUrlBtn");
-    const fileInfo = document.getElementById("fileInfo");
-    const preview = document.getElementById("preview");
+    // ---------- helpers ----------
+    function sanitizeName(name) {
+      return (name || "image").replace(/[^a-zA-Z0-9_.-]/g, "_");
+    }
 
-    const mimeSelect = document.getElementById("mimeSelect");
-    const extSelect = document.getElementById("extSelect");
-    const qualityRange = document.getElementById("qualityRange");
-    const qualityLabel = document.getElementById("qualityLabel");
+    function enableConversion() {
+      convertBtn.disabled = imagesList.length === 0;
+      downloadZipBtn.disabled = true;
+      downloadsDiv.innerHTML = "";
+      const t = translations[currentLang];
+      if (imagesList.length === 0) {
+        fileInfo.textContent = t.noFile;
+      } else {
+        fileInfo.textContent = t.filesLoaded(imagesList.length);
+      }
+    }
 
-    const presetsContainer = document.getElementById("presetsContainer");
-    const convertBtn = document.getElementById("convertBtn");
-    const downloadZipBtn = document.getElementById("downloadZipBtn");
-    const downloadsDiv = document.getElementById("downloads");
-
-    const codeInput = document.getElementById("codeInput");
-    const codeApplyBtn = document.getElementById("codeApplyBtn");
-    const codeStatus = document.getElementById("codeStatus");
-
-    let originalImage = new Image();
-    let originalWidth = 0;
-    let originalHeight = 0;
-    let lastSourceName = "input";
-
-    const MAX_WIDTH = 3840;
-    const MAX_HEIGHT = 2160;
+    function disableConversion() {
+      convertBtn.disabled = true;
+      downloadZipBtn.disabled = true;
+      downloadsDiv.innerHTML = "";
+    }
 
     qualityRange.addEventListener("input", () => {
       qualityLabel.textContent = qualityRange.value;
     });
 
+    let presetsUnlockedUI = false;
     function updatePresetLockUI() {
       if (presetsUnlocked && !isIconMode) {
         presetsContainer.classList.remove("dimmed");
@@ -544,92 +556,107 @@
       updatePresetLockUI();
     });
 
-    function loadImageFromDataUrl(dataUrl) {
-      const img = new Image();
-      img.onload = () => {
-        originalImage = img;
-        originalWidth = img.width;
-        originalHeight = img.height;
-        preview.src = img.src;
-        preview.style.display = "block";
-        fileInfo.textContent += ` | Size: ${originalWidth}×${originalHeight}`;
-        enableConversion();
-      };
-      img.onerror = () => {
-        fileInfo.textContent = translations[currentLang].loadFileError;
-        preview.style.display = "none";
-        disableConversion();
-      };
-      img.src = dataUrl;
+    // ---------- image loading ----------
+    function addImageFromDataUrl(dataUrl, name) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          const baseName = sanitizeName(name).replace(/\.[^.]+$/, "");
+          imagesList.push({
+            name: sanitizeName(name),
+            baseName: baseName || "image",
+            img,
+            width: img.width,
+            height: img.height,
+          });
+          resolve();
+        };
+        img.onerror = () => reject(new Error("Image load error"));
+        img.src = dataUrl;
+      });
+    }
+
+    function addImageFromUrl(url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          const namePart =
+            url.split("/").pop().split("?")[0] || "url_image.png";
+          const baseName = sanitizeName(namePart).replace(/\.[^.]+$/, "");
+          imagesList.push({
+            name: sanitizeName(namePart),
+            baseName: baseName || "image",
+            img,
+            width: img.width,
+            height: img.height,
+          });
+          resolve();
+        };
+        img.onerror = () => reject(new Error("URL image load error"));
+        img.src = url;
+      });
     }
 
     fileInput.addEventListener("change", () => {
-      const file = fileInput.files[0];
+      const files = Array.from(fileInput.files || []);
+      const t = translations[currentLang];
+      imagesList = [];
       downloadsDiv.innerHTML = "";
       downloadZipBtn.disabled = true;
 
-      if (!file) {
-        fileInfo.textContent = translations[currentLang].noFile;
-        preview.style.display = "none";
-        convertBtn.disabled = true;
+      if (files.length === 0) {
+        fileInfo.textContent = t.noFile;
+        disableConversion();
         return;
       }
 
-      const kb = (file.size / 1024).toFixed(1);
-      fileInfo.textContent = `Loaded from file: ${
-        file.name
-      } (${kb} KB, ${file.type || "unknown type"})`;
-      lastSourceName = file.name.replace(/[^a-zA-Z0-9_.-]/g, "_") || "input";
+      const promises = files.map(
+        (file) =>
+          new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) =>
+              addImageFromDataUrl(e.target.result, file.name)
+                .then(resolve)
+                .catch(reject);
+            reader.onerror = () => reject(new Error("File read error"));
+            reader.readAsDataURL(file);
+          })
+      );
 
-      const reader = new FileReader();
-      reader.onload = (e) => loadImageFromDataUrl(e.target.result);
-      reader.readAsDataURL(file);
+      Promise.all(promises)
+        .then(() => {
+          enableConversion();
+        })
+        .catch(() => {
+          fileInfo.textContent = t.loadFileError;
+          disableConversion();
+        });
     });
 
     loadUrlBtn.addEventListener("click", () => {
+      const t = translations[currentLang];
       const url = urlInput.value.trim();
       if (!url) {
-        alert(translations[currentLang].alertEnterUrl);
+        alert(t.alertEnterUrl);
         return;
       }
 
-      fileInfo.textContent = translations[currentLang].loadFromUrl;
+      fileInfo.textContent = t.loadFromUrl;
       downloadsDiv.innerHTML = "";
       downloadZipBtn.disabled = true;
 
-      lastSourceName = url.split("/").pop().split("?")[0] || "url_image";
-      lastSourceName = lastSourceName.replace(/[^a-zA-Z0-9_.-]/g, "_");
-
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        originalImage = img;
-        originalWidth = img.width;
-        originalHeight = img.height;
-        preview.src = img.src;
-        preview.style.display = "block";
-        fileInfo.textContent = `Loaded from URL: ${url} (${originalWidth}×${originalHeight})`;
-        enableConversion();
-      };
-      img.onerror = () => {
-        fileInfo.textContent = translations[currentLang].loadUrlFailed;
-        preview.style.display = "none";
-        disableConversion();
-      };
-      img.src = url;
+      addImageFromUrl(url)
+        .then(() => {
+          enableConversion();
+        })
+        .catch(() => {
+          fileInfo.textContent = t.loadUrlFailed;
+          if (imagesList.length === 0) disableConversion();
+        });
     });
 
-    function enableConversion() {
-      convertBtn.disabled = false;
-      downloadZipBtn.disabled = true;
-      downloadsDiv.innerHTML = "";
-    }
-    function disableConversion() {
-      convertBtn.disabled = true;
-      downloadZipBtn.disabled = true;
-      downloadsDiv.innerHTML = "";
-    }
-
+    // ---------- presets ----------
     const MODES = [
       { value: "fit", label: "Fit inside (keep aspect)" },
       { value: "stretch", label: "Exact stretch" },
@@ -646,8 +673,8 @@
           <div class="preset-title">Preset ${index + 1}</div>
           <div class="checkbox-row">
             <input type="checkbox" id="${presetId}-enabled" ${
-              index === 0 ? "checked" : ""
-            } />
+        index === 0 ? "checked" : ""
+      } />
             <label for="${presetId}-enabled" style="margin:0;">Enable</label>
           </div>
         </div>
@@ -701,7 +728,11 @@
       return presets;
     }
 
-    function createCanvasForPreset(preset) {
+    function createCanvasForPreset(imageEntry, preset) {
+      const originalImage = imageEntry.img;
+      const originalWidth = imageEntry.width;
+      const originalHeight = imageEntry.height;
+
       let targetWidth, targetHeight;
       let srcX = 0,
         srcY = 0,
@@ -835,10 +866,10 @@
     }
 
     // ICO helpers
-    function createIconCanvas() {
+    function createIconCanvasForImage(imageEntry) {
       const size = 128;
       const preset = { width: size, height: size, mode: "fit" };
-      const fitCanvas = createCanvasForPreset(preset);
+      const fitCanvas = createCanvasForPreset(imageEntry, preset);
       const canvas = document.createElement("canvas");
       canvas.width = size;
       canvas.height = size;
@@ -943,185 +974,203 @@
       updatePresetLockUI();
     });
 
+    // ---------- convert ----------
     convertBtn.addEventListener("click", async () => {
-      if (!originalImage.src) return;
+      if (imagesList.length === 0) return;
 
       downloadsDiv.innerHTML = "";
       downloadZipBtn.disabled = true;
 
       const ext = extSelect.value;
-      const zipEntries = [];
+      const zipEntries = []; // { path, blob }
+      const t = translations[currentLang];
 
-      // ---- ICO mode ----
+      // presets
+      let presets;
       if (isIconMode) {
-        const canvas = createIconCanvas();
-        const icoBlob = createIcoBlobFromCanvas(canvas);
-
-        const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-        const baseName = lastSourceName.replace(/\.[^.]+$/, "") || "icon";
-        const filename = `${baseName}_128x128_${ts}.ico`;
-
-        const url = URL.createObjectURL(icoBlob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = filename;
-        link.textContent = `Download icon (${filename})`;
-        link.className = "download-link";
-
-        const itemDiv = document.createElement("div");
-        itemDiv.className = "download-item";
-        itemDiv.innerHTML = ` ICO — <code>128×128</code> → <code>${filename}</code><br/>`;
-        itemDiv.appendChild(link);
-        downloadsDiv.appendChild(itemDiv);
-
-        zipEntries.push({ filename, blob: icoBlob });
+        presets = null; // not used
+      } else if (presetsUnlocked) {
+        presets = getPresetsConfig();
+        if (presets.length === 0) {
+          alert(t.alertEnablePreset);
+          return;
+        }
+      } else {
+        presets = [{ index: 0, width: null, height: null, mode: "fit" }];
       }
-      // ---- PDF mode ----
+
+      const tsBase = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+
+      // ---- ICO mode (ทุกภาพ -> icon 128x128) ----
+      if (isIconMode) {
+        imagesList.forEach((imgEntry, i) => {
+          const iconCanvas = createIconCanvasForImage(imgEntry);
+          const icoBlob = createIcoBlobFromCanvas(iconCanvas);
+          const filename = `${imgEntry.baseName || "icon"}_128x128_${tsBase}.ico`;
+          const zipPath = `icons/${filename}`;
+
+          const url = URL.createObjectURL(icoBlob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = filename;
+          link.textContent = `Download icon (${filename})`;
+          link.className = "download-link";
+
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "download-item";
+          itemDiv.innerHTML = ` ICO — <code>${imgEntry.name}</code> → <code>${filename}</code><br/>`;
+          itemDiv.appendChild(link);
+          downloadsDiv.appendChild(itemDiv);
+
+          zipEntries.push({ path: zipPath, blob: icoBlob });
+        });
+      }
+      // ---- PDF mode (รวมหลายรูปเป็นไฟล์เดียว/ต่อ preset) ----
       else if (ext === "pdf") {
         if (!window.jspdf || !window.jspdf.jsPDF) {
           alert("PDF library (jsPDF) is not loaded.");
           return;
         }
-        const t = translations[currentLang];
-        let presets;
-        if (presetsUnlocked) {
-          presets = getPresetsConfig();
-          if (presets.length === 0) {
-            alert(t.alertEnablePreset);
-            return;
-          }
-        } else {
-          presets = [{ index: 0, width: null, height: null, mode: "fit" }];
-        }
+        const { jsPDF } = window.jspdf;
 
-        const mimeType = mimeSelect.value;
-        const quality = parseFloat(qualityRange.value);
-        const imgType = mimeType === "image/jpeg" ? "JPEG" : "PNG";
-        const dataMime = imgType === "JPEG" ? "image/jpeg" : "image/png";
+        presets.forEach((preset) => {
+          if (imagesList.length === 0) return;
 
-        for (const preset of presets) {
-          const canvas = createCanvasForPreset(preset);
-          const dataURL = canvas.toDataURL(
-            dataMime,
-            imgType === "JPEG" ? quality : 1.0
-          );
+          let doc = null;
+          let firstW = 0;
+          let firstH = 0;
 
-          const orientation = canvas.width >= canvas.height ? "l" : "p";
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF({
-            orientation,
-            unit: "px",
-            format: [canvas.width, canvas.height],
+          // ใช้ image แรกเป็นตัวกำหนดชื่อ batch
+          const baseBatchName =
+            imagesList.length === 1
+              ? imagesList[0].baseName
+              : "images_batch";
+
+          imagesList.forEach((imgEntry, idx) => {
+            const canvas = createCanvasForPreset(imgEntry, preset);
+            const w = canvas.width;
+            const h = canvas.height;
+
+            const mimeType = mimeSelect.value;
+            const quality = parseFloat(qualityRange.value);
+            const imgType = mimeType === "image/jpeg" ? "JPEG" : "PNG";
+            const dataMime = imgType === "JPEG" ? "image/jpeg" : "image/png";
+            const dataURL = canvas.toDataURL(
+              dataMime,
+              imgType === "JPEG" ? quality : 1.0
+            );
+
+            if (idx === 0) {
+              const orientation = w >= h ? "l" : "p";
+              doc = new jsPDF({
+                orientation,
+                unit: "px",
+                format: [w, h],
+              });
+              firstW = w;
+              firstH = h;
+            } else {
+              doc.addPage([w, h]);
+            }
+            doc.addImage(dataURL, imgType, 0, 0, w, h);
           });
 
-          doc.addImage(
-            dataURL,
-            imgType,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          );
+          if (doc) {
+            const pdfBlob = doc.output("blob");
+            const filename = `${baseBatchName}_p${
+              preset.index + 1
+            }_${firstW}x${firstH}_multi_${tsBase}.pdf`;
+            const zipPath = `preset${preset.index + 1}/${filename}`;
 
-          const pdfBlob = doc.output("blob");
+            const url = URL.createObjectURL(pdfBlob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            link.textContent = `Download PDF for preset ${preset.index + 1}`;
+            link.className = "download-link";
 
-          const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-          const baseName = lastSourceName.replace(/\.[^.]+$/, "") || "image";
-          const w = canvas.width;
-          const h = canvas.height;
-          const filename = `${baseName}_p${preset.index + 1}_${w}x${h}_${ts}.pdf`;
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "download-item";
+            itemDiv.innerHTML = ` Preset ${
+              preset.index + 1
+            } — <code>${imagesList.length} images</code> → <code>${filename}</code><br/>`;
+            itemDiv.appendChild(link);
+            downloadsDiv.appendChild(itemDiv);
 
-          const url = URL.createObjectURL(pdfBlob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = filename;
-          link.textContent = `Download preset ${preset.index + 1} (PDF)`;
-          link.className = "download-link";
-
-          const itemDiv = document.createElement("div");
-          itemDiv.className = "download-item";
-          itemDiv.innerHTML = ` Preset ${preset.index + 1} — <code>${w}×${h}</code> → <code>${filename}</code><br/>`;
-          itemDiv.appendChild(link);
-          downloadsDiv.appendChild(itemDiv);
-
-          zipEntries.push({ filename, blob: pdfBlob });
-        }
+            zipEntries.push({ path: zipPath, blob: pdfBlob });
+          }
+        });
       }
       // ---- Normal image modes (png/jpg/webp/bmp/tiff/avif...) ----
       else {
         const mimeType = mimeSelect.value;
         const quality = parseFloat(qualityRange.value);
 
-        let presets;
-        if (presetsUnlocked) {
-          presets = getPresetsConfig();
-          if (presets.length === 0) {
-            alert(translations[currentLang].alertEnablePreset);
-            return;
-          }
-        } else {
-          presets = [{ index: 0, width: null, height: null, mode: "fit" }];
-        }
-
         for (const preset of presets) {
-          const canvas = createCanvasForPreset(preset);
+          for (const imgEntry of imagesList) {
+            const canvas = createCanvasForPreset(imgEntry, preset);
+            const w = canvas.width;
+            const h = canvas.height;
+            const filename = `${imgEntry.baseName}_p${
+              preset.index + 1
+            }_${w}x${h}_${tsBase}.${ext}`;
+            const zipPath = `preset${preset.index + 1}/${filename}`;
 
-          const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-          const baseName = lastSourceName.replace(/\.[^.]+$/, "") || "image";
-          const w = canvas.width;
-          const h = canvas.height;
-          const filename = `${baseName}_p${preset.index + 1}_${w}x${h}_${ts}.${ext}`;
-
-          let blob;
-          if (ext === "bmp") {
-            // ใช้ encoder 16-bit RGB565
-            blob = createBmpBlobFromCanvas(canvas);
-          } else {
-            // encode ผ่าน canvas แล้วเปลี่ยนนามสกุลเอา (จริง ๆ ยังเป็น PNG/JPEG/WEBP ภายใน)
-            let dataURL;
-            if (mimeType === "image/png") {
-              dataURL = canvas.toDataURL("image/png");
-            } else if (mimeType === "image/jpeg") {
-              dataURL = canvas.toDataURL("image/jpeg", quality);
+            let blob;
+            if (ext === "bmp") {
+              blob = createBmpBlobFromCanvas(canvas);
             } else {
-              dataURL = canvas.toDataURL("image/webp", quality);
+              let dataURL;
+              if (mimeType === "image/png") {
+                dataURL = canvas.toDataURL("image/png");
+              } else if (mimeType === "image/jpeg") {
+                dataURL = canvas.toDataURL("image/jpeg", quality);
+              } else {
+                dataURL = canvas.toDataURL("image/webp", quality);
+              }
+              const resp = await fetch(dataURL);
+              blob = await resp.blob();
             }
-            const resp = await fetch(dataURL);
-            blob = await resp.blob();
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            link.textContent = `Download (${imgEntry.name}, preset ${
+              preset.index + 1
+            })`;
+            link.className = "download-link";
+
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "download-item";
+            itemDiv.innerHTML = ` <code>${imgEntry.name}</code> — Preset ${
+              preset.index + 1
+            } <code>${w}×${h}</code> → <code>${filename}</code><br/>`;
+            itemDiv.appendChild(link);
+            downloadsDiv.appendChild(itemDiv);
+
+            zipEntries.push({ path: zipPath, blob });
           }
-
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = filename;
-          link.textContent = `Download preset ${preset.index + 1}`;
-          link.className = "download-link";
-
-          const itemDiv = document.createElement("div");
-          itemDiv.className = "download-item";
-          itemDiv.innerHTML = ` Preset ${preset.index + 1} — <code>${w}×${h}</code> → <code>${filename}</code><br/>`;
-          itemDiv.appendChild(link);
-          downloadsDiv.appendChild(itemDiv);
-
-          zipEntries.push({ filename, blob });
         }
       }
 
-      // ZIP
+      // ZIP โครงสร้างแบบ B: แยกโฟลเดอร์ตาม preset (หรือ icons)
       if (zipEntries.length > 0) {
         downloadZipBtn.disabled = false;
         downloadZipBtn.onclick = async () => {
           const zip = new JSZip();
           zipEntries.forEach((entry) => {
-            zip.file(entry.filename, entry.blob);
+            zip.file(entry.path, entry.blob);
           });
           const zipBlob = await zip.generateAsync({ type: "blob" });
           const zipUrl = URL.createObjectURL(zipBlob);
           const a = document.createElement("a");
-          const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-          const baseName = lastSourceName.replace(/\.[^.]+$/, "") || "images";
+          const baseName =
+            imagesList.length === 1
+              ? imagesList[0].baseName
+              : "images_batch";
           a.href = zipUrl;
-          a.download = `${baseName}_converted_${ts}.zip`;
+          a.download = `${baseName}_converted_${tsBase}.zip`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
