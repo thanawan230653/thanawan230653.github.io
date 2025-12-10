@@ -57,7 +57,7 @@
   .title{font-size:clamp(24px,3.2vw,40px);line-height:1.1;margin:0 0 8px;font-weight:800;text-shadow:0 2px 12px rgba(0,0,0,.45)}
   .typing{border-right:2px solid var(--brand);white-space:nowrap;overflow:hidden;display:inline-block}
 
-  /* badges (อัปเดตให้รองรับลิงก์) */
+  /* badges */
   .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
   .badge{
     display:inline-block;
@@ -108,6 +108,7 @@
       <div class="menu">
         <a href="#about">เกี่ยวกับฉัน</a>
         <a href="#skills">ทักษะ</a>
+        <a href="#details">รายละเอียดส่วนตัว</a>
         <a href="#contact">ติดต่อ</a>
       </div>
       <div class="auth">
@@ -128,7 +129,7 @@
           <h1 class="title"><span class="typing" id="typing" data-text="Pawarit Sosirikul - PAT"></span></h1>
           <div class="sub">อายุ 16 ปี | อาชีพ: ขายข้าว | ความสามารถ: ซอฟต์แวร์ & ฮาร์ดแวร์</div>
 
-          <!-- badges: ทำให้ 🌐 เว็บดีไซน์ เป็นลิงก์ -->
+          <!-- badges -->
           <div class="badges">
             <a class="badge" href="https://thanawan230653.github.io/pawarit.html" target="_blank" rel="noopener">🌐 เว็บดีไซน์</a>
             <span class="badge">🛠️ ฮาร์ดแวร์</span>
@@ -174,12 +175,59 @@
       <div class="card">
         <h2 style="margin:0 0 12px">ทักษะ</h2>
         <div style="display:grid;gap:18px;margin-top:10px;grid-template-columns:repeat(auto-fit, minmax(240px,1fr))">
-          <div class="card"><h3 style="margin:0 0 8px">ซอฟต์แวร์</h3><div style="color:var(--muted);font-size:14px">สคริปต์, ออโตเมชัน, แก้ปัญหา</div></div>
-          <div class="card"><h3 style="margin:0 0 8px">ฮาร์ดแวร์</h3><div style="color:var(--muted);font-size:14px">ซ่อม/วัดผล/จูนประสิทธิภาพ</div></div>
-          <div class="card"><h3 style="margin:0 0 8px">เว็บ</h3><div style="color:var(--muted);font-size:14px">HTML/CSS/JS, UI/UX</div></div>
-          <div class="card"><h3 style="margin:0 0 8px">Android Developer</h3><div style="color:var(--muted);font-size:14px">พื้นฐาน Kotlin/Java, Build & Debug, UI</div></div>
-          <div class="card"><h3 style="margin:0 0 8px">คอมมูนิเคชัน</h3><div style="color:var(--muted);font-size:14px">ซัพพอร์ต & สื่อสารงาน</div></div>
+          <!-- ซอฟต์แวร์ + ไอทีซัพผอต -->
+          <div class="card">
+            <h3 style="margin:0 0 8px">ซอฟต์แวร์</h3>
+            <div style="color:var(--muted);font-size:14px">
+              สคริปต์, ออโตเมชัน, แก้ปัญหา, ไอทีซัพผอต
+            </div>
+          </div>
+          <!-- ฮาร์ดแวร์ + ช่างมือถือ -->
+          <div class="card">
+            <h3 style="margin:0 0 8px">ฮาร์ดแวร์</h3>
+            <div style="color:var(--muted);font-size:14px">
+              ซ่อม/วัดผล/จูนประสิทธิภาพ, ช่างมือถือ - unlock - ยก ชิบ
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="margin:0 0 8px">เว็บ</h3>
+            <div style="color:var(--muted);font-size:14px">HTML/CSS/JS, UI/UX</div>
+          </div>
+          <div class="card">
+            <h3 style="margin:0 0 8px">Android Developer</h3>
+            <div style="color:var(--muted);font-size:14px">พื้นฐาน Kotlin/Java, Build & Debug, UI</div>
+          </div>
+          <div class="card">
+            <h3 style="margin:0 0 8px">คอมมูนิเคชัน</h3>
+            <div style="color:var(--muted);font-size:14px">ซัพพอร์ต & สื่อสารงาน</div>
+          </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DETAILS -->
+  <section id="details">
+    <div class="wrap-main">
+      <div class="card">
+        <h2 style="margin:0 0 12px">รายละเอียดส่วนตัว</h2>
+        <ul style="margin:8px 0 16px;padding-left:20px;color:var(--muted);line-height:1.7">
+          <li>ชื่อเล่น: ต๊ะ</li>
+          <li>อายุ: 16 ปี</li>
+          <li>อาศัยอยู่ที่: อ้อมใหญ่</li>
+          <li>ศึกษาที่: โรงเรียนเทศบาล ๑ วัดเทียนดัด</li>
+          <li>ระดับชั้น : มัธยมศึกษา ปีที่ 3</li>
+          <li>แฟนชื่อ: โม</li>
+          <li>งานอดิเรก: ตกปลา</li>
+          <li>อาชีพหลัก: ช่วยงานร้าน/ข้าวแม่ยาย</li>
+          <li>สนับสนุน: ทรูมันนี้ 0842781903</li>
+          <li>อีวอเลท: 14000842781903</li>
+        </ul>
+
+        <!-- ปุ่ม QR สนับสนุนพร้อมเพ -->
+        <button class="btn btn-alt" id="supportQrBtn">
+          📷 QR สนับสนุนพร้อมเพ
+        </button>
       </div>
     </div>
   </section>
@@ -222,90 +270,22 @@
     </div>
   </div>
 
-<script>
-/* Typing effect */
-(function(){
-  const el = document.getElementById('typing');
-  const base = el.getAttribute('data-text') || '';
-  let i = 0;
-  function type(){
-    if(i <= base.length){ el.textContent = base.slice(0, i); i++; setTimeout(type, 65); }
-    else{ el.style.borderRight = '0'; }
-  } type();
-})();
+  <!-- QR SUPPORT MODAL -->
+  <div class="modal" id="qrModal" aria-hidden="true">
+    <div class="box" role="dialog" aria-modal="true" aria-labelledby="qrTitle">
+      <h3 id="qrTitle" style="margin:0 0 10px">QR สนับสนุนพร้อมเพ</h3>
+      <div style="text-align:center">
+        <img src="bt.jpg"
+             alt="QR สนับสนุนพร้อมเพ"
+             style="max-width:100%;border-radius:12px;border:1px solid rgba(255,255,255,.25)">
+      </div>
+      <div class="row" style="margin-top:16px">
+        <button class="btn" id="qrClose">ปิด</button>
+      </div>
+    </div>
+  </div>
 
-/* Music player + viz */
-(function(){
-  const audio = document.getElementById('audio');
-  const btn = document.getElementById('playBtn');
-  const viz = document.getElementById('viz');
-  btn.addEventListener('click', async () => {
-    try{ if(audio.paused){ await audio.play(); } else { audio.pause(); } }catch(e){ console.warn(e); }
-  });
-  audio.addEventListener('play', () => { viz.classList.add('playing'); btn.textContent = '⏸️ หยุดชั่วคราว'; });
-  audio.addEventListener('pause', () => { viz.classList.remove('playing'); btn.textContent = '▶️ เล่นเพลง'; });
-  audio.addEventListener('ended', () => { viz.classList.remove('playing'); btn.textContent = '▶️ เล่นเพลง'; });
-})();
-
-/* Year */
-document.getElementById('year').textContent = new Date().getFullYear();
-
-/* ===== Login + Protect contacts ===== */
-(function(){
-  let isAuthed = false;
-
-  const modal = document.getElementById('loginModal');
-  const openBtn = document.getElementById('loginOpen');
-  const cancelBtn = document.getElementById('loginCancel');
-  const submitBtn = document.getElementById('loginSubmit');
-  const emailEl = document.getElementById('email');
-  const passEl = document.getElementById('password');
-  const errEl = document.getElementById('loginErr');
-
-  function open(){ modal.classList.add('open'); errEl.textContent=''; setTimeout(()=>emailEl.focus(), 50); }
-  function close(){ modal.classList.remove('open'); }
-
-  openBtn.addEventListener('click', open);
-  cancelBtn.addEventListener('click', close);
-  modal.addEventListener('click', (e)=>{ if(e.target===modal) close(); });
-
-  document.addEventListener('click', (e)=>{
-    const a = e.target.closest('a[data-protect="contact"]');
-    if(!a) return;
-    if(!isAuthed){
-      e.preventDefault();
-      open();
-    }
-  });
-
-  function unlockContacts(){
-    document.querySelectorAll('a[data-protect="contact"]').forEach(a=>{
-      const href = a.getAttribute('data-href');
-      const label = a.getAttribute('data-label');
-      if(href) a.setAttribute('href', href);
-      if(label) a.textContent = label;
-      a.classList.remove('locked');
-      a.removeAttribute('data-protect');
-    });
-  }
-
-  function tryLogin(){
-    const email = (emailEl.value || '').trim().toLowerCase();
-    const pass  = passEl.value || '';
-    if(email === '5460kg@gmail.com' && pass === 'admin'){
-      isAuthed = true;
-      errEl.style.color = '#b8ffc4';
-      errEl.textContent = 'เข้าสู่ระบบสำเร็จ ✔';
-      unlockContacts();
-      setTimeout(()=>{ close(); }, 400);
-    }else{
-      errEl.style.color = '#ffb4b4';
-      errEl.textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
-    }
-  }
-  submitBtn.addEventListener('click', tryLogin);
-  passEl.addEventListener('keydown', e=>{ if(e.key==='Enter') tryLogin(); });
-})();
-</script>
+  <!-- JS แยกไฟล์ -->
+  <script src="index.js"></script>
 </body>
 </html>
