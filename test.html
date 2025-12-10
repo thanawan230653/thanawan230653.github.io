@@ -1,206 +1,82 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>แสดงไอพี + เล่นเพลงอัตโนมัติเมื่อขยับเมาส์</title>
-  <meta name="description" content="หน้าเว็บที่แสดง IP ผู้เข้าชม เล่นเพลงทันทีเมื่อเอาเมาส์/แตะหน้าเว็บ พื้นหลังภาพ และมีรูปเด้งชนขอบหน้าจอ" />
-  <style>
-    :root {
-      --glass: rgba(0,0,0,.55);
-      --text: #fff;
-    }
-    html, body { height: 100%; }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans Thai", Arial, sans-serif;
-      color: var(--text);
-      background-image: url('https://p4.wallpaperbetter.com/wallpaper/301/839/610/full-h-d-of-nature-1920x1080-wallpaper-preview.jpg');
-      background-size: cover;
-      background-position: center center;
-      background-attachment: fixed;
-      overflow: hidden; /* ไม่ให้มีสกรอลล์บาร์จากรูปเด้ง */
-    }
-    /* ไล่เฉดทับพื้นหลังนิดหน่อยให้อ่านง่าย */
-    .shade {
-      position: fixed; inset: 0; pointer-events: none;
-      background: radial-gradient(80% 80% at 50% 50%, rgba(0,0,0,.15), rgba(0,0,0,.45));
-    }
-    /* กล่องแสดง IP */
-    .ip-box {
-      position: fixed; top: 16px; left: 16px; z-index: 20;
-      background: var(--glass);
-      border: 1px solid rgba(255,255,255,.15);
-      box-shadow: 0 8px 30px rgba(0,0,0,.35);
-      padding: 12px 16px; border-radius: 14px;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      line-height: 1.35;
-      user-select: text;
-    }
-    .ip-box small { display:block; opacity:.8; }
-    .ip-value { font-weight: 700; font-size: 18px; letter-spacing: .2px; }
-    /* ป้ายแจ้งเริ่มเพลง */
-    .nudge {
-      position: fixed; inset: 0; display: grid; place-items: center; z-index: 10;
-      transition: opacity .35s ease, visibility .35s ease;
-      background: rgba(0,0,0,.35);
-    }
-    .nudge.hidden { opacity: 0; visibility: hidden; }
-    .nudge .card {
-      background: var(--glass);
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: 18px; padding: 18px 22px; text-align: center;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      box-shadow: 0 10px 40px rgba(0,0,0,.45);
-      max-width: 90vw;
-    }
-    .nudge h1 { margin: 0 0 6px; font-size: 20px; }
-    .nudge p { margin: 0; opacity: .9; }
-
-    /* รูปเด้งชนขอบหน้าจอ */
-    .bouncer {
-      position: fixed; z-index: 5; inset: auto; /* จะกำหนดด้วย JS */
-      width: min(28vmin, 220px); /* ยืดหยุ่นตามจอ */
-      pointer-events: none; /* ไม่ให้ขวางการแตะ/เลื่อน */
-      filter: drop-shadow(0 10px 25px rgba(0,0,0,.4));
-    }
-    .bouncer img { width: 100%; height: auto; display: block; }
-
-    /* แถบเครดิตเล็กๆ (ซ่อนได้หากไม่ต้องการ) */
-    .credit {
-      position: fixed; right: 12px; bottom: 10px; opacity: .75; font-size: 12px;
-      background: rgba(0,0,0,.35); padding: 6px 10px; border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.12);
-    }
-
-    /* ป้องกันการลากภาพออกจากหน้า/เซฟ */
-    img { -webkit-user-drag: none; user-select: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แนะนำตัว: ต๊ะ</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 5px;
+        }
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            text-align: left;
+            margin-top: 20px;
+        }
+        ul {
+            list-style-type: disc;
+            text-align: left;
+            padding-left: 20px;
+            margin-top: 15px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .signature {
+            margin-top: 30px;
+            font-style: italic;
+            color: #777;
+        }
+    </style>
 </head>
 <body>
-  <!-- เพลง: จะเริ่มเมื่อมี gesture เช่น ขยับเมาส์/แตะ/กดปุ่ม และวนลูปตลอด -->
-  <audio id="bgm" src="http://49.228.131.69:3661/LIL.mp3" preload="auto" loop></audio>
 
-  <!-- กล่องแจ้งให้ขยับเมาส์/แตะครั้งแรก เพื่ออนุญาตเล่นเสียง -->
-  <div id="nudge" class="nudge">
-    <div class="card">
-      <h1>เลื่อนเมาส์หรือแตะหน้าจอเพื่อเริ่มเพลง 🎵</h1>
-      <p>เพลงจะเล่นอัตโนมัติและวนซ้ำ (ปิดหยุดไม่ได้บนหน้านี้)</p>
+    <div class="container">
+        <h1>สวัสดีครับ/ค่ะ!</h1>
+        <h2>ผม/ดิฉัน **ต๊ะ** ครับ/ค่ะ</h2>
+        <hr>
+
+        <p>
+            ยินดีที่ได้รู้จักทุกคนนะครับ/คะ! นี่คือหน้าแนะนำตัวเล็ก ๆ ของผม/ดิฉัน
+            คุณสามารถแก้ไขข้อมูลด้านล่างให้เป็นข้อมูลส่วนตัวของคุณได้เลย.
+        </p>
+
+        <h3>✨ สิ่งที่สนใจ</h3>
+        <ul>
+            <li>**งานอดิเรก:** (เช่น การเล่นดนตรี, การดูหนัง, การทำอาหาร)</li>
+            <li>**ความเชี่ยวชาญ:** (เช่น การเขียนโปรแกรม Python, การออกแบบกราฟิก)</li>
+            <li>**เป้าหมาย:** (เช่น การเรียนรู้สิ่งใหม่ ๆ ทุกวัน, การเดินทางไปต่างประเทศ)</li>
+        </ul>
+
+        <p>
+            ถ้ามีคำถามหรือต้องการติดต่อ สามารถส่งอีเมลมาได้ที่: <code>your_email@example.com</code>
+        </p>
+
+        <p class="signature">
+            ขอบคุณที่แวะมาเยี่ยมชมครับ/ค่ะ!
+        </p>
     </div>
-  </div>
 
-  <!-- แสดง IP ผู้เข้าชม -->
-  <div class="ip-box">
-    <small>ไอพีของคุณ</small>
-    <div class="ip-value" id="ip">กำลังตรวจสอบ…</div>
-  </div>
-
-  <!-- รูปที่เด้งไปเด้งมา -->
-  <div class="bouncer" id="bouncer">
-    <img alt="iPhone" src="https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/iphone-card-40-17pro-202509_FMT_WHH?wid=508&hei=472&fmt=p-jpg&qlt=95&.v=WVVFRzUzVk1oblJhbW9PbGNSU25ja3doNjVzb1FWSTVwZWJJYThYTHlrNzQzbUlIR1RvazhDRHNOQlYvM3g2dFIwdkZSSnBZYjhOaHBpM2lkYTFBUEZHTmVoMWFVZloyU3lqdmZCOUFEeDF6K2N6UFd4K21VWHNnbWZBQ3hSanQ"/>
-  </div>
-
-  <div class="shade" aria-hidden="true"></div>
-  <div class="credit">เพลง: <code>LIL.mp3</code> • รูปพื้นหลัง: wallpaperbetter • ภาพ iPhone: Apple CDN</div>
-
-  <script>
-    // ---------- แสดง IP ของผู้ใช้ ----------
-    (function fetchIP(){
-      const el = document.getElementById('ip');
-      // ใช้ ipify ที่เปิดสาธารณะ
-      fetch('https://api.ipify.org?format=json')
-        .then(r => r.json())
-        .then(d => { el.textContent = d.ip || 'ไม่พบ'; })
-        .catch(() => { el.textContent = 'ไม่สามารถดึงไอพีได้'; });
-    })();
-
-    // ---------- เล่นเพลงเมื่อมี gesture และบังคับไม่ให้หยุด ----------
-    const audio = document.getElementById('bgm');
-    const nudge = document.getElementById('nudge');
-    let started = false;
-
-    function beginAudio(){
-      if (started) return;
-      started = true;
-      nudge.classList.add('hidden');
-      audio.muted = false;
-      audio.play().catch(() => {
-        // ถ้าถูกบล็อก ให้ลองอีกครั้งหลัง gesture ถัดไป
-        started = false;
-        nudge.classList.remove('hidden');
-      });
-    }
-
-    // นับเป็น user gesture บนเบราว์เซอร์ส่วนใหญ่
-    window.addEventListener('pointermove', beginAudio, { once: true });
-    window.addEventListener('touchstart', beginAudio, { once: true, passive: true });
-    window.addEventListener('keydown', beginAudio, { once: true });
-
-    // ถ้าถูก pause หรือจบ ให้เล่นต่อทันที (พยายาม “ห้ามหยุด”)
-    audio.addEventListener('pause', () => {
-      // บางเบราว์เซอร์จะบล็อก auto-play ถ้าไม่มี gesture
-      audio.play().catch(() => {
-        started = false;
-        nudge.classList.remove('hidden');
-      });
-    });
-    audio.addEventListener('ended', () => {
-      audio.play().catch(() => {});
-    });
-
-    // หากหน้าโดนซ่อน/กลับมาใหม่ ให้พยายามเล่นต่อ
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && audio.paused) {
-        audio.play().catch(() => {});
-      }
-    });
-
-    // ป้องกันผู้ใช้กดปุ่มหยุด/ปิดเสียงจากคีย์ลัดโดยตั้งค่ากลับ (เท่าที่เบราว์เซอร์อนุญาต)
-    audio.addEventListener('volumechange', () => {
-      if (audio.muted) audio.muted = false;
-    });
-
-    // ---------- รูปเด้งชนขอบหน้าจอ ----------
-    (function bounce(){
-      const el = document.getElementById('bouncer');
-      let x = 40 + Math.random()*80; // เริ่มแบบสุ่มเล็กน้อย
-      let y = 60 + Math.random()*120;
-      let vx = 2.2 + Math.random()*1.6; // ความเร็วแกน X
-      let vy = 1.8 + Math.random()*1.4; // ความเร็วแกน Y
-
-      function tick(){
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        const bw = el.offsetWidth;
-        const bh = el.offsetHeight;
-
-        x += vx; y += vy;
-        if (x <= 0) { x = 0; vx = Math.abs(vx); }
-        if (y <= 0) { y = 0; vy = Math.abs(vy); }
-        if (x + bw >= w) { x = w - bw; vx = -Math.abs(vx); }
-        if (y + bh >= h) { y = h - bh; vy = -Math.abs(vy); }
-
-        el.style.transform = `translate(${x}px, ${y}px)`;
-        requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-
-      // ปรับตำแหน่งเมื่อขนาดหน้าต่างเปลี่ยน
-      window.addEventListener('resize', () => {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        const bw = el.offsetWidth;
-        const bh = el.offsetHeight;
-        x = Math.min(Math.max(0, x), Math.max(0, w - bw));
-        y = Math.min(Math.max(0, y), Math.max(0, h - bh));
-      });
-    })();
-
-    // ปิด context menu เพื่อลดโอกาสกดหยุด/เซฟเสียง (ยังหยุดแบบระบบไม่ได้)
-    window.addEventListener('contextmenu', e => e.preventDefault());
-  </script>
 </body>
 </html>
