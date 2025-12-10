@@ -3,50 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pawarit Sosirikul - Portfolio (PAT)</title>
+    <title>Pawarit Sosirikul - Modern Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* CSS ภายใน HTML สำหรับ Glassmorphism และการเตรียมโครงสร้างหลัก */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding-top: 80px; /* เว้นพื้นที่สำหรับ sticky navbar */
-            background-color: #0d1117; /* พื้นหลังเข้ม */
-            color: #e6e6e6;
-            min-height: 100vh;
-            background-image: linear-gradient(135deg, #1f2733 25%, transparent 25%),
-                              linear-gradient(225deg, #1f2733 25%, transparent 25%),
-                              linear-gradient(45deg, #1f2733 25%, transparent 25%),
-                              linear-gradient(315deg, #1f2733 25%, #0d1117 25%);
-            background-size: 40px 40px;
-            background-position: 0 0, 20px 0, 20px -20px, 0px -20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Glassmorphism Effect for Cards and Navbar */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-            margin-bottom: 30px;
-        }
-    </style>
 </head>
 <body>
 
-<nav id="navbar" class="glass-card">
+<nav id="navbar">
     <div class="container">
-        <a href="#about" class="logo">PAT | Portfolio</a>
+        <a href="#about" class="logo">PAT.DEV</a>
         <div class="nav-links">
             <a href="#about">เกี่ยวกับฉัน</a>
             <a href="#skills">ทักษะ</a>
@@ -54,8 +19,8 @@
             <a href="#contact">ติดต่อ</a>
         </div>
         <div class="nav-actions">
-            <button id="loginBtn" class="nav-btn" title="ล็อกอิน"><i class="fas fa-lock"></i> ล็อกอิน</button>
-            <a href="https://t.me/PAT230653" target="_blank" class="nav-btn btn-telegram" title="สมัครสมาชิก Telegram"><i class="fas fa-edit"></i> สมัครสมาชิก</a>
+            <button id="loginBtn" class="nav-btn primary-btn"><i class="fas fa-lock"></i> ล็อกอิน</button>
+            <a href="https://t.me/PAT230653" target="_blank" class="nav-btn secondary-btn"><i class="fas fa-edit"></i> Telegram</a>
         </div>
     </div>
 </nav>
@@ -64,161 +29,165 @@
 
     <section id="about" class="hero-section">
         <div class="profile-content">
-            <div class="profile-image">
-                <img src="https://i0.wp.com/lifesara.co/wp-content/uploads/2023/05/%E0%B8%AD%E0%B8%99%E0%B8%B4%E0%B9%80%E0%B8%A1%E0%B8%B0%E0%B8%88%E0%B8%B5%E0%B8%99%E0%B8%A7%E0%B8%B2%E0%B8%A2_2.png" alt="Profile Image" class="profile-img">
+            <img src="https://i0.wp.com/lifesara.co/wp-content/uploads/2023/05/%E0%B8%AD%E0%B8%99%E0%B8%B4%E0%B9%80%E0%B8%A1%E0%B8%B0%E0%B8%88%E0%B8%B5%E0%B8%99%E0%B8%A7%E0%B8%B2%E0%B8%A2_2.png" alt="Profile Image" class="profile-img">
+            
+            <h1 id="typing-container">
+                สวัสดี, ผมคือ <span id="typing" data-text="Pawarit Sosirikul - PAT"></span>
+            </h1>
+            <p class="subtitle">อายุ 16 ปี | อาชีพ: **ผู้ประกอบการร้านข้าว** | ความสามารถ: **Software & Hardware Solutions**</p>
+            
+            <div class="quick-contact">
+                <p>🔑 ข้อมูลติดต่อส่วนตัว (ต้องล็อกอิน):</p>
+                <a href="#" id="telLink" class="locked-contact contact-item" data-protect="contact" data-href="tel:0842781903" data-label="📞 โทร: 084-278-1903">📞 โทร: 084-XXX-XXXX</a>
+                <a href="#" id="emailLink" class="locked-contact contact-item" data-protect="contact" data-href="mailto:viv121oioppl@gmail.com" data-label="✉️ อีเมล: viv121oioppl@gmail.com">✉️ อีเมล: ********@gmail.com</a>
             </div>
-            <div class="profile-text glass-card">
-                <h1 id="typing-container">
-                    <span id="typing" data-text="Pawarit Sosirikul - PAT"></span>
-                </h1>
-                <p class="subtitle">อายุ 16 ปี | อาชีพ: **ขายข้าว** | ความสามารถ: **ซอฟต์แวร์** & **ฮาร์ดแวร์**</p>
-                
-                <div class="badges">
-                    <a href="https://thanawan230653.github.io/pawarit.html" target="_blank" class="badge glass-card">🌐 เว็บดีไซน์</a>
-                    <span class="badge glass-card">🛠️ ฮาร์ดแวร์</span>
-                    <span class="badge glass-card">💾 ซอฟต์แวร์</span>
-                    <span class="badge glass-card">🎮 นักพัฒนาเกม</span>
-                    <span class="badge glass-card">🤖 Android Developer</span>
-                    <span class="badge glass-card">⚡ Automations</span>
-                </div>
 
-                <div class="music-player glass-card">
-                    <button id="playBtn" class="nav-btn"><i class="fas fa-play"></i> ▶️ เล่นเพลง</button>
-                    <audio id="audio" src="https://cast.requestradio.in.th:810/https://cast.requestradio.in.th:810/" preload="none"></audio>
-                    <div class="equalizer">
-                        <div class="viz bar"></div>
-                        <div class="viz bar"></div>
-                        <div class="viz bar"></div>
-                        <div class="viz bar"></div>
-                        <div class="viz bar"></div>
-                    </div>
-                </div>
+            <div class="social-links">
+                <a href="https://github.com/thanawan230653" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                <a href="https://t.me/PAT230653" target="_blank" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
+                <a href="https://www.youtube.com/@hddc322" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.facebook.com/kubsss7544" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/pawarit.sosrirkul" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
 
-                <div class="quick-contact">
-                    <p>**Quick Contact (ล็อกอินเพื่อดูข้อมูลเต็ม):**</p>
-                    <a href="#" id="telLink" class="locked-contact" data-protect="contact" data-href="tel:0842781903" data-label="📞 โทร: 084-278-1903">📞 โทร: 084-XXX-XXXX</a>
-                    <a href="#" id="emailLink" class="locked-contact" data-protect="contact" data-href="mailto:viv121oioppl@gmail.com" data-label="✉️ อีเมล: viv121oioppl@gmail.com">✉️ อีเมล: ********@gmail.com</a>
-                    <a href="https://www.youtube.com/@hddc322" target="_blank" class="social-link"><i class="fab fa-youtube"></i> YouTube</a>
+            <div class="music-player card">
+                <audio id="audio" src="https://cast.requestradio.in.th:810/https://cast.requestradio.in.th:810/" preload="none"></audio>
+                <button id="playBtn" class="nav-btn secondary-btn"><i class="fas fa-play"></i> ▶️ Music Stream</button>
+                <div class="equalizer playing">
+                    <div class="viz bar"></div>
+                    <div class="viz bar"></div>
+                    <div class="viz bar"></div>
+                    <div class="viz bar"></div>
+                    <div class="viz bar"></div>
                 </div>
-                
-                <div class="social-links">
-                    <a href="https://github.com/thanawan230653" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="https://t.me/PAT230653" target="_blank" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
-                    <a href="https://www.facebook.com/kubsss7544" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
-                    <a href="https://www.instagram.com/pawarit.sosrirkul" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-                </div>
-
             </div>
         </div>
     </section>
-
+    
+    <hr>
+    
     <section id="skills">
-        <h2>✨ ทักษะและความสามารถ</h2>
+        <h2 class="section-title">✨ ทักษะและความเชี่ยวชาญ</h2>
         <div class="skills-grid">
-            <div class="glass-card skill-item">
+            
+            <div class="skill-item card">
+                <i class="fas fa-desktop icon-bg"></i>
                 <h3>ซอฟต์แวร์</h3>
-                <p>สคริปต์, ออโตเมชัน, แก้ปัญหา, ไอทีซัพผอต</p>
+                <p>สคริปต์, ออโตเมชัน, แก้ปัญหา IT, ซัพผอต</p>
             </div>
-            <div class="glass-card skill-item">
+            <div class="skill-item card">
+                <i class="fas fa-wrench icon-bg"></i>
                 <h3>ฮาร์ดแวร์</h3>
-                <p>ซ่อม/วัดผล/จูนประสิทธิภาพ, ช่างมือถือ - unlock - ยก ชิบ</p>
+                <p>ซ่อม/วัดผล/จูนประสิทธิภาพ, ช่างมือถือ - Unlock/ยกชิป</p>
             </div>
-            <div class="glass-card skill-item">
-                <h3>เว็บ</h3>
-                <p>HTML/CSS/JS, UI/UX, Web Design พื้นฐาน</p>
+            <div class="skill-item card">
+                <i class="fas fa-code icon-bg"></i>
+                <h3>เว็บ & UI/UX</h3>
+                <p>HTML/CSS/JS พื้นฐาน, ออกแบบ UI/UX</p>
             </div>
-            <div class="glass-card skill-item">
+            <div class="skill-item card">
+                <i class="fab fa-android icon-bg"></i>
                 <h3>Android Developer</h3>
-                <p>พื้นฐาน Kotlin/Java, Build & Debug, UI/UX</p>
+                <p>พื้นฐาน Kotlin/Java, Build & Debug, UI Design</p>
             </div>
-            <div class="glass-card skill-item">
+            <div class="skill-item card">
+                <i class="fas fa-comments icon-bg"></i>
                 <h3>คอมมูนิเคชัน</h3>
-                <p>ซัพพอร์ต & สื่อสารงานกับบุคคลอื่นได้อย่างดี</p>
+                <p>การสื่อสารงาน, การซัพพอร์ตลูกค้าและเพื่อนร่วมงาน</p>
             </div>
-            <div class="glass-card skill-item">
+            <div class="skill-item card">
+                <i class="fas fa-terminal icon-bg"></i>
                 <h3>ภาษาคอมพิวเตอร์</h3>
                 <p>Python 3, Java, C++</p>
             </div>
-            <div class="glass-card skill-item">
+            <div class="skill-item card">
+                <i class="fas fa-headset icon-bg"></i>
                 <h3>ภาษาพูด</h3>
-                <p>อีสาน, กลาง (สามารถใช้สื่อสารในชีวิตประจำวันและทำงานได้)</p>
+                <p>อีสาน, กลาง (พร้อมสนับสนุนงานที่หลากหลาย)</p>
             </div>
-            <div class="glass-card skill-item">
+            <div class="skill-item card">
+                <i class="fas fa-gamepad icon-bg"></i>
                 <h3>นักพัฒนาเกม</h3>
-                <p>มายคราฟ, เกมอื่นๆ (ปรับแต่ง / พัฒนา)</p>
+                <p>ปรับแต่งและพัฒนาเกม (เช่น Minecraft)</p>
             </div>
         </div>
     </section>
 
+    <hr>
+
     <section id="details">
-        <h2>👤 รายละเอียดส่วนตัว</h2>
-        <div class="details-card glass-card">
+        <h2 class="section-title">👤 รายละเอียดส่วนตัว</h2>
+        <div class="details-card card">
             <ul>
                 <li>**ชื่อเล่น:** ต๊ะ</li>
                 <li>**อายุ:** 16 ปี</li>
                 <li>**อาศัยอยู่ที่:** อ้อมใหญ่</li>
-                <li>**ศึกษาที่:** วิทยาลัยการจัดการเพชรเกษม</li>
+                <li>**สถานศึกษา:** วิทยาลัยการจัดการเพชรเกษม</li>
                 <li>**สาขา:** เทคโนโลยีทุกิจดิจิทัล ปี 1</li>
                 <li>**แฟนชื่อ:** <span style="color: yellow;">ส่วนนี้เดียวผมแก้เอง</span></li>
                 <li>**งานอดิเรก:** ตกปลา</li>
                 <li>**อาชีพหลัก:** ช่วยงานร้านข้าวแม่ยาย</li>
-                <li>---</li>
-                <li>**สนับสนุน (ทรูมันนี่):** 0881458456</li>
-                <li>**อีวอเลท:** 140008881458456</li>
             </ul>
-            <button id="supportQrBtn" class="nav-btn btn-support"><i class="fas fa-qrcode"></i> 📷 QR สนับสนุนพร้อมเพ</button>
+            <div class="support-info">
+                <h4>💵 ช่องทางสนับสนุน</h4>
+                <p>ทรูมันนี่: **0881458456**</p>
+                <p>อีวอเลท: **140008881458456**</p>
+                <button id="supportQrBtn" class="nav-btn primary-btn btn-full-width" style="margin-top: 15px;"><i class="fas fa-qrcode"></i> 📷 QR สนับสนุนพร้อมเพ</button>
+            </div>
         </div>
     </section>
 
+    <hr>
+
     <section id="contact">
-        <h2>📬 ช่องทางการติดต่อ</h2>
-        <div class="contact-card glass-card">
-            <p><strong>ข้อมูลบางส่วนถูกล็อกไว้ กรุณาล็อกอินเพื่อดูทั้งหมด</strong></p>
-            <ul>
-                <li><a href="#" class="locked-contact" data-protect="contact" data-href="tel:0842781903" data-label="📞 โทร: 084-278-1903">📞 โทร: 084-XXX-XXXX</a></li>
-                <li><a href="#" class="locked-contact" data-protect="contact" data-href="mailto:viv121oioppl@gmail.com" data-label="✉️ อีเมล: viv121oioppl@gmail.com">✉️ อีเมล: ********@gmail.com</a></li>
-                <li><a href="https://www.youtube.com/@hddc322" target="_blank"><i class="fab fa-youtube"></i> YouTube</a></li>
-                <li><a href="https://t.me/PAT230653" target="_blank"><i class="fab fa-telegram-plane"></i> Telegram</a></li>
-                <li><a href="https://www.facebook.com/kubsss7544" target="_blank"><i class="fab fa-facebook"></i> Facebook</a></li>
-                <li><a href="https://www.instagram.com/pawarit.sosrirkul" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
-                <li><a href="https://github.com/thanawan230653" target="_blank"><i class="fab fa-github"></i> GitHub</a></li>
-            </ul>
+        <h2 class="section-title">📬 ช่องทางการติดต่อ</h2>
+        <div class="contact-card card">
+            <p style="color: #ffcccc; margin-bottom: 20px;">**กรุณาล็อกอินเพื่อปลดล็อกเบอร์โทรและอีเมลเต็ม**</p>
+            <div class="contact-list">
+                <a href="#" class="locked-contact contact-item" data-protect="contact" data-href="tel:0842781903" data-label="📞 โทร: 084-278-1903"><i class="fas fa-phone"></i> 084-XXX-XXXX</a>
+                <a href="#" class="locked-contact contact-item" data-protect="contact" data-href="mailto:viv121oioppl@gmail.com" data-label="✉️ อีเมล: viv121oioppl@gmail.com"><i class="fas fa-envelope"></i> ********@gmail.com</a>
+                <a href="https://www.youtube.com/@hddc322" target="_blank" class="contact-item"><i class="fab fa-youtube"></i> YouTube</a>
+                <a href="https://t.me/PAT230653" target="_blank" class="contact-item"><i class="fab fa-telegram-plane"></i> Telegram</a>
+                <a href="https://www.facebook.com/kubsss7544" target="_blank" class="contact-item"><i class="fab fa-facebook"></i> Facebook</a>
+                <a href="https://www.instagram.com/pawarit.sosrirkul" target="_blank" class="contact-item"><i class="fab fa-instagram"></i> Instagram</a>
+                <a href="https://github.com/thanawan230653" target="_blank" class="contact-item"><i class="fab fa-github"></i> GitHub</a>
+            </div>
         </div>
     </section>
 
 </main>
 
 <footer>
-    <p>© <span id="year"></span> Pawarit Sosirikul</p>
+    <p>© <span id="year"></span> Pawarit Sosirikul (PAT)</p>
 </footer>
 
 <div id="loginModal" class="modal">
-    <div class="modal-content glass-card">
-        <h3>🔐 เข้าสู่ระบบ</h3>
+    <div class="modal-content card">
+        <h3>🔐 เข้าสู่ระบบเพื่อปลดล็อก</h3>
         <form id="loginForm">
             <label for="email">อีเมล:</label>
-            <input type="email" id="email" required>
+            <input type="email" id="email" required placeholder="5460kg@gmail.com">
             
             <label for="password">รหัสผ่าน:</label>
-            <input type="password" id="password" required>
+            <input type="password" id="password" required placeholder="admin">
             
             <p id="loginErr" class="error-message"></p>
             
             <div class="modal-actions">
-                <button type="button" id="loginCancel" class="btn-cancel">ยกเลิก</button>
-                <button type="submit" id="loginSubmit" class="btn-submit">เข้าสู่ระบบ</button>
+                <button type="button" id="loginCancel" class="nav-btn secondary-btn">ยกเลิก</button>
+                <button type="submit" id="loginSubmit" class="nav-btn primary-btn">เข้าสู่ระบบ</button>
             </div>
         </form>
     </div>
 </div>
 
 <div id="qrModal" class="modal">
-    <div class="modal-content glass-card">
+    <div class="modal-content card qr-modal">
         <h3>📷 QR สนับสนุนพร้อมเพ</h3>
         <img src="http://49.228.131.69:3661/bt.jpg"
              alt="QR สนับสนุนพร้อมเพ"
-             style="max-width:100%;border-radius:12px;border:1px solid rgba(255,255,255,.25); display: block; margin: 0 auto;">
-        <button id="qrClose" class="btn-cancel" style="margin-top: 20px;">ปิด</button>
+             class="qr-image">
+        <button id="qrClose" class="nav-btn secondary-btn" style="margin-top: 20px;">ปิด</button>
     </div>
 </div>
 
