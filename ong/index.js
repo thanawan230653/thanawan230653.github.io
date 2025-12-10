@@ -1,4 +1,4 @@
-// index.js
+// index.js (โค้ดเดิมยังใช้งานได้)
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(type, 100); // Speed of typing
             } else {
                 // Keep cursor blinking at the end (controlled by CSS)
-                typingElement.style.borderRight = '3px solid #4dc4ff';
+                typingElement.style.borderRight = '4px solid #e0e0e0';
             }
         }
         
@@ -52,36 +52,34 @@ document.addEventListener('DOMContentLoaded', () => {
         playBtn.addEventListener('click', () => {
             if (isPlaying) {
                 audio.pause();
-                playBtn.innerHTML = '<i class="fas fa-play"></i> ▶️ เล่นเพลง';
+                playBtn.innerHTML = '<i class="fas fa-play"></i> ▶️ Music Stream';
                 playerContainer.classList.remove('playing');
                 isPlaying = false;
             } else {
-                audio.load(); // Reload the stream to ensure it starts fresh
+                audio.load(); 
                 audio.play().then(() => {
-                    playBtn.innerHTML = '<i class="fas fa-pause"></i> ⏸️ หยุดชั่วคราว';
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i> ⏸️ Music Stream';
                     playerContainer.classList.add('playing');
                     isPlaying = true;
                 }).catch(error => {
                     console.error("Error playing audio:", error);
-                    // Handle browser autoplay restrictions if needed
                     alert("ไม่สามารถเล่นเพลงได้: โปรดตรวจสอบการตั้งค่าเบราว์เซอร์เกี่ยวกับการเล่นอัตโนมัติ");
-                    playBtn.innerHTML = '<i class="fas fa-play"></i> ▶️ เล่นเพลง';
+                    playBtn.innerHTML = '<i class="fas fa-play"></i> ▶️ Music Stream';
                     playerContainer.classList.remove('playing');
                     isPlaying = false;
                 });
             }
         });
 
-        // Reset state if audio ends (though a stream shouldn't) or errors
         audio.addEventListener('ended', () => {
             isPlaying = false;
-            playBtn.innerHTML = '<i class="fas fa-play"></i> ▶️ เล่นเพลง';
+            playBtn.innerHTML = '<i class="fas fa-play"></i> ▶️ Music Stream';
             playerContainer.classList.remove('playing');
         });
         audio.addEventListener('error', (e) => {
              console.error("Audio Error:", e);
              isPlaying = false;
-             playBtn.innerHTML = '<i class="fas fa-play"></i> ▶️ เล่นเพลง (Error)';
+             playBtn.innerHTML = '<i class="fas fa-play"></i> ▶️ Music Stream (Error)';
              playerContainer.classList.remove('playing');
         });
     })();
@@ -103,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Function to open modal
         const openModal = (modal) => {
             modal.style.display = 'block';
-            // Clear inputs and error when opening
             if(modal.id === 'loginModal'){
                 emailInput.value = '';
                 passwordInput.value = '';
@@ -125,18 +122,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.href = href;
                 link.textContent = label;
                 link.classList.remove('locked-contact');
+                link.style.color = '#28a745'; // Highlight unlocked link
                 link.removeAttribute('data-protect');
             });
             
-            // Disable login button
             if(loginBtn){
-                 loginBtn.innerHTML = '<i class="fas fa-unlock"></i> ล็อกอินสำเร็จ';
+                 loginBtn.innerHTML = '<i class="fas fa-unlock"></i> ปลดล็อกแล้ว';
                  loginBtn.disabled = true;
                  loginBtn.style.backgroundColor = '#28a745';
                  loginBtn.style.cursor = 'default';
             }
         };
-
 
         // --- Event Listeners for Login Modal ---
         loginBtn.addEventListener('click', () => openModal(loginModal));
@@ -151,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Click on protected link opens login modal
         protectedLinks.forEach(link => {
             link.addEventListener('click', (e) => {
-                // Only prevent default if it's still locked
                 if(link.hasAttribute('data-protect')){
                     e.preventDefault();
                     openModal(loginModal);
@@ -167,17 +162,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = passwordInput.value;
 
             if (email === CORRECT_EMAIL && password === CORRECT_PASS) {
-                // Success
                 loginErr.style.color = 'lightgreen';
                 loginErr.textContent = 'เข้าสู่ระบบสำเร็จ ✔';
                 
                 setTimeout(() => {
                     closeModal(loginModal);
                     unlockContacts();
-                }, 1000); // Close after 1 second
+                }, 1000); 
                 
             } else {
-                // Error
                 loginErr.style.color = 'red';
                 loginErr.textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
             }
@@ -192,23 +185,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!qrModal || !supportQrBtn || !qrClose) return;
 
-        // Function to open modal
         const openModal = (modal) => {
             modal.style.display = 'block';
         };
 
-        // Function to close modal
         const closeModal = (modal) => {
             modal.style.display = 'none';
         };
 
-        // Open when button is clicked
         supportQrBtn.addEventListener('click', () => openModal(qrModal));
-
-        // Close when close button is clicked
         qrClose.addEventListener('click', () => closeModal(qrModal));
         
-        // Close when background is clicked
         qrModal.addEventListener('click', (e) => {
             if (e.target === qrModal) {
                 closeModal(qrModal);
