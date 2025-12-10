@@ -1,0 +1,384 @@
+/* style.css */
+
+/* --- Base Styles and Typography --- */
+body {
+    transition: background-color 0.3s;
+}
+
+h1, h2, h3 {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+a {
+    color: #4dc4ff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #6ed0ff;
+}
+
+/* --- Navigation Bar --- */
+#navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 10px 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+#navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.nav-links a {
+    margin: 0 15px;
+    font-weight: 500;
+    color: #e6e6e6;
+}
+
+.nav-links a:hover {
+    color: #4dc4ff;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    font-weight: bold;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-telegram {
+    background-color: #0088cc;
+}
+
+.btn-telegram:hover {
+    background-color: #0099e6;
+}
+
+/* --- Hero Section (ABOUT) --- */
+.hero-section {
+    padding: 60px 0;
+}
+
+.profile-content {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.profile-image {
+    flex-shrink: 0;
+}
+
+.profile-img {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.profile-text {
+    flex-grow: 1;
+}
+
+#typing-container {
+    font-size: 2.5em;
+    margin-top: 0;
+    min-height: 1.2em; /* กันข้อความกระโดด */
+}
+
+#typing {
+    border-right: 3px solid #4dc4ff; /* Cursor effect */
+    display: inline-block;
+    padding-right: 5px;
+}
+
+.subtitle {
+    font-size: 1.1em;
+    color: #b3b3b3;
+    margin-bottom: 20px;
+}
+
+/* Badges */
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: white;
+    cursor: default;
+}
+
+/* Quick Contact and Social Links */
+.quick-contact a, .social-links a {
+    display: inline-block;
+    margin-right: 15px;
+    padding: 5px 0;
+    font-size: 1.1em;
+}
+
+.locked-contact {
+    color: #e6e6e6 !important;
+    cursor: pointer;
+}
+
+.locked-contact:hover {
+    color: #4dc4ff !important;
+}
+
+.social-links {
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+}
+
+.social-links a {
+    font-size: 1.5em;
+    margin-right: 20px;
+    color: #e6e6e6;
+}
+
+.social-links a:hover {
+    color: #4dc4ff;
+}
+
+/* --- Music Player --- */
+.music-player {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 25px;
+}
+
+.equalizer {
+    display: flex;
+    gap: 3px;
+    height: 20px;
+    align-items: flex-end;
+}
+
+.viz.bar {
+    width: 5px;
+    background-color: #4dc4ff;
+    border-radius: 2px;
+    height: 10%;
+    transition: height 0.1s;
+}
+
+.music-player.playing .viz.bar:nth-child(1) { animation: sound 500ms ease-in-out infinite alternate; }
+.music-player.playing .viz.bar:nth-child(2) { animation: sound 500ms ease-in-out infinite alternate-reverse; animation-delay: -300ms; }
+.music-player.playing .viz.bar:nth-child(3) { animation: sound 600ms ease-in-out infinite alternate; animation-delay: -500ms; }
+.music-player.playing .viz.bar:nth-child(4) { animation: sound 400ms ease-in-out infinite alternate-reverse; animation-delay: -700ms; }
+.music-player.playing .viz.bar:nth-child(5) { animation: sound 550ms ease-in-out infinite alternate; animation-delay: -200ms; }
+
+@keyframes sound {
+    0% { height: 10%; }
+    100% { height: 100%; }
+}
+
+/* --- SKILLS Section --- */
+#skills h2 {
+    margin-bottom: 20px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.skill-item h3 {
+    margin-top: 0;
+    color: #4dc4ff;
+}
+
+/* --- DETAILS Section --- */
+.details-card ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.details-card li {
+    padding: 5px 0;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.btn-support {
+    background-color: #28a745;
+}
+.btn-support:hover {
+    background-color: #218838;
+}
+
+/* --- CONTACT Section --- */
+.contact-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.contact-card li {
+    padding: 5px 0;
+}
+
+/* --- Footer --- */
+footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #b3b3b3;
+}
+
+/* --- Modals (Pop-ups) --- */
+.modal {
+    display: none; /* ซ่อนไว้เริ่มต้น */
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7); /* พื้นหลังมืด */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #1f2733; /* ใช้สีพื้นหลังเข้มกว่า */
+    margin: 5% auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+}
+
+#loginForm input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 8px 0 15px 0;
+    display: inline-block;
+    border: 1px solid #4dc4ff;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-cancel, .btn-submit {
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-cancel {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.btn-submit {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.error-message {
+    color: red;
+    min-height: 1.2em; /* กันข้อความกระโดด */
+    margin: 5px 0;
+}
+
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    #navbar .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .nav-links {
+        display: none; /* ซ่อนลิงก์เมนูในมือถือเพื่อให้กระชับ */
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-actions {
+        margin-top: 10px;
+    }
+
+    .profile-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-img {
+        width: 150px;
+        height: 150px;
+    }
+    
+    #typing-container {
+        font-size: 2em;
+        text-align: center;
+    }
+    .subtitle {
+        text-align: center;
+    }
+
+    .badges, .quick-contact, .social-links, .music-player {
+        justify-content: center;
+        text-align: center;
+    }
+}
