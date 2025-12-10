@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pawarit Sosirikul | Portfolio</title>
+  <meta name="description" content="Portfolio ของ Pawarit (PAT) อายุ 16 ปี ความสามารถด้านซอฟต์แวร์ ฮาร์ดแวร์ พัฒนาเกม และดิจิทัลต่าง ๆ" />
+
+  <!-- Font Awesome สำหรับไอคอน -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- สไตล์หลัก -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="nav-brand">PAT.<span>DEV</span></div>
+      <nav class="nav-menu">
+        <a href="#about">เกี่ยวกับฉัน</a>
+        <a href="#skills">ทักษะ</a>
+        <a href="#details">รายละเอียดส่วนตัว</a>
+        <a href="#contact">ติดต่อ</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn ghost" id="loginOpen">
+          <i class="fa-solid fa-lock"></i>
+          ล็อกอิน
+        </button>
+        <a
+          class="btn primary"
+          href="https://t.me/PAT230653"
+          target="_blank"
+          rel="noopener"
+        >
+          <i class="fa-brands fa-telegram"></i>
+          สมัครสมาชิก
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ABOUT / HERO -->
+    <section id="about" class="section">
+      <div class="container hero">
+        <div class="hero-avatar">
+          <img
+            src="https://i0.wp.com/lifesara.co/wp-content/uploads/2023/05/%E0%B8%AD%E0%B8%99%E0%B8%B4%E0%B9%80%E0%B8%A1%E0%B8%B0%E0%B8%88%E0%B8%B5%E0%B8%99%E0%B8%A7%E0%B8%B2%E0%B8%A2_2.png"
+            alt="Pawarit Avatar"
+          />
+        </div>
+        <div class="hero-content">
+          <h1 class="hero-title">
+            <span id="typing" data-text="Pawarit Sosirikul - PAT"></span>
+          </h1>
+          <p class="hero-sub">
+            อายุ 16 ปี · อาศัยอยู่ที่อ้อมใหญ่ · ผู้ช่วยร้านข้าวแม่ยาย ·
+            ชอบซอฟต์แวร์ ฮาร์ดแวร์ และพัฒนาเกม
+          </p>
+
+          <div class="hero-tags">
+            <span class="tag">
+              <i class="fa-solid fa-code"></i> Software Scripting
+            </span>
+            <span class="tag">
+              <i class="fa-solid fa-microchip"></i> Hardware Tuning
+            </span>
+            <span class="tag">
+              <i class="fa-solid fa-gamepad"></i> Game Dev (Minecraft)
+            </span>
+            <a
+              class="tag link"
+              href="https://thanawan230653.github.io/pawarit.html"
+              target="_blank"
+              rel="noopener"
+            >
+              <i class="fa-solid fa-globe"></i> เว็บดีไซน์
+            </a>
+          </div>
+
+          <!-- Music + quick contact -->
+          <div class="hero-row">
+            <div class="player">
+              <button class="btn ghost" id="playBtn">
+                <i class="fa-solid fa-play"></i>
+                เล่นเพลง
+              </button>
+              <div class="viz" id="viz" aria-hidden="true">
+                <!-- 16 bars -->
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <audio
+                id="audio"
+                preload="none"
+                src="https://cast.requestradio.in.th:810/https://cast.requestradio.in.th:810/"
+              ></audio>
+            </div>
+
+            <div class="hero-contacts">
+              <a
+                href="#locked"
+                class="link-chip locked"
+                data-protect="contact"
+                data-href="tel:0842781903"
+                data-label="📞 โทร: 084-278-1903"
+              >
+                📞 โทร: 084-XXX-XXXX
+              </a>
+              <a
+                href="#locked"
+                class="link-chip locked"
+                data-protect="contact"
+                data-href="mailto:viv121oioppl@gmail.com"
+                data-label="✉️ อีเมล: viv121oioppl@gmail.com"
+              >
+                ✉️ อีเมล: ********@gmail.com
+              </a>
+            </div>
+          </div>
+
+          <div class="hero-social">
+            <a
+              href="https://github.com/thanawan230653"
+              target="_blank"
+              rel="noopener"
+              ><i class="fa-brands fa-github"></i> GitHub</a
+            >
+            <a
+              href="https://t.me/PAT230653"
+              target="_blank"
+              rel="noopener"
+              ><i class="fa-brands fa-telegram"></i> Telegram</a
+            >
+            <a
+              href="https://www.youtube.com/@hddc322"
+              target="_blank"
+              rel="noopener"
+              ><i class="fa-brands fa-youtube"></i> YouTube</a
+            >
+            <a
+              href="https://www.facebook.com/kubsss7544"
+              target="_blank"
+              rel="noopener"
+              ><i class="fa-brands fa-facebook"></i> Facebook</a
+            >
+            <a
+              href="https://www.instagram.com/pawarit.sosrirkul"
+              target="_blank"
+              rel="noopener"
+              ><i class="fa-brands fa-instagram"></i> Instagram</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="section">
+      <div class="container">
+        <h2 class="section-title">ทักษะ</h2>
+        <div class="skills-grid">
+          <article class="skill-card">
+            <div class="skill-icon"><i class="fa-solid fa-laptop-code"></i></div>
+            <h3>ซอฟต์แวร์</h3>
+            <p>สคริปต์, ออโตเมชัน, แก้ปัญหา IT, ไอทีซัพพอร์ต</p>
+          </article>
+
+          <article class="skill-card">
+            <div class="skill-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+            <h3>ฮาร์ดแวร์</h3>
+            <p>ซ่อม/วัดผล/จูนประสิทธิภาพ, ช่างมือถือ - Unlock - ยกชิป</p>
+          </article>
+
+          <article class="skill-card">
+            <div class="skill-icon"><i class="fa-solid fa-code"></i></div>
+            <h3>เว็บ & UI/UX</h3>
+            <p>HTML, CSS, JavaScript, ออกแบบ UI/UX ให้ใช้ง่ายและสวย</p>
+          </article>
+
+          <article class="skill-card">
+            <div class="skill-icon"><i class="fa-brands fa-android"></i></div>
+            <h3>Android Developer</h3>
+            <p>พื้นฐาน Kotlin/Java, UI Design, Build & Debug แอป</p>
+          </article>
+
+          <article class="skill-card">
+            <div class="skill-icon"><i class="fa-solid fa-comments"></i></div>
+            <h3>คอมมูนิเคชัน</h3>
+            <p>ซัพพอร์ตลูกค้า, การสื่อสารงาน, อธิบายเทคนิคให้เข้าใจง่าย</p>
+          </article>
+
+          <article class="skill-card">
+            <div class="skill-icon"><i class="fa-solid fa-terminal"></i></div>
+            <h3>ภาษาคอมพิวเตอร์</h3>
+            <p>Python 3, Java, C++ (พื้นฐานการพัฒนาโปรแกรม)</p>
+          </article>
+
+          <article class="skill-card">
+            <div class="skill-icon"><i class="fa-solid fa-headphones"></i></div>
+            <h3>ภาษาพูด</h3>
+            <p>อีสาน, กลาง (พร้อมสื่อสารกับคนหลายกลุ่ม)</p>
+          </article>
+
+          <article class="skill-card">
+            <div class="skill-icon"><i class="fa-solid fa-gamepad"></i></div>
+            <h3>นักพัฒนาเกม</h3>
+            <p>มายคราฟ และเกมอื่น ๆ (Mod / Plugin / ปรับแต่งระบบ)</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PERSONAL DETAILS -->
+    <section id="details" class="section">
+      <div class="container">
+        <h2 class="section-title">รายละเอียดส่วนตัว</h2>
+        <div class="details-card">
+          <ul>
+            <li><strong>ชื่อเล่น:</strong> ต๊ะ</li>
+            <li><strong>อายุ:</strong> 16 ปี</li>
+            <li><strong>ที่อยู่โดยประมาณ:</strong> อ้อมใหญ่</li>
+            <li><strong>สถานศึกษา:</strong> วิทยาลัยการจัดการเพชรเกษม</li>
+            <li><strong>สาขา:</strong> เทคโนโลยีธุรกิจดิจิทัล ปี 1</li>
+            <li><strong>แฟนชื่อ:</strong> ส่วนนี้เดี๋ยวผมแก้เอง</li>
+            <li><strong>งานอดิเรก:</strong> ตกปลา</li>
+            <li><strong>อาชีพหลัก:</strong> ช่วยงานร้านข้าวแม่ยาย</li>
+          </ul>
+
+          <div class="details-support">
+            <h3><i class="fa-solid fa-hand-holding-heart"></i> ช่องทางสนับสนุน</h3>
+            <p><strong>ทรูมันนี่:</strong> 0881458456</p>
+            <p><strong>อีวอเลท:</strong> 140008881458456</p>
+
+            <button class="btn primary" id="supportQrBtn">
+              <i class="fa-solid fa-qrcode"></i>
+              QR สนับสนุนพร้อมเพ
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section">
+      <div class="container">
+        <h2 class="section-title">ติดต่อ</h2>
+        <div class="contact-card">
+          <p class="contact-note">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            กรุณาล็อกอินเพื่อปลดล็อกเบอร์โทรและอีเมลเต็ม
+          </p>
+          <div class="contact-links">
+            <a
+              href="#locked"
+              class="link-chip locked"
+              data-protect="contact"
+              data-href="tel:0842781903"
+              data-label="📞 โทร: 084-278-1903"
+            >
+              📞 โทร: 084-XXX-XXXX
+            </a>
+            <a
+              href="#locked"
+              class="link-chip locked"
+              data-protect="contact"
+              data-href="mailto:viv121oioppl@gmail.com"
+              data-label="✉️ อีเมล: viv121oioppl@gmail.com"
+            >
+              ✉️ อีเมล: ********@gmail.com
+            </a>
+            <a
+              href="https://www.youtube.com/@hddc322"
+              target="_blank"
+              rel="noopener"
+              class="link-chip"
+            >
+              <i class="fa-brands fa-youtube"></i> YouTube
+            </a>
+            <a
+              href="https://t.me/PAT230653"
+              target="_blank"
+              rel="noopener"
+              class="link-chip"
+            >
+              <i class="fa-brands fa-telegram"></i> Telegram
+            </a>
+            <a
+              href="https://www.facebook.com/kubsss7544"
+              target="_blank"
+              rel="noopener"
+              class="link-chip"
+            >
+              <i class="fa-brands fa-facebook"></i> Facebook
+            </a>
+            <a
+              href="https://www.instagram.com/pawarit.sosrirkul"
+              target="_blank"
+              rel="noopener"
+              class="link-chip"
+            >
+              <i class="fa-brands fa-instagram"></i> Instagram
+            </a>
+            <a
+              href="https://github.com/thanawan230653"
+              target="_blank"
+              rel="noopener"
+              class="link-chip"
+            >
+              <i class="fa-brands fa-github"></i> GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    © <span id="year"></span> Pawarit Sosirikul (PAT)
+  </footer>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal" id="loginModal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true">
+      <h2><i class="fa-solid fa-lock"></i> ล็อกอินเพื่อปลดล็อกข้อมูลติดต่อ</h2>
+      <label class="field">
+        <span>อีเมล</span>
+        <input id="email" type="email" placeholder="กรอกอีเมล" autocomplete="username" />
+      </label>
+      <label class="field">
+        <span>รหัสผ่าน</span>
+        <input id="password" type="password" placeholder="รหัสผ่าน" autocomplete="current-password" />
+      </label>
+      <p class="error" id="loginErr"></p>
+      <div class="modal-actions">
+        <button class="btn ghost" id="loginCancel">ยกเลิก</button>
+        <button class="btn primary" id="loginSubmit">เข้าสู่ระบบ</button>
+      </div>
+      <p class="modal-hint">
+        (ค่าเริ่มต้นสำหรับทดสอบ: <code>5460kg@gmail.com / admin</code>)
+      </p>
+    </div>
+  </div>
+
+  <!-- QR SUPPORT MODAL -->
+  <div class="modal" id="qrModal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true">
+      <h2><i class="fa-solid fa-qrcode"></i> QR สนับสนุนพร้อมเพ</h2>
+      <div class="qr-wrapper">
+        <img
+          src="http://49.228.131.69:3661/bt.jpg"
+          alt="QR สนับสนุนพร้อมเพ"
+        />
+      </div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="qrClose">ปิด</button>
+      </div>
+      <p class="modal-hint">
+        ถ้าเปิดบน HTTPS แล้วรูปไม่ขึ้น ให้ย้ายรูปไปไว้บน GitHub ของคุณเองจะชัวร์ที่สุด
+      </p>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script src="index.js"></script>
+</body>
+</html>
