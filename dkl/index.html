@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หน้าดาวน์โหลดไฟล์</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>🔐 ใส่รหัสผ่านเพื่อดาวน์โหลด</h1>
+        
+        <label for="filePassword">รหัสผ่าน:</label>
+        <input type="password" id="filePassword" placeholder="กรอกรหัสผ่าน">
+        <button onclick="checkPassword()">ตรวจสอบ</button>
+
+        <div id="fileDetails" class="hidden">
+            <h2>✨ รายละเอียดไฟล์</h2>
+            <p><strong>จัดทำโดย:</strong> <span id="infoAuthor"></span></p>
+            <p><strong>วันที่อัพ:</strong> <span id="infoDate"></span></p>
+            <p><strong>ลิ้งค์ดาวน์โหลด:</strong> <span id="infoLink"></span></p>
+            
+            <button id="downloadButton">ดาวน์โหลดเลย</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
