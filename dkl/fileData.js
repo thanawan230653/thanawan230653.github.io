@@ -1,0 +1,20 @@
+// fileData.js
+// เก็บข้อมูลรหัสผ่าน + ไฟล์ไว้ไฟล์นี้
+
+// รูปแบบ: password<จัดทำโดย<วันที่อัพ<ลิ้ง
+const fileData = `
+2845<PAT Server Team<2025-12-01<https://example.com/file1.zip
+7777<PAT DataCenter<2025-12-05<https://example.com/file2.zip
+8888<Pigcee Lab<2025-12-10<https://example.com/file3.zip
+`.trim();
+
+// แปลง string เป็น array ของ object
+const files = fileData.split("\n").map(line => {
+    const [pass, author, date, url] = line.split("<");
+    return {
+        pass: pass.trim(),
+        author: author.trim(),
+        date: date.trim(),
+        url: url.trim()
+    };
+});
