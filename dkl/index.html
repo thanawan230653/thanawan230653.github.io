@@ -1,30 +1,193 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>หน้าดาวน์โหลดไฟล์</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>หน้าโหลดไฟล์</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 20px 24px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+      max-width: 380px;
+      width: 100%;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .field {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 8px;
+      padding: 9px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      color: white;
+      background: #2563eb;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .overlay.active {
+      display: flex;
+    }
+
+    .popup {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 18px 20px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
+    }
+
+    .popup h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .popup p {
+      margin: 4px 0;
+      font-size: 14px;
+    }
+
+    .popup-actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+
+    .btn-download {
+      background: #16a34a;
+    }
+
+    .btn-download:hover {
+      background: #15803d;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>🔐 ใส่รหัสผ่านเพื่อดาวน์โหลด</h1>
-        
-        <label for="filePassword">รหัสผ่าน:</label>
-        <input type="password" id="filePassword" placeholder="กรอกรหัสผ่าน">
-        <button onclick="checkPassword()">ตรวจสอบ</button>
+  <div class="card">
+    <h1>แบบฟอร์มโหลดไฟล์</h1>
 
-        <div id="fileDetails" class="hidden">
-            <h2>✨ รายละเอียดไฟล์</h2>
-            <p><strong>จัดทำโดย:</strong> <span id="infoAuthor"></span></p>
-            <p><strong>วันที่อัพ:</strong> <span id="infoDate"></span></p>
-            <p><strong>ลิ้งค์ดาวน์โหลด:</strong> <span id="infoLink"></span></p>
-            
-            <button id="downloadButton">ดาวน์โหลดเลย</button>
-        </div>
+    <form id="downloadForm">
+      <!-- password -->
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" required>
+      </div>
+
+      <!-- จัดทำโดย -->
+      <div class="field">
+        <label for="author">จัดทำโดย</label>
+        <input id="author" type="text" placeholder="ใส่ชื่อผู้จัดทำ" required>
+      </div>
+
+      <!-- วันที่อัพ -->
+      <div class="field">
+        <label for="date">วันที่อัพโหลด</label>
+        <input id="date" type="date" required>
+      </div>
+
+      <!-- ลิ้ง -->
+      <div class="field">
+        <label for="link">ลิ้งดาวน์โหลด</label>
+        <input id="link" type="url" placeholder="https://example.com/file.zip" required>
+      </div>
+
+      <button type="submit">แสดงป๊อปอัพก่อนโหลด</button>
+    </form>
+  </div>
+
+  <!-- ป๊อปอัพ -->
+  <div class="overlay" id="popupOverlay">
+    <div class="popup">
+      <h2>ตรวจสอบรายละเอียดก่อนดาวน์โหลด</h2>
+
+      <p id="showPassword"></p>
+      <p id="showAuthor"></p>
+      <p id="showDate"></p>
+      <p id="showLink"></p>
+
+      <div class="popup-actions">
+        <button type="button" class="btn-secondary" id="cancelBtn">ยกเลิก</button>
+        <a id="downloadBtn"
+           class="btn-download"
+           style="text-decoration:none;display:inline-block;padding:9px 16px;border-radius:8px;color:white;"
+           target="_blank">
+          ดาวน์โหลดไฟล์
+        </a>
+      </div>
     </div>
+  </div>
 
-    <script src="script.js"></script>
+  <!-- JS แยกไฟล์ -->
+  <script src="main.js" defer></script>
 </body>
 </html>
