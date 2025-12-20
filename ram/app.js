@@ -1,205 +1,334 @@
 (() => {
-  const el = (id) => document.getElementById(id);
+  const $ = (id) => document.getElementById(id);
 
-  const sizeMBEl = el("sizeMB");
-  const passesEl = el("passes");
-  const allocStepMBEl = el("allocStepMB");
-  const modeEl = el("mode");
+  // UI refs
+  const envPill = $("envPill");
+  const runState = $("runState");
+  const modeTag = $("modeTag");
 
-  const btnRun = el("btnRun");
-  const btnStop = el("btnStop");
-  const btnAlloc = el("btnAlloc");
-  const btnFree = el("btnFree");
+  const duration = $("duration");
+  const durLabel = $("durLabel");
+  const bufferMB = $("bufferMB");
+  const gmax = $("gmax");
+  const gmaxLabel = $("gmaxLabel");
+  const maxLabel = $("maxLabel");
 
-  const statusEl = el("status");
-  const resultEl = el("result");
-  const heapUsedEl = el("heapUsed");
-  const allocatedEl = el("allocated");
-  const logEl = el("log");
+  const mode = $("mode");
 
-  let stopFlag = false;
-  let allocatedBlocks = []; // keep references to prevent GC
+  const btnGo = $("btnGo");
+  const btnStop = $("btnStop");
 
-  function log(line) {
+  const bigNum = $("bigNum");
+  const bigUnit = $("bigUnit");
+
+  const pingVal = $("pingVal");
+  const jitVal = $("jitVal");
+  const dlVal = $("dlVal");
+  const dlSub = $("dlSub");
+  const ulVal = $("ulVal");
+  const ulSub = $("ulSub");
+
+  const logEl = $("log");
+
+  const gauge = $("gauge");
+  const ticksG = gauge.querySelector("#ticks");
+  const needleG = gauge.querySelector("#needle");
+
+  // State
+  let stop = false;
+
+  // Gauge mapping
+  const ANG_MIN = -130;  // left
+  const ANG_MAX = 130;   // right
+
+  let needleAngle = ANG_MIN;     // current
+  let needleTarget = ANG_MIN;    // desired
+  let rafId = null;
+
+  function log(line){
     const ts = new Date().toLocaleTimeString();
     logEl.textContent += `[${ts}] ${line}\n`;
     logEl.scrollTop = logEl.scrollHeight;
   }
 
-  function setStatus(s) {
-    statusEl.textContent = s;
+  function setPill(el, text){
+    el.textContent = text;
   }
 
-  function fmtMB(bytes) {
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
 
-  function updateHeapUI() {
-    // performance.memory is Chrome-only and requires non-cross-origin isolated? (varies)
-    const mem = performance && performance.memory ? performance.memory : null;
-    if (!mem) {
-      heapUsedEl.textContent = "N/A";
-      return;
+  function formatSpeed(bytesPerSec){
+    const mbps = bytesPerSec / (1024 * 1024);
+    const gbps = bytesPerSec / (1024 * 1024 * 1024);
+    // We show both MB/s and GB/s in the "sub" line
+    if (gbps >= 1) {
+      return { main: gbps.toFixed(2), unit: "GB/s", sub: `${mbps.toFixed(0)} MB/s` };
     }
-    heapUsedEl.textContent = fmtMB(mem.usedJSHeapSize);
+    return { main: mbps.toFixed(0), unit: "MB/s", sub: `${gbps.toFixed(3)} GB/s` };
   }
 
-  function busyWaitNextFrame() {
-    return new Promise((resolve) => requestAnimationFrame(resolve));
+  function speedToAngle(bytesPerSec){
+    const gMax = Math.max(1, Number(gmax.value || 10)); // in GB/s
+    const gbps = bytesPerSec / (1024 * 1024 * 1024);
+    const t = clamp(gbps / gMax, 0, 1);
+    return ANG_MIN + (ANG_MAX - ANG_MIN) * t;
   }
 
-  async function runSpeedTest() {
-    stopFlag = false;
-    btnRun.disabled = true;
-    btnStop.disabled = false;
+  function setNeedleTargetBySpeed(bytesPerSec){
+    needleTarget = speedToAngle(bytesPerSec);
+  }
 
-    resultEl.textContent = "—";
-    setStatus("Preparing...");
-    log("Speed test started.");
+  function animateNeedle(){
+    // smooth toward target
+    const diff = needleTarget - needleAngle;
+    needleAngle += diff * 0.12; // damping
+    needleG.setAttribute("transform", `rotate(${needleAngle.toFixed(2)} 260 250)`);
+    rafId = requestAnimationFrame(animateNeedle);
+  }
 
-    const sizeMB = Math.max(16, Number(sizeMBEl.value || 256));
-    const passes = Math.max(1, Number(passesEl.value || 6));
-    const mode = modeEl.value;
+  function rebuildTicks(){
+    ticksG.innerHTML = "";
+    const gMax = Math.max(1, Number(gmax.value || 10));
 
-    // Allocate buffer
-    const bytes = sizeMB * 1024 * 1024;
-    const buf = new ArrayBuffer(bytes);
+    // major ticks: 0..gMax (GB/s) each 1
+    // minor ticks: 0.5
+    const majorStep = 1;
+    const minorStep = 0.5;
 
-    // Use Uint32 for faster stepping; 4 bytes per element
+    const cx = 260, cy = 250;
+    const rOuter = 204;
+    const rInnerMajor = 178;
+    const rInnerMinor = 186;
+
+    function addTick(gbps, major){
+      const t = gbps / gMax;
+      const ang = (ANG_MIN + (ANG_MAX - ANG_MIN) * t) * Math.PI / 180;
+      const x1 = cx + rOuter * Math.cos(ang);
+      const y1 = cy + rOuter * Math.sin(ang);
+      const x2 = cx + (major ? rInnerMajor : rInnerMinor) * Math.cos(ang);
+      const y2 = cy + (major ? rInnerMajor : rInnerMinor) * Math.sin(ang);
+
+      const line = document.createElementNS("http://www.w3.org/2000/svg","line");
+      line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+      line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+      line.setAttribute("stroke", major ? "rgba(234,241,255,.55)" : "rgba(234,241,255,.25)");
+      line.setAttribute("stroke-width", major ? "2" : "1");
+      line.setAttribute("stroke-linecap","round");
+      ticksG.appendChild(line);
+
+      if (major){
+        const tx = cx + (160) * Math.cos(ang);
+        const ty = cy + (160) * Math.sin(ang) + 4;
+        const text = document.createElementNS("http://www.w3.org/2000/svg","text");
+        text.setAttribute("x", tx);
+        text.setAttribute("y", ty);
+        text.setAttribute("fill","rgba(234,241,255,.75)");
+        text.setAttribute("font-size","12");
+        text.setAttribute("text-anchor","middle");
+        text.textContent = String(gbps);
+        ticksG.appendChild(text);
+      }
+    }
+
+    for (let v = 0; v <= gMax + 1e-9; v += minorStep){
+      const isMajor = Math.abs(v - Math.round(v)) < 1e-9;
+      addTick(v, isMajor);
+    }
+
+    gmaxLabel.textContent = String(gMax);
+    maxLabel.textContent = `${gMax} GB/s`;
+  }
+
+  // Ping/Jitter: measure setTimeout drift (event loop latency)
+  async function measurePingJitter(samples = 20){
+    const lat = [];
+    for (let i = 0; i < samples; i++){
+      const t0 = performance.now();
+      await new Promise(r => setTimeout(r, 0));
+      const t1 = performance.now();
+      lat.push(t1 - t0);
+      if (stop) break;
+    }
+    lat.sort((a,b)=>a-b);
+    const median = lat[Math.floor(lat.length/2)] || 0;
+    const mean = lat.reduce((a,b)=>a+b,0) / Math.max(1, lat.length);
+    const jitter = Math.sqrt(lat.reduce((a,b)=>a+(b-mean)*(b-mean),0)/Math.max(1,lat.length));
+    return { pingMs: median, jitterMs: jitter };
+  }
+
+  // Chunked throughput test to keep UI responsive
+  async function throughputTest({ kind, seconds, bufBytes }){
+    // kind: "read" or "write"
+    // Use Uint32Array for speed
+    const buf = new ArrayBuffer(bufBytes);
     const arr = new Uint32Array(buf);
     const len = arr.length;
 
-    // Warmup (helps JIT)
-    setStatus("Warming up...");
-    for (let i = 0; i < Math.min(len, 1_000_000); i += 97) {
-      arr[i] = (i ^ 0x9e3779b9) >>> 0;
-    }
-    await busyWaitNextFrame();
+    // warmup
+    for (let i = 0; i < Math.min(len, 250_000); i += 97) arr[i] = (i ^ 0x9e3779b9) >>> 0;
 
-    // Timed loops
-    setStatus("Running...");
-    updateHeapUI();
-
-    const t0 = performance.now();
+    let bytesDone = 0;
     let checksum = 0;
 
-    for (let p = 0; p < passes; p++) {
-      if (stopFlag) break;
+    const tEnd = performance.now() + seconds * 1000;
+    const CHUNK_ELEMS = 1_000_000; // ~4MB per chunk
 
-      // Write pass
-      if (mode === "rw" || mode === "write") {
-        // step by 1 is “heavier”; step by 2/4 is “lighter”
-        for (let i = 0; i < len; i++) {
-          arr[i] = (i + p * 2654435761) >>> 0;
+    while (performance.now() < tEnd && !stop){
+      // do a chunk
+      const chunk = Math.min(CHUNK_ELEMS, len);
+      if (kind === "write"){
+        const base = (bytesDone >>> 2) >>> 0;
+        for (let i = 0; i < chunk; i++){
+          arr[i] = (base + i) >>> 0;
         }
-      }
-
-      // Read pass
-      if (mode === "rw" || mode === "read") {
-        // Sum a subset to avoid insane CPU cost? We'll sum all for stable work.
-        // Keep it simple: sum all, but use >>>0 to keep uint32-ish.
+        bytesDone += chunk * 4;
+      } else {
         let s = 0;
-        for (let i = 0; i < len; i++) {
+        for (let i = 0; i < chunk; i++){
           s = (s + arr[i]) >>> 0;
         }
         checksum ^= s;
+        bytesDone += chunk * 4;
       }
 
-      // Yield to UI occasionally
-      if (p % 2 === 1) {
-        updateHeapUI();
-        log(`Pass ${p + 1}/${passes} done.`);
-        await busyWaitNextFrame();
+      // Yield
+      await new Promise(r => requestAnimationFrame(r));
+    }
+
+    const elapsed = Math.max(0.001, seconds - Math.max(0, (tEnd - performance.now()) / 1000));
+    const bps = bytesDone / elapsed;
+
+    return { bps, checksum };
+  }
+
+  function setBig(bytesPerSec){
+    const f = formatSpeed(bytesPerSec);
+    bigNum.textContent = f.main;
+    bigUnit.textContent = f.unit;
+  }
+
+  function setMetric(elMain, elSub, bytesPerSec){
+    const f = formatSpeed(bytesPerSec);
+    elMain.textContent = `${f.main} ${f.unit}`;
+    elSub.textContent = f.sub;
+  }
+
+  function setRunningUI(running){
+    btnGo.disabled = running;
+    btnStop.disabled = !running;
+    setPill(runState, running ? "Running" : "Idle");
+    setPill(envPill, running ? "Testing…" : "Ready");
+  }
+
+  async function run(){
+    stop = false;
+    logEl.textContent = "";
+
+    const seconds = Math.max(2, Number(duration.value || 8));
+    const bufMB = Math.max(32, Number(bufferMB.value || 256));
+    const bufBytes = bufMB * 1024 * 1024;
+    const selected = mode.value;
+
+    // Reset values
+    pingVal.textContent = "—";
+    jitVal.textContent = "Jitter: —";
+    dlVal.textContent = "—";
+    dlSub.textContent = "—";
+    ulVal.textContent = "—";
+    ulSub.textContent = "—";
+
+    modeTag.textContent = "PING";
+    setBig(0);
+    setNeedleTargetBySpeed(0);
+
+    setRunningUI(true);
+    log(`Start: duration=${seconds}s, buffer=${bufMB}MB, mode=${selected}`);
+
+    // 1) Ping/Jitter
+    const pj = await measurePingJitter(24);
+    if (!stop){
+      pingVal.textContent = `${pj.pingMs.toFixed(1)} ms`;
+      jitVal.textContent = `Jitter: ${pj.jitterMs.toFixed(1)} ms`;
+      log(`Ping≈${pj.pingMs.toFixed(1)}ms, Jitter≈${pj.jitterMs.toFixed(1)}ms`);
+    }
+
+    // Helper to animate gauge live-ish (set to current test throughput)
+    async function runOne(kind){
+      modeTag.textContent = kind === "read" ? "DOWNLOAD" : "UPLOAD";
+      log(`${kind.toUpperCase()} test running…`);
+
+      // Do test
+      const res = await throughputTest({ kind, seconds, bufBytes });
+
+      if (stop) return null;
+
+      // Update gauge to final
+      setNeedleTargetBySpeed(res.bps);
+      setBig(res.bps);
+
+      return res;
+    }
+
+    let readRes = null, writeRes = null;
+
+    // 2) Read / Write as selected
+    if (!stop && (selected === "both" || selected === "read")){
+      // animate gauge during run: simple "pulse" by periodically sampling drift
+      // We'll do a lightweight live indicator by setting needle to last known estimate.
+      // (A more exact live estimate would require instrumenting inside throughputTest.)
+      setNeedleTargetBySpeed(0);
+      setBig(0);
+      readRes = await runOne("read");
+      if (readRes){
+        setMetric(dlVal, dlSub, readRes.bps);
       }
     }
 
-    const t1 = performance.now();
-    const elapsedSec = Math.max(0.000001, (t1 - t0) / 1000);
+    if (!stop && (selected === "both" || selected === "write")){
+      setNeedleTargetBySpeed(0);
+      setBig(0);
+      writeRes = await runOne("write");
+      if (writeRes){
+        setMetric(ulVal, ulSub, writeRes.bps);
+      }
+    }
 
-    btnRun.disabled = false;
-    btnStop.disabled = true;
-
-    if (stopFlag) {
-      setStatus("Stopped");
-      log("Speed test stopped by user.");
+    if (stop){
+      modeTag.textContent = "STOPPED";
+      log("Stopped by user.");
+      setRunningUI(false);
       return;
     }
 
-    setStatus("Done");
+    // 3) Summary
+    modeTag.textContent = "DONE";
+    log("Done.");
+    if (readRes) log(`READ checksum: 0x${readRes.checksum.toString(16).padStart(8,"0")}`);
+    if (writeRes) log(`WRITE done (no checksum).`);
 
-    // Compute effective transferred bytes:
-    // - write: bytes per pass
-    // - read: bytes per pass
-    // - rw: 2*bytes per pass
-    const factor = mode === "rw" ? 2 : 1;
-    const transferredBytes = bytes * passes * factor;
-    const mbps = (transferredBytes / (1024 * 1024)) / elapsedSec;
-
-    resultEl.textContent = `${mbps.toFixed(0)} MB/s`;
-    updateHeapUI();
-    log(`Mode: ${mode}, Size: ${sizeMB}MB, Passes: ${passes}`);
-    log(`Elapsed: ${elapsedSec.toFixed(3)}s, Throughput: ${mbps.toFixed(1)} MB/s`);
-    log(`Checksum (anti-opt): 0x${checksum.toString(16).padStart(8, "0")}`);
+    setRunningUI(false);
   }
 
-  async function allocateUntilFail() {
-    stopFlag = false;
-    btnAlloc.disabled = true;
-    btnFree.disabled = false;
-
-    const stepMB = Math.max(8, Number(allocStepMBEl.value || 128));
-    const stepBytes = stepMB * 1024 * 1024;
-
-    setStatus("Allocating...");
-    log(`Allocation started. Step = ${stepMB}MB`);
-
-    let total = allocatedBlocks.reduce((a, b) => a + b.byteLength, 0);
-
-    // Keep allocating blocks until it throws or user stops.
-    while (!stopFlag) {
-      try {
-        const block = new Uint8Array(stepBytes);
-        // Touch memory so it is actually committed
-        for (let i = 0; i < block.length; i += 4096) block[i] = (i ^ 0x5a) & 0xff;
-
-        allocatedBlocks.push(block);
-        total += stepBytes;
-
-        allocatedEl.textContent = String(allocatedBlocks.length);
-        updateHeapUI();
-        log(`Allocated +${stepMB}MB (total kept: ${fmtMB(total)})`);
-
-        // Yield to UI
-        await busyWaitNextFrame();
-      } catch (e) {
-        setStatus("Allocation failed");
-        log(`Allocation failed after total kept: ${fmtMB(total)}`);
-        log(`Error: ${e && e.message ? e.message : String(e)}`);
-        break;
-      }
-    }
-
-    btnAlloc.disabled = false;
-  }
-
-  function freeAllocations() {
-    allocatedBlocks = [];
-    allocatedEl.textContent = "0";
-    updateHeapUI();
-    setStatus("Freed allocations");
-    log("Freed allocated blocks (GC may take a moment).");
-  }
-
-  btnRun.addEventListener("click", runSpeedTest);
-  btnStop.addEventListener("click", () => {
-    stopFlag = true;
-    setStatus("Stopping...");
-    log("Stop requested.");
+  // Events
+  duration.addEventListener("input", () => {
+    durLabel.textContent = `${duration.value}s`;
   });
-  btnAlloc.addEventListener("click", allocateUntilFail);
-  btnFree.addEventListener("click", freeAllocations);
 
-  // init
-  logEl.textContent = "";
-  updateHeapUI();
+  gmax.addEventListener("change", () => {
+    rebuildTicks();
+  });
+
+  btnGo.addEventListener("click", run);
+  btnStop.addEventListener("click", () => {
+    stop = true;
+    setPill(envPill, "Stopping…");
+    setPill(runState, "Stopping…");
+  });
+
+  // Init
+  durLabel.textContent = `${duration.value}s`;
+  rebuildTicks();
+
+  // Start needle animation loop once
+  if (!rafId) animateNeedle();
 })();
