@@ -1,10 +1,10 @@
 (() => {
   const $ = (id) => document.getElementById(id);
 
-  // UI refs
-  const envPill = $("envPill");
-  const runState = $("runState");
-  const modeTag = $("modeTag");
+  // UI
+  const statePill = $("statePill");
+  const miniState = $("miniState");
+  const modePill = $("modePill");
 
   const duration = $("duration");
   const durLabel = $("durLabel");
@@ -13,23 +13,23 @@
   const gmaxLabel = $("gmaxLabel");
   const maxLabel = $("maxLabel");
 
-  const mode = $("mode");
-
   const btnGo = $("btnGo");
   const btnStop = $("btnStop");
 
   const bigNum = $("bigNum");
   const bigUnit = $("bigUnit");
 
-  const pingVal = $("pingVal");
-  const jitVal = $("jitVal");
-  const dlVal = $("dlVal");
-  const dlSub = $("dlSub");
-  const ulVal = $("ulVal");
-  const ulSub = $("ulSub");
+  const readOut = $("readOut");
+  const writeOut = $("writeOut");
+  const avgOut = $("avgOut");
+
+  const publicIpEl = $("publicIp");
+  const hostNameEl = $("hostName");
+  const hostIpEl = $("hostIp");
 
   const logEl = $("log");
 
+  // Gauge parts
   const gauge = $("gauge");
   const ticksG = gauge.querySelector("#ticks");
   const needleG = gauge.querySelector("#needle");
@@ -37,12 +37,10 @@
   // State
   let stop = false;
 
-  // Gauge mapping
-  const ANG_MIN = -130;  // left
-  const ANG_MAX = 130;   // right
-
-  let needleAngle = ANG_MIN;     // current
-  let needleTarget = ANG_MIN;    // desired
+  const ANG_MIN = -130;
+  const ANG_MAX = 130;
+  let needleAngle = ANG_MIN;
+  let needleTarget = ANG_MIN;
   let rafId = null;
 
   function log(line){
@@ -51,37 +49,31 @@
     logEl.scrollTop = logEl.scrollHeight;
   }
 
-  function setPill(el, text){
-    el.textContent = text;
-  }
-
-  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function setPillText(el, text){ el.textContent = text; }
+  function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
 
   function formatSpeed(bytesPerSec){
     const mbps = bytesPerSec / (1024 * 1024);
     const gbps = bytesPerSec / (1024 * 1024 * 1024);
-    // We show both MB/s and GB/s in the "sub" line
-    if (gbps >= 1) {
-      return { main: gbps.toFixed(2), unit: "GB/s", sub: `${mbps.toFixed(0)} MB/s` };
-    }
-    return { main: mbps.toFixed(0), unit: "MB/s", sub: `${gbps.toFixed(3)} GB/s` };
+    // show main with best unit, and always compute both
+    if (gbps >= 1) return { main: `${gbps.toFixed(2)} GB/s`, sub: `${mbps.toFixed(0)} MB/s` };
+    return { main: `${mbps.toFixed(0)} MB/s`, sub: `${gbps.toFixed(3)} GB/s` };
   }
 
-  function speedToAngle(bytesPerSec){
-    const gMax = Math.max(1, Number(gmax.value || 10)); // in GB/s
+  function bpsToAngle(bytesPerSec){
+    const gMax = Math.max(1, Number(gmax.value || 10)); // GB/s
     const gbps = bytesPerSec / (1024 * 1024 * 1024);
     const t = clamp(gbps / gMax, 0, 1);
     return ANG_MIN + (ANG_MAX - ANG_MIN) * t;
   }
 
-  function setNeedleTargetBySpeed(bytesPerSec){
-    needleTarget = speedToAngle(bytesPerSec);
+  function setNeedleTarget(bytesPerSec){
+    needleTarget = bpsToAngle(bytesPerSec);
   }
 
   function animateNeedle(){
-    // smooth toward target
     const diff = needleTarget - needleAngle;
-    needleAngle += diff * 0.12; // damping
+    needleAngle += diff * 0.12;
     needleG.setAttribute("transform", `rotate(${needleAngle.toFixed(2)} 260 250)`);
     rafId = requestAnimationFrame(animateNeedle);
   }
@@ -89,9 +81,6 @@
   function rebuildTicks(){
     ticksG.innerHTML = "";
     const gMax = Math.max(1, Number(gmax.value || 10));
-
-    // major ticks: 0..gMax (GB/s) each 1
-    // minor ticks: 0.5
     const majorStep = 1;
     const minorStep = 0.5;
 
@@ -117,8 +106,8 @@
       ticksG.appendChild(line);
 
       if (major){
-        const tx = cx + (160) * Math.cos(ang);
-        const ty = cy + (160) * Math.sin(ang) + 4;
+        const tx = cx + 160 * Math.cos(ang);
+        const ty = cy + 160 * Math.sin(ang) + 4;
         const text = document.createElementNS("http://www.w3.org/2000/svg","text");
         text.setAttribute("x", tx);
         text.setAttribute("y", ty);
@@ -139,43 +128,46 @@
     maxLabel.textContent = `${gMax} GB/s`;
   }
 
-  // Ping/Jitter: measure setTimeout drift (event loop latency)
-  async function measurePingJitter(samples = 20){
-    const lat = [];
-    for (let i = 0; i < samples; i++){
-      const t0 = performance.now();
-      await new Promise(r => setTimeout(r, 0));
-      const t1 = performance.now();
-      lat.push(t1 - t0);
-      if (stop) break;
+  function setBig(bytesPerSec){
+    const gbps = bytesPerSec / (1024 * 1024 * 1024);
+    const mbps = bytesPerSec / (1024 * 1024);
+
+    if (gbps >= 1){
+      bigNum.textContent = gbps.toFixed(2);
+      bigUnit.textContent = "GB/s";
+    } else {
+      bigNum.textContent = mbps.toFixed(0);
+      bigUnit.textContent = "MB/s";
     }
-    lat.sort((a,b)=>a-b);
-    const median = lat[Math.floor(lat.length/2)] || 0;
-    const mean = lat.reduce((a,b)=>a+b,0) / Math.max(1, lat.length);
-    const jitter = Math.sqrt(lat.reduce((a,b)=>a+(b-mean)*(b-mean),0)/Math.max(1,lat.length));
-    return { pingMs: median, jitterMs: jitter };
   }
 
-  // Chunked throughput test to keep UI responsive
-  async function throughputTest({ kind, seconds, bufBytes }){
-    // kind: "read" or "write"
-    // Use Uint32Array for speed
+  function setRunningUI(running){
+    btnGo.disabled = running;
+    btnStop.disabled = !running;
+    setPillText(statePill, running ? "Testing…" : "Ready");
+    setPillText(miniState, running ? "Running" : "Idle");
+  }
+
+  async function throughputTest(kind, seconds, bufBytes, onUpdate){
+    // kind: "read" | "write"
     const buf = new ArrayBuffer(bufBytes);
     const arr = new Uint32Array(buf);
     const len = arr.length;
 
-    // warmup
+    // Warmup
     for (let i = 0; i < Math.min(len, 250_000); i += 97) arr[i] = (i ^ 0x9e3779b9) >>> 0;
 
     let bytesDone = 0;
     let checksum = 0;
 
-    const tEnd = performance.now() + seconds * 1000;
-    const CHUNK_ELEMS = 1_000_000; // ~4MB per chunk
+    const tStart = performance.now();
+    const tEnd = tStart + seconds * 1000;
+
+    const CHUNK_ELEMS = 1_000_000; // ~4MB chunk
 
     while (performance.now() < tEnd && !stop){
-      // do a chunk
       const chunk = Math.min(CHUNK_ELEMS, len);
+
       if (kind === "write"){
         const base = (bytesDone >>> 2) >>> 0;
         for (let i = 0; i < chunk; i++){
@@ -191,33 +183,18 @@
         bytesDone += chunk * 4;
       }
 
-      // Yield
+      const now = performance.now();
+      const elapsed = Math.max(0.001, (now - tStart) / 1000);
+      const bpsNow = bytesDone / elapsed;
+
+      if (onUpdate) onUpdate(bpsNow, (now - tStart) / (seconds * 1000));
+
       await new Promise(r => requestAnimationFrame(r));
     }
 
-    const elapsed = Math.max(0.001, seconds - Math.max(0, (tEnd - performance.now()) / 1000));
-    const bps = bytesDone / elapsed;
-
+    const elapsedFinal = Math.max(0.001, (performance.now() - tStart) / 1000);
+    const bps = bytesDone / elapsedFinal;
     return { bps, checksum };
-  }
-
-  function setBig(bytesPerSec){
-    const f = formatSpeed(bytesPerSec);
-    bigNum.textContent = f.main;
-    bigUnit.textContent = f.unit;
-  }
-
-  function setMetric(elMain, elSub, bytesPerSec){
-    const f = formatSpeed(bytesPerSec);
-    elMain.textContent = `${f.main} ${f.unit}`;
-    elSub.textContent = f.sub;
-  }
-
-  function setRunningUI(running){
-    btnGo.disabled = running;
-    btnStop.disabled = !running;
-    setPill(runState, running ? "Running" : "Idle");
-    setPill(envPill, running ? "Testing…" : "Ready");
   }
 
   async function run(){
@@ -227,86 +204,128 @@
     const seconds = Math.max(2, Number(duration.value || 8));
     const bufMB = Math.max(32, Number(bufferMB.value || 256));
     const bufBytes = bufMB * 1024 * 1024;
-    const selected = mode.value;
 
-    // Reset values
-    pingVal.textContent = "—";
-    jitVal.textContent = "Jitter: —";
-    dlVal.textContent = "—";
-    dlSub.textContent = "—";
-    ulVal.textContent = "—";
-    ulSub.textContent = "—";
-
-    modeTag.textContent = "PING";
-    setBig(0);
-    setNeedleTargetBySpeed(0);
+    // Reset summary
+    readOut.textContent = "—";
+    writeOut.textContent = "—";
+    avgOut.textContent = "—";
 
     setRunningUI(true);
-    log(`Start: duration=${seconds}s, buffer=${bufMB}MB, mode=${selected}`);
+    setNeedleTarget(0);
+    setBig(0);
 
-    // 1) Ping/Jitter
-    const pj = await measurePingJitter(24);
-    if (!stop){
-      pingVal.textContent = `${pj.pingMs.toFixed(1)} ms`;
-      jitVal.textContent = `Jitter: ${pj.jitterMs.toFixed(1)} ms`;
-      log(`Ping≈${pj.pingMs.toFixed(1)}ms, Jitter≈${pj.jitterMs.toFixed(1)}ms`);
-    }
+    log(`Start: duration=${seconds}s, buffer=${bufMB}MB`);
+    modePill.textContent = "READ";
 
-    // Helper to animate gauge live-ish (set to current test throughput)
-    async function runOne(kind){
-      modeTag.textContent = kind === "read" ? "DOWNLOAD" : "UPLOAD";
-      log(`${kind.toUpperCase()} test running…`);
-
-      // Do test
-      const res = await throughputTest({ kind, seconds, bufBytes });
-
-      if (stop) return null;
-
-      // Update gauge to final
-      setNeedleTargetBySpeed(res.bps);
-      setBig(res.bps);
-
-      return res;
-    }
-
-    let readRes = null, writeRes = null;
-
-    // 2) Read / Write as selected
-    if (!stop && (selected === "both" || selected === "read")){
-      // animate gauge during run: simple "pulse" by periodically sampling drift
-      // We'll do a lightweight live indicator by setting needle to last known estimate.
-      // (A more exact live estimate would require instrumenting inside throughputTest.)
-      setNeedleTargetBySpeed(0);
-      setBig(0);
-      readRes = await runOne("read");
-      if (readRes){
-        setMetric(dlVal, dlSub, readRes.bps);
-      }
-    }
-
-    if (!stop && (selected === "both" || selected === "write")){
-      setNeedleTargetBySpeed(0);
-      setBig(0);
-      writeRes = await runOne("write");
-      if (writeRes){
-        setMetric(ulVal, ulSub, writeRes.bps);
-      }
-    }
+    // READ
+    const readRes = await throughputTest("read", seconds, bufBytes, (bpsNow) => {
+      setNeedleTarget(bpsNow);
+      setBig(bpsNow);
+    });
 
     if (stop){
-      modeTag.textContent = "STOPPED";
-      log("Stopped by user.");
+      modePill.textContent = "STOPPED";
+      log("Stopped.");
       setRunningUI(false);
       return;
     }
 
-    // 3) Summary
-    modeTag.textContent = "DONE";
-    log("Done.");
-    if (readRes) log(`READ checksum: 0x${readRes.checksum.toString(16).padStart(8,"0")}`);
-    if (writeRes) log(`WRITE done (no checksum).`);
+    const rFmt = formatSpeed(readRes.bps);
+    readOut.textContent = `${rFmt.main} (${rFmt.sub})`;
+    log(`READ: ${rFmt.main} | ${rFmt.sub}`);
+
+    // WRITE
+    modePill.textContent = "WRITE";
+    setNeedleTarget(0);
+    setBig(0);
+
+    const writeRes = await throughputTest("write", seconds, bufBytes, (bpsNow) => {
+      setNeedleTarget(bpsNow);
+      setBig(bpsNow);
+    });
+
+    if (stop){
+      modePill.textContent = "STOPPED";
+      log("Stopped.");
+      setRunningUI(false);
+      return;
+    }
+
+    const wFmt = formatSpeed(writeRes.bps);
+    writeOut.textContent = `${wFmt.main} (${wFmt.sub})`;
+    log(`WRITE: ${wFmt.main} | ${wFmt.sub}`);
+
+    // AVG
+    const avgBps = (readRes.bps + writeRes.bps) / 2;
+    const aFmt = formatSpeed(avgBps);
+    avgOut.textContent = `${aFmt.main} (${aFmt.sub})`;
+    modePill.textContent = "DONE";
+    log(`AVG: ${aFmt.main} | ${aFmt.sub}`);
+
+    // keep needle at avg
+    setNeedleTarget(avgBps);
+    setBig(avgBps);
 
     setRunningUI(false);
+  }
+
+  // IP functions
+  async function setPublicIP(){
+    // Try multiple endpoints
+    const endpoints = [
+      { url: "https://api.ipify.org?format=json", pick: (j) => j.ip },
+      { url: "https://ifconfig.co/json", pick: (j) => j.ip },
+      { url: "https://ipinfo.io/json", pick: (j) => j.ip },
+    ];
+
+    for (const ep of endpoints){
+      try{
+        const res = await fetch(ep.url, { cache: "no-store" });
+        if (!res.ok) continue;
+        const j = await res.json();
+        const ip = ep.pick(j);
+        if (ip){
+          publicIpEl.textContent = ip;
+          return;
+        }
+      }catch(_){}
+    }
+    publicIpEl.textContent = "N/A (blocked/offline)";
+  }
+
+  async function setHostInfo(){
+    const host = location.hostname || "—";
+    hostNameEl.textContent = host;
+
+    // Best-effort: ask external DNS-over-HTTPS style helper.
+    // Many public DoH APIs exist; some require headers; some CORS-block.
+    // We'll try a CORS-friendly JSON endpoint (may fail depending on environment).
+    const tries = [
+      // Google DoH (may be blocked by CORS in some contexts)
+      `https://dns.google/resolve?name=${encodeURIComponent(host)}&type=A`,
+      // Cloudflare DoH JSON (often CORS-blocked)
+      `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(host)}&type=A`,
+    ];
+
+    for (const url of tries){
+      try{
+        const res = await fetch(url, {
+          cache: "no-store",
+          headers: url.includes("cloudflare-dns.com") ? { "accept": "application/dns-json" } : undefined
+        });
+        if (!res.ok) continue;
+        const j = await res.json();
+        // dns.google returns Answer array with data = IP
+        const ans = j.Answer || j.answer || [];
+        const ip = ans.find(a => a.type === 1 && typeof a.data === "string")?.data;
+        if (ip){
+          hostIpEl.textContent = ip;
+          return;
+        }
+      }catch(_){}
+    }
+
+    hostIpEl.textContent = "N/A (CORS/DNS restricted)";
   }
 
   // Events
@@ -314,21 +333,26 @@
     durLabel.textContent = `${duration.value}s`;
   });
 
-  gmax.addEventListener("change", () => {
-    rebuildTicks();
-  });
+  gmax.addEventListener("change", rebuildTicks);
 
   btnGo.addEventListener("click", run);
   btnStop.addEventListener("click", () => {
     stop = true;
-    setPill(envPill, "Stopping…");
-    setPill(runState, "Stopping…");
+    setPillText(statePill, "Stopping…");
+    setPillText(miniState, "Stopping…");
   });
 
   // Init
   durLabel.textContent = `${duration.value}s`;
   rebuildTicks();
 
-  // Start needle animation loop once
-  if (!rafId) animateNeedle();
+  if (!rafId) {
+    rafId = requestAnimationFrame(function loop(){
+      animateNeedle();
+    });
+  }
+
+  // IP init
+  setPublicIP();
+  setHostInfo();
 })();
