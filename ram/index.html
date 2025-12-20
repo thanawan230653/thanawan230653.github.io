@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RAM Speed Test</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0; padding: 24px;
+      display: grid; place-items: center;
+      background: #0b0f14;
+      color: #e8eef6;
+    }
+    .card{
+      width: min(760px, 100%);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 16px;
+      padding: 18px;
+      background: rgba(255,255,255,.04);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    h1{ font-size: 18px; margin: 0 0 10px; letter-spacing:.2px; }
+    .sub{ font-size: 12px; opacity:.8; margin-bottom: 14px; line-height: 1.4; }
+    .grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .box{
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(0,0,0,.18);
+    }
+    label{ font-size: 12px; opacity:.85; display:block; margin-bottom: 6px; }
+    input, select{
+      width: 100%;
+      padding: 10px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: inherit;
+      outline: none;
+    }
+    .row{ display:flex; gap:10px; margin-top: 12px; flex-wrap: wrap; }
+    button{
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      color: inherit;
+      cursor: pointer;
+    }
+    button.primary{ background: #2a7cff; border-color: #2a7cff; color: white; }
+    button.danger{ background: rgba(255,60,60,.18); border-color: rgba(255,60,60,.35); }
+    button:disabled{ opacity:.5; cursor:not-allowed; }
+    .stats{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .stat{
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(255,255,255,.03);
+    }
+    .stat .k{ font-size: 11px; opacity: .7; }
+    .stat .v{ font-size: 16px; margin-top: 2px; }
+    pre{
+      margin: 12px 0 0;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.10);
+      overflow: auto;
+      max-height: 240px;
+      font-size: 12px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .hint{
+      margin-top: 10px;
+      font-size: 12px;
+      opacity:.8;
+    }
+    .pill{
+      display:inline-block;
+      padding: 2px 8px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      font-size: 11px;
+      opacity:.9;
+      margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>RAM Speed Test <span class="pill">Browser-based</span></h1>
+    <div class="sub">
+      Tests memory throughput using TypedArrays (write/read) and can try allocating memory to estimate available headroom.
+      Results are approximate (CPU/JIT/GC & browser limits apply).
+    </div>
+
+    <div class="grid">
+      <div class="box">
+        <label>Test size (MB)</label>
+        <input id="sizeMB" type="number" min="16" step="16" value="256" />
+        <div class="hint">แนะนำเริ่ม 128–512MB ถ้าเครื่องแรงค่อยเพิ่ม</div>
+      </div>
+
+      <div class="box">
+        <label>Passes (loops)</label>
+        <input id="passes" type="number" min="1" step="1" value="6" />
+        <div class="hint">จำนวนรอบมากขึ้น = นิ่่งขึ้น แต่ใช้เวลานานขึ้น</div>
+      </div>
+
+      <div class="box">
+        <label>Allocation step (MB)</label>
+        <input id="allocStepMB" type="number" min="8" step="8" value="128" />
+        <div class="hint">ใช้กับ “Allocate until fail”</div>
+      </div>
+
+      <div class="box">
+        <label>Mode</label>
+        <select id="mode">
+          <option value="rw">Write + Read (Throughput)</option>
+          <option value="write">Write only</option>
+          <option value="read">Read only</option>
+        </select>
+        <div class="hint">โหมด read-only อาจเร็ว/ช้าต่างตาม JIT</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="primary" id="btnRun">Run Speed Test</button>
+      <button id="btnStop" class="danger" disabled>Stop</button>
+      <button id="btnAlloc">Allocate until fail</button>
+      <button id="btnFree">Free Allocations</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="k">Status</div>
+        <div class="v" id="status">Idle</div>
+      </div>
+      <div class="stat">
+        <div class="k">Result</div>
+        <div class="v" id="result">—</div>
+      </div>
+      <div class="stat">
+        <div class="k">Heap used (Chrome only)</div>
+        <div class="v" id="heapUsed">—</div>
+      </div>
+      <div class="stat">
+        <div class="k">Allocated blocks</div>
+        <div class="v" id="allocated">0</div>
+      </div>
+    </div>
+
+    <pre id="log"></pre>
+
+    <div class="hint">
+      ถ้าทดสอบ allocate แล้วเครื่องเริ่มหน่วง ให้กด <b>Free Allocations</b> หรือรีเฟรชหน้า
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
