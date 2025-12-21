@@ -3,303 +3,673 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AI Image Chat</title>
+  <title>ChatGPT Image (Clone UI)</title>
   <style>
     :root{
-      --bg:#0b0f14; --panel:#0f1620; --panel2:#0c131c;
-      --text:#e6edf3; --muted:#9aa4af; --border:#1f2a37;
-      --accent:#3b82f6; --accent2:#22c55e;
-      --bubbleUser:#13233a; --bubbleBot:#0f1a26;
-      --shadow: 0 12px 30px rgba(0,0,0,.35);
-      --radius: 18px;
+      --bg:#0b0f14;
+      --panel:#0f141b;
+      --panel2:#111827;
+      --panel3:#0f172a;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --border:rgba(255,255,255,.08);
+      --hover:rgba(255,255,255,.06);
+      --brand:#10a37f;
+      --danger:#ef4444;
+      --radius:14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans Thai", Arial;
     }
     *{box-sizing:border-box}
-    body{margin:0; background:radial-gradient(900px 700px at 20% 0%, rgba(59,130,246,.18), transparent 55%),
-                     radial-gradient(900px 700px at 80% 0%, rgba(34,197,94,.12), transparent 55%),
-                     var(--bg); color:var(--text);}
-    .app{max-width:1050px; margin:0 auto; height:100vh; display:flex; flex-direction:column; padding:18px;}
-    header{
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      padding:12px 14px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid var(--border); border-radius:16px; box-shadow: var(--shadow);
+    html,body{height:100%; margin:0; background:var(--bg); color:var(--text);}
+
+    /* Layout */
+    .app{height:100%; display:flex; overflow:hidden}
+    .sidebar{
+      width:300px; min-width:260px; max-width:340px;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border-right:1px solid var(--border);
+      padding:12px;
+      display:flex; flex-direction:column; gap:12px;
     }
-    .brand{display:flex; gap:10px; align-items:center;}
-    .logo{
-      width:34px; height:34px; border-radius:12px;
-      background:linear-gradient(135deg, rgba(59,130,246,.9), rgba(34,197,94,.8));
-      box-shadow:0 10px 24px rgba(59,130,246,.18);
+    .main{
+      flex:1; display:flex; flex-direction:column; min-width:0;
+      background: radial-gradient(800px 500px at 30% 0%, rgba(16,163,127,.12), transparent 60%),
+                  radial-gradient(800px 500px at 80% 0%, rgba(59,130,246,.10), transparent 60%),
+                  var(--bg);
     }
-    .brand h1{font-size:15px; margin:0; letter-spacing:.2px}
-    .brand p{margin:0; font-size:12px; color:var(--muted)}
-    .controls{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
-    select, input[type="number"]{
-      background:var(--panel); color:var(--text);
-      border:1px solid var(--border); border-radius:12px; padding:9px 10px;
+
+    /* Sidebar header */
+    .sbTop{display:flex; gap:10px; align-items:center}
+    .newChat{
+      width:100%;
+      display:flex; gap:10px; align-items:center; justify-content:center;
+      padding:10px 12px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--border);
+      border-radius:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .newChat:hover{background:rgba(255,255,255,.06)}
+    .plus{
+      width:18px; height:18px; border-radius:6px;
+      border:1px solid var(--border);
+      display:grid; place-items:center;
+      font-weight:700; color:var(--text);
+      background:rgba(255,255,255,.03);
+    }
+
+    .sbSectionTitle{
+      font-size:12px; color:var(--muted);
+      padding:0 4px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .sbList{flex:1; overflow:auto; padding-right:4px}
+    .chatItem{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      border:1px solid transparent;
+    }
+    .chatItem:hover{background:var(--hover)}
+    .chatItem.active{
+      background:rgba(255,255,255,.06);
+      border-color:rgba(255,255,255,.10);
+    }
+    .chatTitle{
+      min-width:0;
+      font-size:13px;
+      color:var(--text);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .delBtn{
+      border:none; background:transparent; color:var(--muted);
+      cursor:pointer; padding:6px 8px; border-radius:10px;
+    }
+    .delBtn:hover{background:rgba(255,255,255,.06); color:#fff}
+
+    .sbBottom{
+      border-top:1px solid var(--border);
+      padding-top:10px;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .pillRow{display:flex; gap:8px; flex-wrap:wrap}
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:8px 10px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:rgba(255,255,255,.03);
+      font-size:12px;
+      color:var(--muted);
+    }
+    .pill select, .pill input{
+      background:transparent;
+      border:none;
+      color:var(--text);
       outline:none;
+      font-size:12px;
     }
-    .chip{
-      display:flex; gap:8px; align-items:center;
-      border:1px solid var(--border); background:var(--panel2);
-      padding:8px 10px; border-radius:12px; color:var(--muted); font-size:12px;
+    .pill input{width:40px}
+
+    /* Main header */
+    .topbar{
+      height:56px;
+      display:flex; align-items:center; justify-content:center;
+      padding:0 16px;
+      border-bottom:1px solid var(--border);
+      background:rgba(11,15,20,.75);
+      backdrop-filter: blur(10px);
+      position:sticky; top:0; z-index:10;
     }
-    .chip b{color:var(--text); font-weight:600}
-    main{
-      margin-top:14px;
-      border:1px solid var(--border); border-radius:18px; background:rgba(255,255,255,.02);
-      box-shadow: var(--shadow);
-      overflow:hidden; display:flex; flex-direction:column; min-height:0; flex:1;
+    .topbarInner{
+      width:min(900px, 100%);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .brand{
+      display:flex; gap:10px; align-items:center;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px; background:var(--brand);
+      box-shadow:0 0 0 6px rgba(16,163,127,.14);
+    }
+    .sub{
+      font-size:12px; color:var(--muted); font-weight:500;
+    }
+
+    /* Chat area */
+    .chatWrap{
+      flex:1; overflow:auto;
+      padding:18px 16px 110px;
+      display:flex; justify-content:center;
     }
     .chat{
-      padding:18px 14px;
-      overflow:auto; min-height:0; flex:1;
+      width:min(900px, 100%);
+      display:flex; flex-direction:column;
+      gap:14px;
     }
-    .row{display:flex; margin:10px 0;}
-    .row.user{justify-content:flex-end}
-    .row.bot{justify-content:flex-start}
-    .bubble{
-      max-width:min(720px, 92%);
+    .msgRow{display:flex; gap:12px}
+    .avatar{
+      width:28px; height:28px; border-radius:10px;
+      display:grid; place-items:center;
+      background:rgba(255,255,255,.05);
       border:1px solid var(--border);
-      border-radius: var(--radius);
+      flex:0 0 auto;
+      margin-top:2px;
+      color:var(--muted);
+      font-weight:800;
+      font-size:12px;
+    }
+    .avatar.user{
+      background:rgba(16,163,127,.12);
+      border-color:rgba(16,163,127,.25);
+      color:#bff3e5;
+    }
+    .bubble{
+      flex:1;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius:14px;
       padding:12px 12px;
-      background:var(--bubbleBot);
-      box-shadow:0 10px 22px rgba(0,0,0,.25);
+      box-shadow:0 6px 20px rgba(0,0,0,.18);
     }
-    .row.user .bubble{background:var(--bubbleUser)}
-    .meta{display:flex; gap:10px; align-items:center; justify-content:space-between; margin-bottom:6px;}
-    .who{font-size:12px; color:var(--muted)}
-    .time{font-size:11px; color:rgba(154,164,175,.75)}
-    .text{white-space:pre-wrap; line-height:1.45}
-    .imgWrap{margin-top:10px; border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,.08)}
-    .imgWrap img{display:block; width:100%; height:auto}
-    .hint{
-      font-size:12px; color:var(--muted);
-      padding:10px 14px; border-top:1px solid var(--border);
-      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    .whoLine{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:6px;
+      color:var(--muted);
+      font-size:12px;
     }
+    .text{white-space:pre-wrap; line-height:1.55; font-size:14px}
+    .imgGrid{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap:10px;
+    }
+    .imgCard{
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      position:relative;
+    }
+    .imgCard img{display:block; width:100%; height:auto}
+    .imgActions{
+      position:absolute; right:10px; top:10px;
+      display:flex; gap:8px;
+    }
+    .iconBtn{
+      border:none; cursor:pointer;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.55);
+      color:#fff;
+      font-size:12px;
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(6px);
+    }
+    .iconBtn:hover{background:rgba(0,0,0,.70)}
+
+    /* Composer */
     .composer{
-      display:flex; gap:10px; padding:12px; border-top:1px solid var(--border);
-      background:rgba(15,22,32,.65); backdrop-filter: blur(10px);
-      align-items:flex-end;
+      position:fixed; left:300px; right:0; bottom:0;
+      padding:14px 16px 16px;
+      background:linear-gradient(180deg, rgba(11,15,20,0), rgba(11,15,20,.85) 22%, rgba(11,15,20,.95));
+      display:flex; justify-content:center;
+      pointer-events:none;
+    }
+    .composerInner{
+      width:min(900px, 100%);
+      pointer-events:auto;
+    }
+    .inputBar{
+      display:flex; gap:10px; align-items:flex-end;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:10px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
     }
     textarea{
-      width:100%; min-height:52px; max-height:160px; resize:vertical;
-      padding:12px 12px; border-radius:16px;
-      border:1px solid var(--border); background:var(--panel); color:var(--text);
-      outline:none; line-height:1.45;
+      width:100%;
+      min-height:44px;
+      max-height:160px;
+      resize:none;
+      border:none;
+      outline:none;
+      background:transparent;
+      color:var(--text);
+      font-size:14px;
+      line-height:1.45;
+      padding:8px 6px;
     }
     .btn{
-      border:none; cursor:pointer; border-radius:14px; padding:12px 14px;
-      background:linear-gradient(135deg, rgba(59,130,246,.95), rgba(34,197,94,.80));
-      color:white; font-weight:700; min-width:118px;
-      box-shadow:0 14px 28px rgba(59,130,246,.18);
+      border:none;
+      border-radius:12px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:700;
+      color:#081015;
+      background:var(--brand);
+      min-width:92px;
     }
-    .btn:disabled{opacity:.55; cursor:not-allowed}
-    .btn2{
-      border:1px solid var(--border); cursor:pointer; border-radius:14px; padding:12px 14px;
-      background:var(--panel2); color:var(--text); font-weight:600;
+    .btn:disabled{opacity:.6; cursor:not-allowed}
+    .btnGhost{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      min-width:72px;
+    }
+    .btnGhost:hover{background:rgba(255,255,255,.06)}
+    .hint{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+      text-align:center;
     }
     .spinner{
-      width:14px; height:14px; border-radius:999px; border:2px solid rgba(255,255,255,.35);
-      border-top-color:white; display:inline-block; animation:spin .9s linear infinite;
-      vertical-align:-2px; margin-right:8px;
+      width:14px; height:14px; border-radius:999px;
+      border:2px solid rgba(0,0,0,.25);
+      border-top-color:rgba(0,0,0,.75);
+      display:inline-block;
+      animation:spin .9s linear infinite;
+      vertical-align:-2px;
+      margin-right:8px;
     }
     @keyframes spin{to{transform:rotate(360deg)}}
-    .footerActions{display:flex; gap:10px}
-    @media (max-width:720px){
-      .controls{justify-content:flex-start}
-      .btn{min-width:110px}
+
+    /* Responsive */
+    @media (max-width: 880px){
+      .sidebar{display:none}
+      .composer{left:0}
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <h1>AI Image Chat</h1>
-          <p>พิมพ์ prompt แล้วกด Generate เพื่อสร้างรูป</p>
-        </div>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sbTop">
+      <div class="newChat" id="newChatBtn">
+        <div class="plus">+</div>
+        <div style="font-weight:700">New chat</div>
       </div>
+    </div>
 
-      <div class="controls">
-        <label class="chip">Model <b>
+    <div class="sbSectionTitle">
+      <span>Chats</span>
+      <button class="delBtn" id="clearAllBtn" title="Clear all chats">Clear</button>
+    </div>
+
+    <div class="sbList" id="chatList"></div>
+
+    <div class="sbBottom">
+      <div class="pillRow">
+        <div class="pill">Model
           <select id="model">
             <option value="gpt-image-1.5">gpt-image-1.5</option>
             <option value="gpt-image-1">gpt-image-1</option>
           </select>
-        </b></label>
-
-        <label class="chip">Size <b>
+        </div>
+        <div class="pill">Size
           <select id="size">
             <option value="1024x1024">1024×1024</option>
-            <option value="1024x1536">1024×1536</option>
             <option value="1536x1024">1536×1024</option>
+            <option value="1024x1536">1024×1536</option>
           </select>
-        </b></label>
-
-        <label class="chip">Quality <b>
+        </div>
+        <div class="pill">Quality
           <select id="quality">
             <option value="auto">auto</option>
             <option value="high">high</option>
             <option value="medium">medium</option>
             <option value="low">low</option>
           </select>
-        </b></label>
-
-        <label class="chip">N <b>
+        </div>
+        <div class="pill">N
           <input id="n" type="number" min="1" max="4" value="1" />
-        </b></label>
-      </div>
-    </header>
-
-    <main>
-      <div id="chat" class="chat"></div>
-
-      <div class="hint" id="hint">
-        🔐 ปลอดภัยสุด: อย่าใส่ API key ในหน้าเว็บ — ให้เรียกผ่าน <code>/api/image</code> (ดูตัวอย่าง backend ด้านล่าง)
-      </div>
-
-      <div class="composer">
-        <textarea id="prompt" placeholder="Describe the image you want… (ภาษาไทย/อังกฤษได้หมด)"></textarea>
-        <div class="footerActions">
-          <button class="btn2" id="clearBtn" title="Clear chat">ล้าง</button>
-          <button class="btn" id="genBtn">Generate</button>
         </div>
       </div>
-    </main>
-  </div>
+      <div class="pill" style="justify-content:space-between">
+        <span>Local history: ON</span>
+        <span style="color:var(--muted)">v1</span>
+      </div>
+    </div>
+  </aside>
 
-  <script>
-    const chatEl = document.getElementById("chat");
-    const promptEl = document.getElementById("prompt");
-    const genBtn = document.getElementById("genBtn");
-    const clearBtn = document.getElementById("clearBtn");
-    const modelEl = document.getElementById("model");
-    const sizeEl = document.getElementById("size");
-    const qualityEl = document.getElementById("quality");
-    const nEl = document.getElementById("n");
+  <!-- Main -->
+  <section class="main">
+    <div class="topbar">
+      <div class="topbarInner">
+        <div class="brand"><span class="dot"></span> Image Chat <span class="sub">Chat-like UI</span></div>
+        <div class="sub" id="chatTitleTop">New chat</div>
+      </div>
+    </div>
 
-    const state = {
-      messages: []
-    };
+    <div class="chatWrap" id="chatWrap">
+      <div class="chat" id="chat"></div>
+    </div>
 
-    function nowTime(){
-      const d = new Date();
-      return d.toLocaleString("th-TH", { hour:"2-digit", minute:"2-digit" });
+    <div class="composer">
+      <div class="composerInner">
+        <div class="inputBar">
+          <textarea id="prompt" placeholder="Message Image Chat… (Enter ส่ง / Shift+Enter ขึ้นบรรทัดใหม่)"></textarea>
+          <button class="btn btnGhost" id="stopBtn" disabled>Stop</button>
+          <button class="btn" id="sendBtn">Send</button>
+        </div>
+        <div class="hint">Tip: พิมพ์ prompt แล้ว Enter เพื่อส่ง • รูปจะถูกบันทึกในประวัติของแชทนี้</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // ====== Simple local chat storage ======
+  const LS_KEY = "imgchat_clone_v1";
+
+  const $ = (id) => document.getElementById(id);
+
+  const ui = {
+    chat: $("chat"),
+    chatWrap: $("chatWrap"),
+    prompt: $("prompt"),
+    sendBtn: $("sendBtn"),
+    stopBtn: $("stopBtn"),
+    newChatBtn: $("newChatBtn"),
+    chatList: $("chatList"),
+    clearAllBtn: $("clearAllBtn"),
+    chatTitleTop: $("chatTitleTop"),
+    model: $("model"),
+    size: $("size"),
+    quality: $("quality"),
+    n: $("n"),
+  };
+
+  const state = {
+    chats: [],
+    activeChatId: null,
+    aborter: null
+  };
+
+  function uid(){ return crypto.randomUUID(); }
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(LS_KEY);
+      if(!raw) return;
+      const parsed = JSON.parse(raw);
+      if(parsed && Array.isArray(parsed.chats)){
+        state.chats = parsed.chats;
+        state.activeChatId = parsed.activeChatId || (parsed.chats[0]?.id ?? null);
+      }
+    }catch{}
+  }
+
+  function save(){
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      chats: state.chats,
+      activeChatId: state.activeChatId
+    }));
+  }
+
+  function activeChat(){
+    return state.chats.find(c => c.id === state.activeChatId) || null;
+  }
+
+  function createChat(title="New chat"){
+    const chat = { id: uid(), title, createdAt: Date.now(), messages: [] };
+    state.chats.unshift(chat);
+    state.activeChatId = chat.id;
+    save();
+    renderAll();
+    return chat;
+  }
+
+  function deleteChat(id){
+    state.chats = state.chats.filter(c => c.id !== id);
+    if(state.activeChatId === id){
+      state.activeChatId = state.chats[0]?.id ?? null;
+    }
+    save();
+    renderAll();
+  }
+
+  function clearAll(){
+    state.chats = [];
+    state.activeChatId = null;
+    save();
+    renderAll();
+  }
+
+  function setTitleFromPrompt(chat, prompt){
+    const t = (prompt || "").trim().slice(0, 36);
+    if(!t) return;
+    if(chat.title === "New chat") chat.title = t;
+  }
+
+  function nowTime(){
+    const d = new Date();
+    return d.toLocaleString("th-TH", { hour:"2-digit", minute:"2-digit" });
+  }
+
+  function escapeHtml(s){
+    return (s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  }
+
+  function scrollBottom(){
+    requestAnimationFrame(() => {
+      ui.chatWrap.scrollTop = ui.chatWrap.scrollHeight;
+    });
+  }
+
+  function renderSidebar(){
+    ui.chatList.innerHTML = state.chats.map(c => `
+      <div class="chatItem ${c.id===state.activeChatId ? "active":""}" data-id="${c.id}">
+        <div class="chatTitle">${escapeHtml(c.title)}</div>
+        <button class="delBtn" data-del="${c.id}" title="Delete">🗑</button>
+      </div>
+    `).join("") || `<div style="color:var(--muted);font-size:13px;padding:10px 6px;">No chats yet</div>`;
+
+    ui.chatTitleTop.textContent = activeChat()?.title ?? "New chat";
+  }
+
+  function renderChat(){
+    const chat = activeChat();
+    if(!chat){
+      ui.chat.innerHTML = `
+        <div style="color:var(--muted); text-align:center; padding:70px 10px;">
+          <div style="font-size:18px; color:var(--text); font-weight:800; margin-bottom:8px;">Start a new image chat</div>
+          <div>พิมพ์ prompt ด้านล่าง แล้วกด Send</div>
+        </div>`;
+      return;
     }
 
-    function addMessage(role, text, imageUrls = []){
-      const msg = { id: crypto.randomUUID(), role, text, imageUrls, t: nowTime() };
-      state.messages.push(msg);
-      render();
-      scrollToBottom();
-      return msg;
-    }
-
-    function scrollToBottom(){
-      requestAnimationFrame(()=>{ chatEl.scrollTop = chatEl.scrollHeight; });
-    }
-
-    function escapeHtml(s){
-      return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-    }
-
-    function render(){
-      chatEl.innerHTML = state.messages.map(m => {
-        const who = m.role === "user" ? "You" : "AI";
-        const rowClass = m.role === "user" ? "row user" : "row bot";
-        const imgs = (m.imageUrls || []).map(url => `
-          <div class="imgWrap">
-            <img src="${escapeHtml(url)}" alt="generated image" loading="lazy" />
-          </div>
-        `).join("");
-
-        return `
-          <div class="${rowClass}">
-            <div class="bubble">
-              <div class="meta">
-                <div class="who">${who}</div>
-                <div class="time">${m.t}</div>
+    ui.chat.innerHTML = chat.messages.map(m => {
+      const isUser = m.role === "user";
+      const av = isUser ? "You" : "AI";
+      const avCls = isUser ? "avatar user" : "avatar";
+      const imgs = (m.images || []).length ? `
+        <div class="imgGrid">
+          ${(m.images || []).map((src, idx) => `
+            <div class="imgCard">
+              <div class="imgActions">
+                <button class="iconBtn" data-open="${escapeHtml(src)}">Open</button>
+                <button class="iconBtn" data-dl="${escapeHtml(src)}" data-name="image_${idx+1}.png">Download</button>
               </div>
-              <div class="text">${escapeHtml(m.text || "")}</div>
-              ${imgs}
+              <img src="${escapeHtml(src)}" alt="generated" loading="lazy"/>
             </div>
+          `).join("")}
+        </div>` : "";
+
+      return `
+        <div class="msgRow">
+          <div class="${avCls}">${av}</div>
+          <div class="bubble">
+            <div class="whoLine">
+              <span>${isUser ? "You" : "Image AI"}</span>
+              <span>${escapeHtml(m.time || "")}</span>
+            </div>
+            <div class="text">${escapeHtml(m.text || "")}</div>
+            ${imgs}
           </div>
-        `;
-      }).join("");
-    }
+        </div>
+      `;
+    }).join("");
 
-    async function generate(){
-      const prompt = promptEl.value.trim();
-      if(!prompt) return;
+    scrollBottom();
+  }
 
-      addMessage("user", prompt);
-      promptEl.value = "";
+  function renderAll(){
+    renderSidebar();
+    renderChat();
+  }
 
-      genBtn.disabled = true;
-      genBtn.innerHTML = `<span class="spinner"></span>Generating`;
+  // ====== Image generation ======
+  function setBusy(on){
+    ui.sendBtn.disabled = on;
+    ui.stopBtn.disabled = !on;
+    ui.sendBtn.innerHTML = on ? `<span class="spinner"></span>Sending` : "Send";
+  }
 
-      const placeholder = addMessage("bot", "กำลังสร้างรูป…");
+  async function send(){
+    const prompt = ui.prompt.value.trim();
+    if(!prompt) return;
 
-      try{
-        const payload = {
-          prompt,
-          model: modelEl.value,
-          size: sizeEl.value,
-          quality: qualityEl.value,
-          n: Math.max(1, Math.min(4, parseInt(nEl.value || "1", 10)))
-        };
+    let chat = activeChat();
+    if(!chat) chat = createChat("New chat");
 
-        const res = await fetch("/api/image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
+    // User message
+    chat.messages.push({ role:"user", text: prompt, time: nowTime() });
+    setTitleFromPrompt(chat, prompt);
+    ui.prompt.value = "";
+    save();
+    renderAll();
 
-        if(!res.ok){
-          const t = await res.text().catch(()=> "");
-          throw new Error(`API error ${res.status}: ${t || res.statusText}`);
-        }
+    // Bot placeholder
+    const botMsg = { role:"assistant", text:"Generating image…", time: nowTime(), images: [] };
+    chat.messages.push(botMsg);
+    save();
+    renderAll();
 
-        const data = await res.json();
-        // คาดหวัง: { images: ["data:image/png;base64,...", "https://..."] }
-        const images = Array.isArray(data.images) ? data.images : [];
+    // Abort controller
+    state.aborter = new AbortController();
+    setBusy(true);
 
-        // replace placeholder
-        placeholder.text = images.length ? "เสร็จแล้ว ✅" : "เสร็จแล้ว แต่ไม่มีรูปกลับมา";
-        placeholder.imageUrls = images;
-        render();
-        scrollToBottom();
+    try{
+      const payload = {
+        prompt,
+        model: ui.model.value,
+        size: ui.size.value,
+        quality: ui.quality.value,
+        n: Math.max(1, Math.min(4, parseInt(ui.n.value || "1", 10)))
+      };
 
-      }catch(err){
-        placeholder.text = "เกิดข้อผิดพลาด: " + (err?.message || err);
-        placeholder.imageUrls = [];
-        render();
-        scrollToBottom();
-      }finally{
-        genBtn.disabled = false;
-        genBtn.textContent = "Generate";
+      const res = await fetch("/api/image", {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify(payload),
+        signal: state.aborter.signal
+      });
+
+      if(!res.ok){
+        const t = await res.text().catch(()=> "");
+        throw new Error(`API ${res.status}: ${t || res.statusText}`);
       }
+
+      const data = await res.json();
+      const images = Array.isArray(data.images) ? data.images : [];
+
+      botMsg.text = images.length ? "Done ✅" : "Done ✅ (no image returned)";
+      botMsg.images = images;
+
+      save();
+      renderAll();
+    }catch(e){
+      botMsg.text = (e.name === "AbortError")
+        ? "Stopped."
+        : ("Error: " + (e.message || e));
+      botMsg.images = [];
+      save();
+      renderAll();
+    }finally{
+      setBusy(false);
+      state.aborter = null;
     }
+  }
 
-    genBtn.addEventListener("click", generate);
-    clearBtn.addEventListener("click", ()=>{
-      state.messages = [];
-      render();
-      promptEl.focus();
-    });
+  function stop(){
+    if(state.aborter) state.aborter.abort();
+  }
 
-    promptEl.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter" && !e.shiftKey){
-        e.preventDefault();
-        generate();
-      }
-    });
+  // Download helper (for data URL / normal URL)
+  async function downloadImage(src, filename="image.png"){
+    try{
+      const a = document.createElement("a");
+      a.href = src;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }catch{}
+  }
 
-    // welcome
-    addMessage("bot", "สวัสดี 👋 พิมพ์ prompt แล้วกด Generate ได้เลย (Enter เพื่อส่ง, Shift+Enter ขึ้นบรรทัดใหม่)");
-  </script>
+  // ====== Events ======
+  ui.sendBtn.addEventListener("click", send);
+  ui.stopBtn.addEventListener("click", stop);
+
+  ui.prompt.addEventListener("keydown", (e) => {
+    if(e.key === "Enter" && !e.shiftKey){
+      e.preventDefault();
+      send();
+    }
+  });
+
+  ui.newChatBtn.addEventListener("click", () => createChat("New chat"));
+
+  ui.clearAllBtn.addEventListener("click", () => {
+    if(confirm("Clear all chats?")) clearAll();
+  });
+
+  ui.chatList.addEventListener("click", (e) => {
+    const del = e.target?.getAttribute?.("data-del");
+    if(del){
+      e.stopPropagation();
+      if(confirm("Delete this chat?")) deleteChat(del);
+      return;
+    }
+    const item = e.target.closest?.(".chatItem");
+    if(item){
+      state.activeChatId = item.getAttribute("data-id");
+      save();
+      renderAll();
+    }
+  });
+
+  ui.chat.addEventListener("click", (e) => {
+    const open = e.target?.getAttribute?.("data-open");
+    const dl = e.target?.getAttribute?.("data-dl");
+    if(open){
+      window.open(open, "_blank");
+    }
+    if(dl){
+      const name = e.target?.getAttribute?.("data-name") || "image.png";
+      downloadImage(dl, name);
+    }
+  });
+
+  // ====== Init ======
+  load();
+  if(!state.activeChatId && state.chats.length){
+    state.activeChatId = state.chats[0].id;
+  }
+  renderAll();
+</script>
 </body>
 </html>
