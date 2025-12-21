@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Image Chat</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --panel:#0f1620; --panel2:#0c131c;
+      --text:#e6edf3; --muted:#9aa4af; --border:#1f2a37;
+      --accent:#3b82f6; --accent2:#22c55e;
+      --bubbleUser:#13233a; --bubbleBot:#0f1a26;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans Thai", Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0; background:radial-gradient(900px 700px at 20% 0%, rgba(59,130,246,.18), transparent 55%),
+                     radial-gradient(900px 700px at 80% 0%, rgba(34,197,94,.12), transparent 55%),
+                     var(--bg); color:var(--text);}
+    .app{max-width:1050px; margin:0 auto; height:100vh; display:flex; flex-direction:column; padding:18px;}
+    header{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      padding:12px 14px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--border); border-radius:16px; box-shadow: var(--shadow);
+    }
+    .brand{display:flex; gap:10px; align-items:center;}
+    .logo{
+      width:34px; height:34px; border-radius:12px;
+      background:linear-gradient(135deg, rgba(59,130,246,.9), rgba(34,197,94,.8));
+      box-shadow:0 10px 24px rgba(59,130,246,.18);
+    }
+    .brand h1{font-size:15px; margin:0; letter-spacing:.2px}
+    .brand p{margin:0; font-size:12px; color:var(--muted)}
+    .controls{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
+    select, input[type="number"]{
+      background:var(--panel); color:var(--text);
+      border:1px solid var(--border); border-radius:12px; padding:9px 10px;
+      outline:none;
+    }
+    .chip{
+      display:flex; gap:8px; align-items:center;
+      border:1px solid var(--border); background:var(--panel2);
+      padding:8px 10px; border-radius:12px; color:var(--muted); font-size:12px;
+    }
+    .chip b{color:var(--text); font-weight:600}
+    main{
+      margin-top:14px;
+      border:1px solid var(--border); border-radius:18px; background:rgba(255,255,255,.02);
+      box-shadow: var(--shadow);
+      overflow:hidden; display:flex; flex-direction:column; min-height:0; flex:1;
+    }
+    .chat{
+      padding:18px 14px;
+      overflow:auto; min-height:0; flex:1;
+    }
+    .row{display:flex; margin:10px 0;}
+    .row.user{justify-content:flex-end}
+    .row.bot{justify-content:flex-start}
+    .bubble{
+      max-width:min(720px, 92%);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      padding:12px 12px;
+      background:var(--bubbleBot);
+      box-shadow:0 10px 22px rgba(0,0,0,.25);
+    }
+    .row.user .bubble{background:var(--bubbleUser)}
+    .meta{display:flex; gap:10px; align-items:center; justify-content:space-between; margin-bottom:6px;}
+    .who{font-size:12px; color:var(--muted)}
+    .time{font-size:11px; color:rgba(154,164,175,.75)}
+    .text{white-space:pre-wrap; line-height:1.45}
+    .imgWrap{margin-top:10px; border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,.08)}
+    .imgWrap img{display:block; width:100%; height:auto}
+    .hint{
+      font-size:12px; color:var(--muted);
+      padding:10px 14px; border-top:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    }
+    .composer{
+      display:flex; gap:10px; padding:12px; border-top:1px solid var(--border);
+      background:rgba(15,22,32,.65); backdrop-filter: blur(10px);
+      align-items:flex-end;
+    }
+    textarea{
+      width:100%; min-height:52px; max-height:160px; resize:vertical;
+      padding:12px 12px; border-radius:16px;
+      border:1px solid var(--border); background:var(--panel); color:var(--text);
+      outline:none; line-height:1.45;
+    }
+    .btn{
+      border:none; cursor:pointer; border-radius:14px; padding:12px 14px;
+      background:linear-gradient(135deg, rgba(59,130,246,.95), rgba(34,197,94,.80));
+      color:white; font-weight:700; min-width:118px;
+      box-shadow:0 14px 28px rgba(59,130,246,.18);
+    }
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+    .btn2{
+      border:1px solid var(--border); cursor:pointer; border-radius:14px; padding:12px 14px;
+      background:var(--panel2); color:var(--text); font-weight:600;
+    }
+    .spinner{
+      width:14px; height:14px; border-radius:999px; border:2px solid rgba(255,255,255,.35);
+      border-top-color:white; display:inline-block; animation:spin .9s linear infinite;
+      vertical-align:-2px; margin-right:8px;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .footerActions{display:flex; gap:10px}
+    @media (max-width:720px){
+      .controls{justify-content:flex-start}
+      .btn{min-width:110px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>AI Image Chat</h1>
+          <p>พิมพ์ prompt แล้วกด Generate เพื่อสร้างรูป</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <label class="chip">Model <b>
+          <select id="model">
+            <option value="gpt-image-1.5">gpt-image-1.5</option>
+            <option value="gpt-image-1">gpt-image-1</option>
+          </select>
+        </b></label>
+
+        <label class="chip">Size <b>
+          <select id="size">
+            <option value="1024x1024">1024×1024</option>
+            <option value="1024x1536">1024×1536</option>
+            <option value="1536x1024">1536×1024</option>
+          </select>
+        </b></label>
+
+        <label class="chip">Quality <b>
+          <select id="quality">
+            <option value="auto">auto</option>
+            <option value="high">high</option>
+            <option value="medium">medium</option>
+            <option value="low">low</option>
+          </select>
+        </b></label>
+
+        <label class="chip">N <b>
+          <input id="n" type="number" min="1" max="4" value="1" />
+        </b></label>
+      </div>
+    </header>
+
+    <main>
+      <div id="chat" class="chat"></div>
+
+      <div class="hint" id="hint">
+        🔐 ปลอดภัยสุด: อย่าใส่ API key ในหน้าเว็บ — ให้เรียกผ่าน <code>/api/image</code> (ดูตัวอย่าง backend ด้านล่าง)
+      </div>
+
+      <div class="composer">
+        <textarea id="prompt" placeholder="Describe the image you want… (ภาษาไทย/อังกฤษได้หมด)"></textarea>
+        <div class="footerActions">
+          <button class="btn2" id="clearBtn" title="Clear chat">ล้าง</button>
+          <button class="btn" id="genBtn">Generate</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const chatEl = document.getElementById("chat");
+    const promptEl = document.getElementById("prompt");
+    const genBtn = document.getElementById("genBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const modelEl = document.getElementById("model");
+    const sizeEl = document.getElementById("size");
+    const qualityEl = document.getElementById("quality");
+    const nEl = document.getElementById("n");
+
+    const state = {
+      messages: []
+    };
+
+    function nowTime(){
+      const d = new Date();
+      return d.toLocaleString("th-TH", { hour:"2-digit", minute:"2-digit" });
+    }
+
+    function addMessage(role, text, imageUrls = []){
+      const msg = { id: crypto.randomUUID(), role, text, imageUrls, t: nowTime() };
+      state.messages.push(msg);
+      render();
+      scrollToBottom();
+      return msg;
+    }
+
+    function scrollToBottom(){
+      requestAnimationFrame(()=>{ chatEl.scrollTop = chatEl.scrollHeight; });
+    }
+
+    function escapeHtml(s){
+      return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    }
+
+    function render(){
+      chatEl.innerHTML = state.messages.map(m => {
+        const who = m.role === "user" ? "You" : "AI";
+        const rowClass = m.role === "user" ? "row user" : "row bot";
+        const imgs = (m.imageUrls || []).map(url => `
+          <div class="imgWrap">
+            <img src="${escapeHtml(url)}" alt="generated image" loading="lazy" />
+          </div>
+        `).join("");
+
+        return `
+          <div class="${rowClass}">
+            <div class="bubble">
+              <div class="meta">
+                <div class="who">${who}</div>
+                <div class="time">${m.t}</div>
+              </div>
+              <div class="text">${escapeHtml(m.text || "")}</div>
+              ${imgs}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function generate(){
+      const prompt = promptEl.value.trim();
+      if(!prompt) return;
+
+      addMessage("user", prompt);
+      promptEl.value = "";
+
+      genBtn.disabled = true;
+      genBtn.innerHTML = `<span class="spinner"></span>Generating`;
+
+      const placeholder = addMessage("bot", "กำลังสร้างรูป…");
+
+      try{
+        const payload = {
+          prompt,
+          model: modelEl.value,
+          size: sizeEl.value,
+          quality: qualityEl.value,
+          n: Math.max(1, Math.min(4, parseInt(nEl.value || "1", 10)))
+        };
+
+        const res = await fetch("/api/image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if(!res.ok){
+          const t = await res.text().catch(()=> "");
+          throw new Error(`API error ${res.status}: ${t || res.statusText}`);
+        }
+
+        const data = await res.json();
+        // คาดหวัง: { images: ["data:image/png;base64,...", "https://..."] }
+        const images = Array.isArray(data.images) ? data.images : [];
+
+        // replace placeholder
+        placeholder.text = images.length ? "เสร็จแล้ว ✅" : "เสร็จแล้ว แต่ไม่มีรูปกลับมา";
+        placeholder.imageUrls = images;
+        render();
+        scrollToBottom();
+
+      }catch(err){
+        placeholder.text = "เกิดข้อผิดพลาด: " + (err?.message || err);
+        placeholder.imageUrls = [];
+        render();
+        scrollToBottom();
+      }finally{
+        genBtn.disabled = false;
+        genBtn.textContent = "Generate";
+      }
+    }
+
+    genBtn.addEventListener("click", generate);
+    clearBtn.addEventListener("click", ()=>{
+      state.messages = [];
+      render();
+      promptEl.focus();
+    });
+
+    promptEl.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        generate();
+      }
+    });
+
+    // welcome
+    addMessage("bot", "สวัสดี 👋 พิมพ์ prompt แล้วกด Generate ได้เลย (Enter เพื่อส่ง, Shift+Enter ขึ้นบรรทัดใหม่)");
+  </script>
+</body>
+</html>
