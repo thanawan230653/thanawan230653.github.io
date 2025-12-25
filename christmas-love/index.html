@@ -2,503 +2,53 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Merry Christmas 💙</title>
-  <style>
-    :root{
-      --glass: rgba(0,0,0,.62);
-      --radius: 22px;
-      --btn: #e63946;
-      --btn2:#457b9d;
-      --text:#ffffff;
-      --muted: rgba(255,255,255,.78);
-    }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      min-height:100vh;
-      font-family: system-ui,-apple-system,"Prompt",sans-serif;
-      color:var(--text);
-      background: url("assets/jack.png") center/cover no-repeat fixed;
-      overflow-x:hidden;
-    }
-
-    /* Snow canvas */
-    #snowCanvas{
-      position:fixed; inset:0;
-      width:100vw; height:100vh;
-      z-index:0;
-      pointer-events:none;
-    }
-
-    .wrap{
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 26px 14px;
-      position:relative;
-      z-index:1;
-    }
-
-    .card{
-      width:min(560px, 94vw);
-      background: var(--glass);
-      border-radius: var(--radius);
-      padding: 22px 18px;
-      box-shadow: 0 18px 50px rgba(0,0,0,.35);
-      backdrop-filter: blur(6px);
-    }
-
-    .logo{
-      width:110px;
-      display:block;
-      margin: 0 auto 10px;
-      filter: drop-shadow(0 8px 14px rgba(0,0,0,.35));
-    }
-
-    h1{ margin: 6px 0 4px; font-size: 28px; }
-    h2{ margin: 10px 0 12px; font-size: 20px; line-height:1.3; }
-    p{ margin: 8px 0; color: var(--muted); }
-
-    .row{
-      display:flex; gap:10px; flex-wrap:wrap;
-      justify-content:center;
-    }
-
-    .progress{
-      font-size: 12px;
-      opacity:.85;
-      margin-top: 6px;
-    }
-
-    input, select, textarea{
-      width: 100%;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: none;
-      outline: none;
-      font-size: 15px;
-      margin: 10px 0 8px;
-    }
-    textarea{ min-height: 88px; resize: vertical; }
-
-    button{
-      border:none;
-      cursor:pointer;
-      padding: 12px 18px;
-      border-radius: 999px;
-      color:#fff;
-      font-size: 15px;
-      background: var(--btn);
-      box-shadow: 0 10px 22px rgba(0,0,0,.25);
-      transition: transform .08s ease;
-    }
-    button:active{ transform: scale(.98); }
-    .btn2{ background: var(--btn2); }
-    .btnGhost{
-      background: transparent;
-      border: 1px solid rgba(255,255,255,.35);
-      box-shadow:none;
-    }
-
-    .mini{
-      font-size: 12px;
-      opacity:.85;
-      margin-top: 12px;
-      line-height:1.4;
-      color: rgba(255,255,255,.75);
-    }
-    .footer{
-      margin-top: 14px;
-      font-size: 12px;
-      opacity:.8;
-    }
-
-    /* Fade transition */
-    .fadeOut{ animation: fadeOut .18s ease forwards; }
-    .fadeIn{ animation: fadeIn .22s ease forwards; }
-    @keyframes fadeOut{ to{ opacity:0; transform: translateY(6px); } }
-    @keyframes fadeIn{ from{ opacity:0; transform: translateY(-6px); } to{ opacity:1; transform: translateY(0); } }
-
-    /* Choice chips */
-    .chip{
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.18);
-      color: #fff;
-      cursor:pointer;
-      user-select:none;
-    }
-    .chip.active{
-      background: rgba(230,57,70,.35);
-      border-color: rgba(230,57,70,.75);
-    }
-
-    .hr{
-      height:1px;
-      background: rgba(255,255,255,.18);
-      margin: 14px 0;
-      border:0;
-    }
-
-    .danger{
-      color: #ffd6d6;
-      font-size: 13px;
-      margin-top: 6px;
-      display:none;
-    }
-
-    /* Keep audio hidden */
-    audio{ display:none; }
-  </style>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#c62828" />
+  <title>Christmas Love Quiz</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 
 <body>
-  <canvas id="snowCanvas"></canvas>
+  <!-- Snow layer -->
+  <canvas id="snow" aria-hidden="true"></canvas>
 
-  <div class="wrap">
-    <div class="card" id="card">
-      <img class="logo" src="assets/logo.png" alt="logo" onerror="this.style.display='none'">
-      <div id="app"></div>
-      <div class="footer">จัดทำโดย PAT Studio</div>
-    </div>
-  </div>
-
-  <audio id="bgm" loop preload="auto">
-    <source src="assets/tot.mp3" type="audio/mpeg">
+  <!-- Music (เล่นได้หลัง user click ครั้งแรก ตามกฎเบราว์เซอร์) -->
+  <audio id="bgm" preload="auto" crossorigin="anonymous">
+    <source src="https://raw.githubusercontent.com/thanawan230653/poto/refs/heads/main/tot.mp3" type="audio/mpeg">
   </audio>
 
-<script>
-(() => {
-  // ====== Config ======
-  const NOTE_NOLOG = "*เว็บนี้เป็นไฟล์สแตติกบน GitHub Pages ไม่เก็บข้อมูล/ไม่เก็บ log ผู้ใช้งาน (ไม่มี cookies, ไม่มี localStorage, ไม่มี analytics)";
-  const SANTA_TEXT = "💬 ระวังซานต้าจะมาแซลนะอิอิ 😝";
-
-  // ====== Questions ======
-  const questions = [
-    { key:"myName",   title:"ชื่อคุณคืออะไร 💕", type:"text", placeholder:"ชื่อเล่น/ชื่อจริงก็ได้" },
-    { key:"loverName",title:"ชื่อแฟน / คนที่ชอบ 🎁", type:"text", placeholder:"พิมพ์ชื่อเขา..." },
-    { key:"age",      title:"อายุเขาเท่าไหร่ 🎂", type:"number", placeholder:"เช่น 18" },
-    { key:"status",   title:"คบกันยัง 😆", type:"choice", options:["กำลังคุย","คบแล้ว","แอบชอบ","ไม่บอกก็ได้"] },
-    { key:"vibe",     title:"หล่อไหม / ติ๋มไหม 😝", type:"choice", options:["หล่อมาก","น่ารักมาก","ติ๋มนิดๆ","เท่จัด","ขี้เล่น","ไม่ระบุ"] },
-    { key:"where",    title:"เจอกันที่ไหน 🤍", type:"text", placeholder:"เช่น โรงเรียน / ที่ทำงาน / เกม" },
-    { key:"reason",   title:"ทำไมถึงชอบเขา 💖", type:"textarea", placeholder:"พิมพ์เหตุผลน่ารักๆ" },
-    { key:"myFb",     title:"ชื่อเฟสคุณ (ไม่ระบุก็ได้)", type:"text", placeholder:"ใส่หรือข้ามได้" },
-    { key:"loverFb",  title:"ชื่อเฟสแฟน (ไม่ระบุก็ได้)", type:"text", placeholder:"ใส่หรือข้ามได้" },
-  ];
-
-  // ====== State ======
-  const app = document.getElementById("app");
-  const card = document.getElementById("card");
-  const bgm = document.getElementById("bgm");
-
-  let i = 0;
-  let answers = {};
-
-  // ====== Helpers ======
-  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, m => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  }[m]));
-  const safe = (v) => (v && String(v).trim() !== "" && v !== "-" ? String(v).trim() : "ไม่ระบุ");
-
-  function transition(renderFn){
-    card.classList.remove("fadeIn");
-    card.classList.add("fadeOut");
-    setTimeout(() => {
-      renderFn();
-      card.classList.remove("fadeOut");
-      card.classList.add("fadeIn");
-      burstSnow(22);
-    }, 170);
-  }
-
-  function burstSnow(extra = 20){
-    snow.burst(extra);
-  }
-
-  // ====== UI Renders ======
-  function renderStart(){
-    app.innerHTML = `
-      <h1>🎄 Merry Christmas 🎁</h1>
-      <p>แบบทดสอบน่ารักๆ ไว้ส่งให้คนที่ชอบ</p>
-      <div class="row" style="margin-top:14px">
-        <button id="startBtn">เริ่มเลย ❄️</button>
-        <button id="muteBtn" class="btnGhost" title="ปิด/เปิดเพลง">🔊</button>
-      </div>
-      <p class="mini">${esc(NOTE_NOLOG)}</p>
-    `;
-
-    let muted = false;
-    const muteBtn = document.getElementById("muteBtn");
-    muteBtn.onclick = () => {
-      muted = !muted;
-      bgm.muted = muted;
-      muteBtn.textContent = muted ? "🔇" : "🔊";
-    };
-
-    document.getElementById("startBtn").onclick = async () => {
-      // เพลงต้องเริ่มหลัง user interaction ถึงจะชัวร์
-      try { await bgm.play(); } catch(e) { /* ถ้าโดนบล็อกก็ไม่พัง */ }
-      i = 0; answers = {};
-      transition(renderQuestion);
-    };
-  }
-
-  function renderQuestion(){
-    const q = questions[i];
-    const progress = `คำถาม ${i+1} / ${questions.length}`;
-
-    let inputHtml = "";
-    if(q.type === "text" || q.type === "number"){
-      inputHtml = `<input id="inp" type="${q.type}" placeholder="${esc(q.placeholder||"")}" />`;
-    } else if(q.type === "textarea"){
-      inputHtml = `<textarea id="inp" placeholder="${esc(q.placeholder||"")}"></textarea>`;
-    } else if(q.type === "choice"){
-      inputHtml = `
-        <div class="row" id="chips" style="margin-top:8px">
-          ${q.options.map(opt => `<div class="chip" data-v="${esc(opt)}">${esc(opt)}</div>`).join("")}
-        </div>
-        <input id="inp" type="hidden" value="">
-      `;
-    }
-
-    app.innerHTML = `
-      <div class="progress">${esc(progress)}</div>
-      <h2>${esc(q.title)}</h2>
-      ${inputHtml}
-      <div id="warn" class="danger">พิมพ์นิดนึงก็ได้ หรือกด "ข้าม" ได้เลยนะ 🙂</div>
-
-      <div class="row" style="margin-top:10px">
-        <button id="okBtn">ยืนยัน ❄️</button>
-        <button id="skipBtn" class="btn2">ข้าม</button>
-        ${i>0 ? `<button id="backBtn" class="btnGhost">ย้อนกลับ</button>` : ``}
+  <main class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <span class="dot"></span>
+        <span>Christmas Love Quiz</span>
       </div>
 
-      <p class="mini">${esc(NOTE_NOLOG)}</p>
-    `;
-
-    // Choice behavior
-    if(q.type === "choice"){
-      const chips = document.getElementById("chips");
-      const hidden = document.getElementById("inp");
-      chips.addEventListener("click", (e) => {
-        const el = e.target.closest(".chip");
-        if(!el) return;
-        [...chips.querySelectorAll(".chip")].forEach(c => c.classList.remove("active"));
-        el.classList.add("active");
-        hidden.value = el.dataset.v || "";
-      });
-    }
-
-    const warn = document.getElementById("warn");
-    const getVal = () => (document.getElementById("inp").value ?? "").trim();
-
-    function goNext(val){
-      answers[q.key] = val && val !== "" ? val : "-";
-      i++;
-      if(i < questions.length) transition(renderQuestion);
-      else transition(renderSummary);
-    }
-
-    document.getElementById("okBtn").onclick = () => {
-      const v = getVal();
-      // ไม่บังคับกรอก แต่ถ้าว่างมากๆ ให้เตือนนิด
-      if(v === ""){
-        warn.style.display = "block";
-        burstSnow(10);
-        // ยังให้ไปต่อได้ถ้ากดอีกที
-        setTimeout(() => warn.style.display = "none", 1400);
-        goNext("-");
-      } else {
-        goNext(v);
-      }
-    };
-
-    document.getElementById("skipBtn").onclick = () => goNext("-");
-
-    const backBtn = document.getElementById("backBtn");
-    if(backBtn){
-      backBtn.onclick = () => {
-        i = Math.max(0, i-1);
-        transition(renderQuestion);
-      };
-    }
-  }
-
-  function renderSummary(){
-    app.innerHTML = `
-      <h2>🎄 สรุปของคุณ 🎁</h2>
-
-      <div style="text-align:left; line-height:1.8; margin-top:10px">
-        <div>👤 ชื่อคุณ: <b>${esc(safe(answers.myName))}</b></div>
-        <div>🎁 คนที่ชอบ: <b>${esc(safe(answers.loverName))}</b></div>
-        <div>🎂 อายุ: <b>${esc(safe(answers.age))}</b></div>
-        <div>💞 สถานะ: <b>${esc(safe(answers.status))}</b></div>
-        <div>😝 หล่อ/ติ๋ม: <b>${esc(safe(answers.vibe))}</b></div>
-        <div>🤍 เจอกันที่: <b>${esc(safe(answers.where))}</b></div>
-        <div>💖 เหตุผล: <b>${esc(safe(answers.reason))}</b></div>
-        <div>📘 ชื่อเฟสคุณ: <b>${esc(safe(answers.myFb))}</b></div>
-        <div>📗 ชื่อเฟสเขา: <b>${esc(safe(answers.loverFb))}</b></div>
+      <div class="top-actions">
+        <button class="chip" data-action="toggle-snow" type="button">
+          <span class="chip-ico">❄️</span><span>Snow</span>
+        </button>
+        <button class="chip" data-action="toggle-music" type="button">
+          <span class="chip-ico">🎵</span><span>Music</span>
+        </button>
+        <button class="chip" data-action="copy-summary" type="button">
+          <span class="chip-ico">📋</span><span>Copy</span>
+        </button>
       </div>
+    </header>
 
-      <div class="hr"></div>
+    <section id="app" class="app" aria-live="polite"></section>
 
-      <p style="margin-top:10px">${esc(SANTA_TEXT)}</p>
-      <p class="mini">*ทำไว้เล่นขำๆ ส่งให้คนพิเศษเท่านั้น</p>
-      <p class="mini">${esc(NOTE_NOLOG)}</p>
-
-      <div class="row" style="margin-top:12px">
-        <button id="againBtn">ทำใหม่อีกรอบ ❄️</button>
-        <button id="stopMusicBtn" class="btnGhost">ปิดเพลง</button>
+    <footer class="footer">
+      <div class="fine">
+        ทำขำๆ เอาไว้แคป/คัดลอกส่งให้คนที่ชอบได้เลย — ทุกอย่างทำงานในเบราว์เซอร์บน GitHub Pages
       </div>
-    `;
+      <div class="madeby">จัดทำโดย <b>PAT Studlo</b></div>
+    </footer>
+  </main>
 
-    document.getElementById("againBtn").onclick = () => {
-      i = 0; answers = {};
-      burstSnow(30);
-      transition(renderQuestion);
-    };
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    document.getElementById("stopMusicBtn").onclick = () => {
-      bgm.pause();
-      bgm.currentTime = 0;
-      burstSnow(12);
-    };
-  }
-
-  // ====== Snow (Canvas, snowflake-like) ======
-  const snow = (() => {
-    const c = document.getElementById("snowCanvas");
-    const ctx = c.getContext("2d", { alpha:true });
-    let w=0,h=0,dpr=1;
-
-    const flakes = [];
-    let baseSpawn = 2; // per frame-ish (scaled in tick)
-    let burstLeft = 0;
-
-    function resize(){
-      dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
-      w = Math.floor(window.innerWidth);
-      h = Math.floor(window.innerHeight);
-      c.width = w*dpr;
-      c.height= h*dpr;
-      c.style.width = w+"px";
-      c.style.height= h+"px";
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-    }
-
-    function addFlake(count=1){
-      for(let k=0;k<count;k++){
-        flakes.push({
-          x: Math.random()*w,
-          y: -20 - Math.random()*h*0.2,
-          s: 4 + Math.random()*10,          // size
-          vy: 0.7 + Math.random()*1.8,
-          vx: -0.5 + Math.random()*1.0,
-          rot: Math.random()*Math.PI*2,
-          vr: (-0.01 + Math.random()*0.02),
-          a: 0.35 + Math.random()*0.6
-        });
-      }
-    }
-
-    function drawSnowflake(x,y,size,rot,alpha){
-      ctx.save();
-      ctx.translate(x,y);
-      ctx.rotate(rot);
-      ctx.globalAlpha = alpha;
-
-      // main 6 arms
-      ctx.strokeStyle = "rgba(255,255,255,.95)";
-      ctx.lineWidth = Math.max(1, size/10);
-
-      for(let n=0;n<6;n++){
-        ctx.rotate(Math.PI/3);
-        ctx.beginPath();
-        ctx.moveTo(0,0);
-        ctx.lineTo(0,-size);
-        ctx.stroke();
-
-        // small branches
-        ctx.beginPath();
-        ctx.moveTo(0,-size*0.55);
-        ctx.lineTo(size*0.18,-size*0.65);
-        ctx.moveTo(0,-size*0.55);
-        ctx.lineTo(-size*0.18,-size*0.65);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(0,-size*0.78);
-        ctx.lineTo(size*0.14,-size*0.88);
-        ctx.moveTo(0,-size*0.78);
-        ctx.lineTo(-size*0.14,-size*0.88);
-        ctx.stroke();
-      }
-
-      // center dot
-      ctx.fillStyle = "rgba(255,255,255,.95)";
-      ctx.beginPath();
-      ctx.arc(0,0,Math.max(1.2,size*0.08),0,Math.PI*2);
-      ctx.fill();
-
-      ctx.restore();
-    }
-
-    function tick(){
-      ctx.clearRect(0,0,w,h);
-
-      // spawn
-      let spawn = baseSpawn;
-      if(burstLeft > 0){
-        spawn += 6;
-        burstLeft--;
-      }
-      // adapt spawn to screen size
-      const target = Math.floor((w*h)/160000); // ~1-6
-      spawn += target;
-
-      addFlake(Math.min(10, spawn));
-
-      // update + draw
-      for(let idx=flakes.length-1; idx>=0; idx--){
-        const f = flakes[idx];
-        f.x += f.vx;
-        f.y += f.vy;
-        f.rot += f.vr;
-
-        // wrap
-        if(f.x < -30) f.x = w+30;
-        if(f.x > w+30) f.x = -30;
-
-        drawSnowflake(f.x, f.y, f.s, f.rot, f.a);
-
-        // remove when out
-        if(f.y > h + 40) flakes.splice(idx,1);
-      }
-
-      // keep array size reasonable
-      if(flakes.length > 650) flakes.splice(0, flakes.length - 650);
-
-      requestAnimationFrame(tick);
-    }
-
-    function burst(extra=20){
-      burstLeft = Math.min(35, burstLeft + Math.floor(extra/2));
-      addFlake(extra);
-    }
-
-    window.addEventListener("resize", resize);
-    resize();
-    tick();
-
-    return { burst };
-  })();
-
-  // ====== Start ======
-  renderStart();
-})();
-</script>
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
