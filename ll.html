@@ -1,194 +1,334 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Image Converter GUI (Single File)</title>
 
 <style>
-    body {
-        background-color: #c0c0c0;
-        font-family: Tahoma, Verdana, Arial, sans-serif;
-        font-size: 14px;
-        color: #000;
-        margin: 0;
-        padding: 20px;
-    }
+  body{
+    background:#c0c0c0;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    font-size:14px;
+    color:#000;
+    margin:0;
+    padding:20px;
+  }
 
-    .window {
-        background: #e0e0e0;
-        border: 2px solid #000;
-        box-shadow: inset -2px -2px #808080, inset 2px 2px #ffffff;
-        max-width: 820px;
-        margin: auto;
-        padding: 10px;
-    }
+  .window{
+    position:relative;
+    background:#e0e0e0;
+    border:2px solid #000;
+    box-shadow: inset -2px -2px #808080, inset 2px 2px #ffffff;
+    max-width:900px;
+    margin:auto;
+    padding:10px;
+    overflow:hidden;
+  }
 
-    .title-bar {
-        background: #000080;
-        color: #fff;
-        padding: 6px 10px;
-        font-weight: bold;
-        letter-spacing: 1px;
-    }
+  .title-bar{
+    background:#000080;
+    color:#fff;
+    padding:6px 10px;
+    font-weight:bold;
+    letter-spacing:1px;
+    border:1px solid #000;
+    box-shadow: inset 1px 1px #4d4dff, inset -1px -1px #00004d;
+  }
 
-    .content {
-        padding: 15px;
-    }
+  .menu-bar{
+    background:#dcdcdc;
+    border:2px solid #808080;
+    box-shadow: inset 2px 2px #ffffff, inset -2px -2px #808080;
+    padding:6px 8px;
+    margin:10px 0;
+    font-size:13px;
+  }
 
-    h2 {
-        margin-top: 20px;
-        font-size: 16px;
-        border-bottom: 1px solid #000;
-        padding-bottom: 4px;
-    }
+  .menu-bar a{
+    color:#000;
+    text-decoration:none;
+    font-weight:bold;
+    margin-right:10px;
+  }
+  .menu-bar a:hover{ text-decoration:underline; }
 
-    ul {
-        margin: 10px 0 10px 20px;
-    }
+  .content{
+    padding:15px;
+    position:relative;
+    z-index:2;
+  }
 
-    li {
-        margin-bottom: 6px;
-    }
+  /* รูปตกแต่งแบบร่างๆ / ร่วงๆ */
+  .bg-art{
+    position:absolute;
+    right:-60px;
+    bottom:-60px;
+    width:360px;
+    opacity:0.14;
+    transform: rotate(-8deg);
+    filter: grayscale(55%) blur(0.3px);
+    z-index:1;
+    pointer-events:none;
+  }
+  .bg-art2{
+    position:absolute;
+    left:-70px;
+    top:110px;
+    width:270px;
+    opacity:0.10;
+    transform: rotate(10deg);
+    filter: grayscale(60%) blur(0.5px);
+    z-index:1;
+    pointer-events:none;
+  }
+  .bg-art3{
+    position:absolute;
+    left:260px;
+    top:-40px;
+    width:220px;
+    opacity:0.08;
+    transform: rotate(-14deg);
+    filter: grayscale(70%) blur(0.6px);
+    z-index:1;
+    pointer-events:none;
+  }
 
-    .box {
-        background: #f5f5f5;
-        border: 2px solid #808080;
-        box-shadow: inset 2px 2px #ffffff, inset -2px -2px #808080;
-        padding: 10px;
-        margin: 15px 0;
-    }
+  h2{
+    margin-top:20px;
+    font-size:16px;
+    border-bottom:1px solid #000;
+    padding-bottom:4px;
+  }
+  h3{
+    margin:14px 0 6px 0;
+    font-size:14px;
+  }
 
-    .btn {
-        display: inline-block;
-        background: #dcdcdc;
-        border: 2px solid #000;
-        box-shadow: inset 2px 2px #ffffff, inset -2px -2px #808080;
-        padding: 6px 12px;
-        font-weight: bold;
-        text-decoration: none;
-        color: #000;
-        margin-top: 10px;
-    }
+  p{ line-height:1.5; }
 
-    .btn:hover {
-        background: #c0c0c0;
-    }
+  ul{
+    margin:10px 0 10px 20px;
+    padding:0;
+  }
+  li{ margin-bottom:6px; }
 
-    .footer {
-        margin-top: 20px;
-        font-size: 12px;
-        color: #333;
-        text-align: center;
-    }
+  .box{
+    background:#f5f5f5;
+    border:2px solid #808080;
+    box-shadow: inset 2px 2px #ffffff, inset -2px -2px #808080;
+    padding:10px;
+    margin:15px 0;
+  }
 
-    code {
-        background: #000;
-        color: #00ff00;
-        padding: 2px 4px;
-        font-family: "Courier New", monospace;
-    }
+  .btn{
+    display:inline-block;
+    background:#dcdcdc;
+    border:2px solid #000;
+    box-shadow: inset 2px 2px #ffffff, inset -2px -2px #808080;
+    padding:6px 12px;
+    font-weight:bold;
+    text-decoration:none;
+    color:#000;
+    margin-top:10px;
+  }
+  .btn:hover{ background:#c0c0c0; }
+
+  code{
+    background:#000;
+    color:#00ff00;
+    padding:2px 4px;
+    font-family:"Courier New", monospace;
+    font-size:13px;
+  }
+
+  .tag{
+    display:inline-block;
+    padding:2px 6px;
+    background:#fff;
+    border:1px solid #000;
+    margin:3px 4px 0 0;
+    font-size:12px;
+  }
+
+  .footer{
+    margin-top:25px;
+    font-size:12px;
+    color:#333;
+    text-align:center;
+    border-top:1px dashed #555;
+    padding-top:10px;
+  }
+  .credit{
+    margin-top:4px;
+    font-style:italic;
+    color:#222;
+  }
+
+  .note{
+    font-size:12px;
+    color:#222;
+    margin-top:6px;
+  }
 </style>
 </head>
 
 <body>
-
 <div class="window">
-    <div class="title-bar">
-        IMAGE CONVERTER GUI - SINGLE FILE
+
+  <!-- รูปตกแต่ง -->
+  <img class="bg-art"
+    src="https://raw.githubusercontent.com/thanawan230653/img/refs/heads/main/%F0%9F%93%8E%20%20%E2%87%84%20%20%DB%AB%20%20%20%ED%98%9C%EC%9B%90%20%20%20%D7%9E%20%20%20%E0%BB%91%20%20%20%20%20%CC%A0%20%20%20%DD%83.jpg"
+    alt="decorative art" />
+  <img class="bg-art2"
+    src="https://raw.githubusercontent.com/thanawan230653/img/refs/heads/main/%F0%9F%93%8E%20%20%E2%87%84%20%20%DB%AB%20%20%20%ED%98%9C%EC%9B%90%20%20%20%D7%9E%20%20%20%E0%BB%91%20%20%20%20%20%CC%A0%20%20%20%DD%83.jpg"
+    alt="decorative art 2" />
+  <img class="bg-art3"
+    src="https://raw.githubusercontent.com/thanawan230653/img/refs/heads/main/%F0%9F%93%8E%20%20%E2%87%84%20%20%DB%AB%20%20%20%ED%98%9C%EC%9B%90%20%20%20%D7%9E%20%20%20%E0%BB%91%20%20%20%20%20%CC%A0%20%20%20%DD%83.jpg"
+    alt="decorative art 3" />
+
+  <div class="title-bar">IMAGE CONVERTER GUI - SINGLE FILE</div>
+
+  <div class="menu-bar">
+    MENU:
+    <a href="#about">ABOUT</a>
+    <a href="#features">FEATURES</a>
+    <a href="#notinclude">NOT INCLUDE</a>
+    <a href="#forwho">FOR WHO</a>
+    <a href="#download">DOWNLOAD</a>
+  </div>
+
+  <div class="content" id="about">
+    <p>
+      <strong>หน้าที่หลักของโปรแกรมนี้</strong><br>
+      แปลงรูป + ปรับขนาดรูป แบบใช้ง่าย คลิกไม่กี่ครั้ง (GUI)<br>
+      ทำงานทั้งหมดในเครื่องคุณ (Local only) ไม่อัปโหลดไปไหน
+    </p>
+
+    <div class="box">
+      <strong>ทำงานทั้งหมดในเครื่องคุณ (Local only)</strong><br>
+      ✅ ไม่อัปโหลดรูปไปที่ไหน<br>
+      ✅ ไม่มีโฆษณา / แอด / tracking
+      <div class="note">
+        <span class="tag">FAST</span>
+        <span class="tag">SIMPLE</span>
+        <span class="tag">OFFLINE</span>
+        <span class="tag">SINGLE FILE</span>
+      </div>
     </div>
 
-    <div class="content">
+    <h2 id="features">✅ สิ่งที่โปรแกรมทำได้</h2>
 
-        <p>
-            โปรแกรมแปลงรูป + ปรับขนาดรูป<br>
-            ออกแบบมาให้ใช้ง่าย คลิกไม่กี่ครั้ง เหมือนโปรแกรมยุคเก่า
-        </p>
+    <h3>1️⃣ เลือกรูป (ได้ทีละ 1 ไฟล์)</h3>
+    <ul>
+      <li>เลือกรูปจากเครื่อง (PNG / JPG / WEBP / BMP / TIFF / ICO)</li>
+      <li>หรือ โหลดจาก URL</li>
+      <li>วิธีวางลิงก์: <strong>คลิกช่อง URL</strong> → <strong>คลิกขวา</strong> → <strong>วางลิงก์</strong></li>
+      <li>แสดงชื่อไฟล์ที่เลือกแบบสั้น ไม่รก</li>
+    </ul>
 
-        <div class="box">
-            <strong>ทำงานทั้งหมดในเครื่องคุณ (Local only)</strong><br>
-            ❌ ไม่อัปโหลดรูปไปที่ไหน<br>
-            ❌ ไม่มีโฆษณา / tracking / แอบส่งข้อมูล
-        </div>
+    <h3>2️⃣ แปลงนามสกุลรูป (Format)</h3>
+    <ul>
+      <li>แปลงได้เป็น:</li>
+      <li>PNG</li>
+      <li>JPG / JPEG</li>
+      <li>WEBP</li>
+      <li>BMP</li>
+      <li>TIFF</li>
+      <li>ICO (128×128) → ใช้ทำไอคอน</li>
+      <li>PDF (รูปเดียว)</li>
+    </ul>
 
-        <h2>✅ สิ่งที่โปรแกรมทำได้</h2>
+    <h3>3️⃣ ปรับคุณภาพรูป (Quality)</h3>
+    <ul>
+      <li>ใช้กับ JPG / WEBP</li>
+      <li>ปรับได้ตั้งแต่คุณภาพต่ำ → สูง</li>
+      <li>ช่วยลดขนาดไฟล์ได้เยอะ</li>
+    </ul>
 
-        <h3>1️⃣ เลือกรูป (ทีละ 1 ไฟล์)</h3>
+    <h3>4️⃣ Resize รูป (มีแค่ Preset เดียว ใช้ง่าย)</h3>
+    <ul>
+      <li>เลือกใส่:
         <ul>
-            <li>เลือกรูปจากเครื่อง (PNG / JPG / WEBP / BMP / TIFF / ICO)</li>
-            <li>หรือโหลดจาก URL</li>
-            <li>คลิกช่อง URL → คลิกขวา → วางลิงก์</li>
-            <li>แสดงชื่อไฟล์แบบสั้น ไม่รก</li>
+          <li>Width (กว้าง)</li>
+          <li>Height (สูง)</li>
+          <li>(เว้นว่าง = ไม่ resize)</li>
         </ul>
-
-        <h3>2️⃣ แปลงนามสกุลรูป (Format)</h3>
+      </li>
+      <li>เลือกโหมด:
         <ul>
-            <li>PNG</li>
-            <li>JPG / JPEG</li>
-            <li>WEBP</li>
-            <li>BMP</li>
-            <li>TIFF</li>
-            <li>ICO (128×128) สำหรับทำไอคอน</li>
-            <li>PDF (รูปเดียว)</li>
+          <li><strong>Fit</strong> → คงสัดส่วน (แนะนำ)</li>
+          <li><strong>Stretch</strong> → ยืดตามขนาดที่ใส่</li>
+          <li><strong>Fill</strong> → เต็มกรอบ + ครอปตรงกลาง</li>
         </ul>
+      </li>
+      <li>📌 จำกัดขนาดสูงสุดไม่เกิน <code>3840×2160</code> กันพลาด</li>
+    </ul>
 
-        <h3>3️⃣ ปรับคุณภาพรูป (Quality)</h3>
+    <h3>5️⃣ บันทึกผลลัพธ์</h3>
+    <ul>
+      <li>เลือกได้ 2 แบบ:
         <ul>
-            <li>ใช้กับ JPG / WEBP</li>
-            <li>ลดขนาดไฟล์ได้มาก</li>
+          <li>📁 บันทึกลงโฟลเดอร์</li>
+          <li>📦 บันทึกเป็นไฟล์ ZIP</li>
         </ul>
+      </li>
+      <li>ชื่อไฟล์จะตั้งให้อัตโนมัติ: <code>ชื่อเดิม_ขนาด_เวลา.ext</code></li>
+    </ul>
 
-        <h3>4️⃣ Resize รูป (Preset เดียว)</h3>
-        <ul>
-            <li>ใส่ Width / Height (เว้นว่าง = ไม่ resize)</li>
-            <li><strong>Fit</strong> – คงสัดส่วน (แนะนำ)</li>
-            <li><strong>Stretch</strong> – ยืดตามขนาด</li>
-            <li><strong>Fill</strong> – เต็มกรอบ + ครอปกลาง</li>
-            <li>จำกัดสูงสุด <code>3840×2160</code></li>
-        </ul>
+    <h3>6️⃣ ทำเป็นไฟล์ .exe ได้</h3>
+    <ul>
+      <li>แปลงเป็น .exe</li>
+      <li>เครื่องอื่น ไม่ต้องลง Python</li>
+      <li>ดับเบิลคลิกเปิดได้เลยเหมือนโปรแกรมทั่วไป</li>
+    </ul>
 
-        <h3>5️⃣ บันทึกผลลัพธ์</h3>
-        <ul>
-            <li>📁 บันทึกลงโฟลเดอร์</li>
-            <li>📦 บันทึกเป็น ZIP</li>
-            <li>ชื่อไฟล์อัตโนมัติ: <code>ชื่อเดิม_ขนาด_เวลา.ext</code></li>
-        </ul>
+    <h2 id="notinclude">❌ สิ่งที่ “ตั้งใจไม่ใส่”</h2>
+    <div class="note">(เพื่อให้โปรแกรมเบา ใช้ง่าย)</div>
+    <ul>
+      <li>❌ เลือกหลายไฟล์พร้อมกัน</li>
+      <li>❌ Preset หลายชุด</li>
+      <li>❌ อัปโหลดขึ้นเซิร์ฟเวอร์</li>
+      <li>❌ โฆษณา / แอด / tracking</li>
+    </ul>
 
-        <h3>6️⃣ ทำเป็นไฟล์ .exe</h3>
-        <ul>
-            <li>เครื่องอื่นไม่ต้องลง Python</li>
-            <li>ดับเบิลคลิกใช้งานได้ทันที</li>
-        </ul>
+    <h2 id="forwho">🧠 เหมาะกับใคร</h2>
+    <ul>
+      <li>คนอยาก แปลงรูปเร็วๆ</li>
+      <li>ทำไอคอน .ico</li>
+      <li>ลดขนาดรูปก่อนอัปโหลด</li>
+      <li>เอาไปแจกคนอื่นเป็น .exe</li>
+      <li>ไม่อยากใช้เว็บแปลงรูป</li>
+    </ul>
 
-        <h2>❌ สิ่งที่ตั้งใจไม่ใส่</h2>
-        <ul>
-            <li>เลือกหลายไฟล์พร้อมกัน</li>
-            <li>Preset หลายชุด</li>
-            <li>อัปโหลดขึ้นเซิร์ฟเวอร์</li>
-            <li>โฆษณา / แอด / tracking</li>
-        </ul>
-
-        <h2>🧠 เหมาะกับใคร</h2>
-        <ul>
-            <li>คนอยากแปลงรูปเร็วๆ</li>
-            <li>ทำไอคอน .ico</li>
-            <li>ลดขนาดรูปก่อนอัปโหลด</li>
-            <li>แจกโปรแกรมเป็นไฟล์ .exe</li>
-            <li>ไม่อยากใช้เว็บแปลงรูป</li>
-        </ul>
-
-        <div class="box">
-            <strong>ดาวน์โหลดโปรแกรม</strong><br><br>
-            <a class="btn" href="http://49.228.131.69:3661/Tools/image_converter_gui_singlefile.exe">
-                DOWNLOAD .EXE
-            </a>
-        </div>
-
-        <div class="footer">
-            Image Converter GUI – Single File Edition<br>
-            Old school • Simple • Offline
-        </div>
-
+    <div class="box">
+      <strong>ถ้าคุณอยากเพิ่มความสามารถ เช่น</strong>
+      <ul>
+        <li>preview รูปก่อนแปลง</li>
+        <li>drag & drop</li>
+        <li>บังคับชื่อไฟล์เอง</li>
+        <li>batch ทีละหลายรูป (เปิดโหมดขั้นสูง)</li>
+      </ul>
     </div>
+
+    <div class="box" id="download">
+      <strong>ดาวน์โหลดโปรแกรม</strong><br>
+      <div class="note">ลิ้งโหลดไฟล์:</div>
+      <a class="btn" href="http://49.228.131.69:3661/Tools/image_converter_gui_singlefile.exe">
+        DOWNLOAD .EXE
+      </a>
+      <div class="note">
+        * ถ้าเปิดลิ้งแล้วไม่โหลด ให้คลิกขวา → Save link as
+      </div>
+    </div>
+
+    <div class="footer">
+      Image Converter GUI – Single File Edition<br>
+      Old school • Simple • Offline
+      <div class="credit">จัดทำโดย Pawarit</div>
+    </div>
+
+  </div>
 </div>
 
 </body>
