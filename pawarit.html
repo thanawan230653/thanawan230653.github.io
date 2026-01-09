@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>แจ้งเตือนการใช้งานถูกระงับชั่วคราว</title>
+  <style>
+    :root {
+      --bg:url('https://media.thairath.co.th/image/c47Jh7v31NfG8M7J0NgDNZ0f9nFkB1AYkhWIPlAI650e9vA1.png');
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", "Noto Sans", Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif; }
+    .wrap { position: relative; min-height: 100dvh; display: grid; place-items: center; color: #fff; text-align: center; overflow: hidden; }
+    .bg { position: absolute; inset: 0; background-image: var(--bg); background-size: cover; background-position: center; transform: scale(1.05); filter: brightness(0.5); z-index: -2; }
+    .overlay { position: absolute; inset: 0; background: radial-gradient(120% 120% at 50% 50%, rgba(0,0,0,0.15), rgba(0,0,0,0.65)); z-index: -1; }
+    .card { width: min(980px, 92vw); padding: 2.25rem; border-radius: 1.25rem; backdrop-filter: blur(6px); background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+    .title { font-size: clamp(1.15rem, 1rem + 1.2vw, 1.5rem); line-height: 1.6; margin: 0 0 1.5rem 0; letter-spacing: 0.2px; }
+    .btns { display: inline-flex; gap: .75rem; flex-wrap: wrap; justify-content: center; margin-top: .5rem; }
+    .btn { display: inline-block; padding: 0.9rem 1.4rem; border-radius: 999px; font-weight: 600; text-decoration: none; background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05)); border: 1px solid rgba(255,255,255,0.35); color: #fff; transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 6px 14px rgba(0,0,0,0.35); backdrop-filter: blur(8px); cursor: pointer; }
+    .btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.22); box-shadow: 0 10px 22px rgba(0,0,0,0.45); }
+    .btn:active { transform: translateY(0); }
+    .sub { opacity: 0.85; font-size: 0.95rem; margin-top: 0.75rem; }
+    .footer { position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.75); }
+  </style>
+</head>
+<body>
+  <audio id="bgm" src="https://raw.githubusercontent.com/Mr-xcam/mmm/refs/heads/main/3.mp3" loop hidden></audio>
+  <main class="wrap">
+    <div class="bg" aria-hidden="true"></div>
+    <div class="overlay" aria-hidden="true"></div>
+
+    <section class="card" role="status" aria-live="polite">
+      <p class="title">วันใช้งานคุณถูกระงับชั่วคราวให้ทัก Telegraph เพื่อเติมวันใช้งาน By ช่างฟีร์ม ATV ขอบคุณที่ใช้งาน</p>
+
+      <div class="btns">
+        <a class="btn" href="https://t.me" target="_blank" rel="noopener noreferrer">นำทางไปยังผู้จำหน่าย</a>
+        <button class="btn" id="mainSiteBtn" type="button">เวปหลัก</button>
+      </div>
+
+      <div class="sub">แตะที่ใดก็ได้เพื่อเริ่มเล่นเพลง กดปุ่มเพื่อเปิด Telegram หรือเข้าถึงเวปหลัก</div>
+    </section>
+
+    <div class="footer">© 2025</div>
+  </main>
+
+  <script>
+    const audio = document.getElementById('bgm');
+
+    // พยายามเล่นเพลงหลังจากผู้ใช้แตะหน้าจอครั้งแรก
+    function enableAudio(){
+      audio.play().then(()=>{
+        console.log('เริ่มเล่นเพลงแล้ว');
+      }).catch(err=>{
+        console.warn('ไม่สามารถเล่นเพลงอัตโนมัติได้:', err);
+      });
+      document.removeEventListener('click', enableAudio);
+      document.removeEventListener('touchstart', enableAudio);
+    }
+    document.addEventListener('click', enableAudio);
+    document.addEventListener('touchstart', enableAudio);
+
+    // ระบบถามรหัสเข้าเว็บหลัก
+    (function(){
+      let attempts = 0;
+      const MAX_ATTEMPTS = 3;
+      const BTN = document.getElementById('mainSiteBtn');
+      const SUCCESS_URL = 'https://thanawan230653.github.io';
+      const FAIL_URL = 'https://t.me/PAT230653';
+
+      function askAccess(){
+        const u = window.prompt('กรุณากรอก User');
+        if (u === null) return;
+        const p = window.prompt('กรุณากรอก Password');
+        if (p === null) return;
+
+        const ok = (u === 'admin') && (p === 'pat');
+        if (ok){
+          window.location.href = SUCCESS_URL;
+          return;
+        }
+        attempts++;
+        const left = MAX_ATTEMPTS - attempts;
+        if (left > 0){
+          alert('ไม่ถูกต้อง! คุณยังเหลือโอกาส ' + left + ' ครั้ง');
+        } else {
+          alert('พยายามครบ 3 ครั้ง กำลังพาไปติดต่อผู้ดูแลผ่าน Telegram');
+          window.location.href = FAIL_URL;
+        }
+      }
+
+      BTN.addEventListener('click', askAccess);
+    })();
+  </script>
+</body>
+</html>

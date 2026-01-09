@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>mod.html – BEMO Image Studio Pro (PNG Editor)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-main: #05070b;
+      --bg-panel: #111827;
+      --bg-panel-alt: #020617;
+      --accent: #3b82f6;
+      --accent-soft: #1d4ed8;
+      --border-subtle: #1f2937;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #f97373;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: radial-gradient(circle at top, #111827 0, #020617 40%, #000 100%);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Bar */
+    .topbar {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      background: linear-gradient(90deg, #020617, #020617 45%, #111827 100%);
+      border-bottom: 1px solid #111827;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
+      z-index: 10;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .app-logo {
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      background: conic-gradient(from 180deg, #22c55e, #3b82f6, #a855f7, #f97316, #22c55e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 18px rgba(59, 130, 246, 0.6);
+    }
+
+    .app-logo span {
+      font-size: 11px;
+      font-weight: 700;
+      color: #020617;
+    }
+
+    .app-title-main {
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .app-title-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      border-left: 1px solid #1f2937;
+      padding-left: 8px;
+      margin-left: 4px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #1f2937;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-kbd {
+      padding: 2px 6px;
+      border-radius: 5px;
+      border: 1px solid #374151;
+      font-size: 10px;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+      background: #020617;
+      color: #9ca3af;
+    }
+
+    /* Main layout */
+    .main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 68px minmax(0, 1fr) 290px;
+      gap: 0;
+      height: calc(100% - 44px);
+      backdrop-filter: blur(26px);
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.18), transparent 60%);
+    }
+
+    /* Toolbar */
+    .toolbar {
+      background: radial-gradient(circle at top, #020617, #020617 60%, #020617 100%);
+      border-right: 1px solid #1f2937;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 6px;
+      gap: 6px;
+      box-shadow: 6px 0 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .toolbar-group-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #4b5563;
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+
+    .tool-button {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: radial-gradient(circle at 20% 0, #111827, #020617 80%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border 0.14s ease, background 0.14s ease, transform 0.08s ease;
+      position: relative;
+    }
+
+    .tool-button span {
+      font-size: 18px;
+    }
+
+    .tool-button.active {
+      border-color: var(--accent);
+      background: radial-gradient(circle at 0 0, #1d4ed8, #020617 80%);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4), 0 0 18px rgba(37, 99, 235, 0.6);
+    }
+
+    .tool-button.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .tool-button:not(.disabled):hover {
+      border-color: #374151;
+      transform: translateY(-1px);
+    }
+
+    .tool-tooltip {
+      position: absolute;
+      left: 48px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #020617;
+      border-radius: 9px;
+      border: 1px solid #374151;
+      white-space: nowrap;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      box-shadow: var(--shadow-soft);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.12s ease;
+      z-index: 10;
+    }
+
+    .tool-button:hover .tool-tooltip {
+      opacity: 1;
+    }
+
+    /* Workspace (center) */
+    .workspace {
+      display: flex;
+      flex-direction: column;
+      padding: 10px 16px 16px;
+    }
+
+    .workspace-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      align-items: center;
+    }
+
+    .breadcrumb-active {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .workspace-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 7px 12px;
+      border: 1px solid #1f2937;
+      background: radial-gradient(circle at 0 0, #111827, #020617 80%);
+      color: var(--text-main);
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: background 0.14s ease, border 0.14s ease, transform 0.08s ease, box-shadow 0.12s ease;
+    }
+
+    .btn span.icon {
+      font-size: 13px;
+    }
+
+    .btn-primary {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.5);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn:hover:not(:disabled) {
+      border-color: #4b5563;
+      transform: translateY(-0.5px);
+      box-shadow: 0 10px 32px rgba(15, 23, 42, 0.8);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #1d4ed8, #1d4ed8);
+    }
+
+    .btn-ghost {
+      border-style: dashed;
+      border-color: #4b5563;
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    .btn-danger {
+      border-color: #7f1d1d;
+      background: radial-gradient(circle at 0 0, #7f1d1d, #111827 70%);
+      color: #fecaca;
+    }
+
+    .hint-text {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .workspace-main {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .canvas-shell {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background-image:
+        radial-gradient(circle at top, rgba(30, 64, 175, 0.45), transparent 55%),
+        radial-gradient(circle at bottom, rgba(16, 185, 129, 0.3), transparent 60%),
+        radial-gradient(circle at 80% 40%, rgba(147, 51, 234, 0.45), transparent 60%);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .canvas-shell::before {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: calc(var(--radius-lg) - 1px);
+      border: 1px solid rgba(15, 23, 42, 0.9);
+      pointer-events: none;
+    }
+
+    .canvas-scroll {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .canvas-inner {
+      position: relative;
+      max-width: 100%;
+      max-height: 100%;
+      transform-origin: center center;
+      transition: transform 0.16s ease-out;
+    }
+
+    .canvas-frame {
+      padding: 18px;
+      background-image: linear-gradient(135deg, #020617, #020617);
+      border-radius: 22px;
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.85);
+      border: 1px solid #111827;
+      position: relative;
+    }
+
+    .checkerboard {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      background-image:
+        linear-gradient(45deg, #111827 25%, transparent 25%, transparent 75%, #111827 75%, #111827),
+        linear-gradient(45deg, #111827 25%, transparent 25%, transparent 75%, #111827 75%, #111827);
+      background-position: 0 0, 12px 12px;
+      background-size: 24px 24px;
+    }
+
+    #editorCanvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      background: transparent;
+    }
+
+    #selectionRect {
+      position: absolute;
+      border: 1px dashed #93c5fd;
+      background: rgba(59, 130, 246, 0.18);
+      border-radius: 4px;
+      pointer-events: none;
+      display: none;
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9);
+    }
+
+    .canvas-status {
+      position: absolute;
+      left: 16px;
+      bottom: 12px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 10px;
+      color: #9ca3af;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      backdrop-filter: blur(10px);
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
+    }
+
+    .zoom-control {
+      position: absolute;
+      right: 16px;
+      bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      backdrop-filter: blur(10px);
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .zoom-control input[type="range"] {
+      width: 90px;
+      accent-color: var(--accent);
+    }
+
+    /* Right Side Panel */
+    .sidepanel {
+      border-left: 1px solid #1f2937;
+      background: radial-gradient(circle at 0 0, #020617, #020617 55%, #020617);
+      padding: 10px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: -8px 0 30px rgba(0, 0, 0, 0.8);
+    }
+
+    .panel-card {
+      background: radial-gradient(circle at 0 0, #020617, #020617 70%);
+      border-radius: var(--radius-md);
+      border: 1px solid #111827;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75);
+      padding: 10px 11px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .panel-title {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
+
+    .panel-tag {
+      font-size: 10px;
+      color: #4b5563;
+      text-transform: uppercase;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .meta-label {
+      color: #6b7280;
+    }
+
+    .meta-value {
+      color: var(--text-main);
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 2px 6px;
+      font-size: 10px;
+      border: 1px solid #1f2937;
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .badge-soft {
+      border-style: dashed;
+      color: #9ca3af;
+    }
+
+    .section-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #6b7280;
+      margin: 8px 0 4px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .taglist {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-muted);
+    }
+
+    .tag-accent {
+      border-color: var(--accent);
+      color: #bfdbfe;
+      background: rgba(37, 99, 235, 0.15);
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .slider-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+
+    .small-btn-row {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .btn-xs {
+      border-radius: 999px;
+      padding: 3px 8px;
+      border: 1px solid #1f2937;
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 10px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.12s ease, border 0.12s ease, transform 0.06s ease;
+    }
+
+    .btn-xs:hover {
+      background: #111827;
+      border-color: #374151;
+      transform: translateY(-0.5px);
+    }
+
+    .btn-xs:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .panel-footer {
+      font-size: 10px;
+      color: #4b5563;
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+    }
+
+    .error-text {
+      font-size: 11px;
+      color: #fecaca;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .notice {
+      font-size: 10px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .layers-list {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .layer-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      padding: 4px 6px;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .layer-item span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .layer-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .settings-block {
+      margin-top: 4px;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px dashed #1f2937;
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 11px;
+      display: none;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .settings-row label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .settings-row input[type="color"] {
+      width: 32px;
+      height: 18px;
+      padding: 0;
+      border-radius: 5px;
+      border: 1px solid #374151;
+      background: transparent;
+    }
+
+    .settings-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+
+    .settings-row span.value {
+      width: 40px;
+      text-align: right;
+      font-size: 11px;
+      color: var(--text-main);
+    }
+
+    .settings-row input[type="checkbox"] {
+      margin-right: 4px;
+    }
+
+    @media (max-width: 980px) {
+      .main {
+        grid-template-columns: 54px minmax(0, 1fr) 260px;
+      }
+
+      .canvas-frame {
+        padding: 12px;
+      }
+    }
+
+    @media (max-width: 820px) {
+      body {
+        overflow: auto;
+      }
+
+      .main {
+        grid-template-columns: 54px minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr) auto;
+      }
+
+      .sidepanel {
+        grid-column: 1 / -1;
+        border-left: none;
+        border-top: 1px solid #1f2937;
+        flex-direction: row;
+        gap: 10px;
+        overflow-x: auto;
+      }
+
+      .panel-card {
+        min-width: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="app-logo"><span>B</span></div>
+      <div>
+        <span class="app-title-main">BEMO Image Studio Pro</span>
+        <span class="app-title-sub">PNG-ONLY • BRUSH • TEXT • SHAPE • EFFECTS</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="pill">
+        <span>ส่งออก</span>
+        <strong>PNG เท่านั้น</strong>
+      </div>
+      <div class="pill">
+        <span>Shortcuts</span>
+        <span class="pill-kbd">Ctrl+Z</span>
+        <span class="pill-kbd">Ctrl+S</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Left toolbar -->
+    <aside class="toolbar">
+      <div class="toolbar-group-label">Tools</div>
+
+      <button class="tool-button active" data-tool="pointer" title="Move / Pointer">
+        <span>🖱️</span>
+        <div class="tool-tooltip">Pointer – เลือกและใช้งานทั่วไป</div>
+      </button>
+
+      <button class="tool-button" data-tool="crop" title="Crop">
+        <span>✂️</span>
+        <div class="tool-tooltip">Crop – ครอบภาพ (Zoom จะถูกรีเซ็ตเป็น 100%)</div>
+      </button>
+
+      <button class="tool-button" data-tool="brush" title="Brush">
+        <span>🖌️</span>
+        <div class="tool-tooltip">Brush – วาดเส้น ลงสี</div>
+      </button>
+
+      <button class="tool-button" data-tool="eraser" title="Eraser">
+        <span>🧽</span>
+        <div class="tool-tooltip">Eraser – ลบแบบโปร่งใส (รักษา PNG alpha)</div>
+      </button>
+
+      <button class="tool-button" data-tool="text" title="Text">
+        <span>🅣</span>
+        <div class="tool-tooltip">Text – คลิกบนภาพเพื่อเพิ่มข้อความ</div>
+      </button>
+
+      <button class="tool-button" data-tool="shape-rect" title="Rectangle">
+        <span>▭</span>
+        <div class="tool-tooltip">Shape – ลากเพื่อสร้างกรอบสี่เหลี่ยม</div>
+      </button>
+
+      <button class="tool-button" data-tool="eyedropper" title="Eyedropper">
+        <span>🎯</span>
+        <div class="tool-tooltip">Eyedropper – ดูดสีจากพิกเซล</div>
+      </button>
+
+      <div class="toolbar-group-label" style="margin-top: 10px;">PNG</div>
+      <div style="font-size: 9px; color: #4b5563; text-align: center;">
+        PNG<br>Only
+      </div>
+    </aside>
+
+    <!-- Center workspace -->
+    <section class="workspace">
+      <div class="workspace-top">
+        <div class="breadcrumbs">
+          <span>Projects</span>
+          <span>/</span>
+          <span class="breadcrumb-active" id="docName">Untitled PNG</span>
+          <span>/</span>
+          <span id="metaBitDepth">8-bit RGBA (virtual)</span>
+        </div>
+        <div class="workspace-actions">
+          <button class="btn btn-ghost" id="btnUndo" disabled>
+            <span class="icon">↩️</span> Undo
+          </button>
+          <button class="btn" id="btnReset">
+            <span class="icon">🧼</span> เคลียร์การปรับ
+          </button>
+          <button class="btn btn-primary" id="btnExport" disabled>
+            <span class="icon">⬇️</span> ส่งออก PNG
+          </button>
+        </div>
+      </div>
+
+      <div class="workspace-main">
+        <div class="canvas-shell">
+          <div class="canvas-scroll" id="canvasScroll">
+            <div class="canvas-inner" id="canvasInner">
+              <div class="canvas-frame">
+                <div class="checkerboard">
+                  <canvas id="editorCanvas" width="960" height="540"></canvas>
+                  <div id="selectionRect"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="canvas-status" id="canvasStatus">
+            <div class="dot"></div>
+            <span id="statusText">รออัปโหลด PNG…</span>
+            <span id="sizeLabel">0 × 0 px</span>
+          </div>
+
+          <div class="zoom-control">
+            <span>Zoom</span>
+            <input type="range" id="zoomRange" min="0.3" max="2.5" step="0.05" value="1" />
+            <span id="zoomLabel">100%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right side panels -->
+    <aside class="sidepanel">
+      <!-- File / Project -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <span class="panel-title">File</span>
+          <span class="panel-tag">PNG Workflow</span>
+        </div>
+
+        <div class="field-group">
+          <button class="btn btn-primary" id="btnOpen">
+            <span class="icon">📂</span> เปิด PNG
+          </button>
+          <input type="file" id="fileInput" accept="image/png" hidden />
+          <div class="hint-text">รองรับเฉพาะ <strong>ไฟล์ .png</strong> เท่านั้น</div>
+
+          <div class="meta-row" style="margin-top: 4px;">
+            <span class="meta-label">ไฟล์:</span>
+            <span class="meta-value" id="fileNameLabel">ยังไม่ได้เลือก</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">ขนาด:</span>
+            <span class="meta-value" id="fileSizeLabel">–</span>
+          </div>
+        </div>
+
+        <p class="error-text" id="fileError">⚠️ กรุณาเลือกไฟล์ PNG เท่านั้น</p>
+
+        <div class="notice">
+          Tip: ลากไฟล์ PNG มาวางบนหน้าต่างนี้ได้ (Drag & Drop)
+        </div>
+
+        <div class="panel-footer">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="status-dot" id="fileStatusDot"></div>
+            <span>Ready</span>
+          </div>
+          <span style="font-size: 9px;">BEMO Datacenter</span>
+        </div>
+      </div>
+
+      <!-- Tool settings -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <span class="panel-title">Tool Settings</span>
+          <span class="panel-tag">Context-Aware</span>
+        </div>
+
+        <div class="meta-row">
+          <span class="meta-label">Resolution</span>
+          <span class="meta-value" id="metaResolution">0 × 0 px</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Aspect</span>
+          <span class="meta-value" id="metaAspect">–</span>
+        </div>
+
+        <div class="section-label">Active Tool</div>
+        <div class="meta-row">
+          <span class="meta-label">Tool:</span>
+          <span class="meta-value" id="metaTool">Pointer</span>
+        </div>
+
+        <!-- Generic info -->
+        <div class="settings-block" data-settings="pointer,crop,shape-rect,eyedropper">
+          <div class="hint-text">
+            เลือก Brush / Eraser / Text / Shape เพื่อดูตัวเลือกละเอียดด้านล่าง
+          </div>
+        </div>
+
+        <!-- Brush + Eraser -->
+        <div class="settings-block" data-settings="brush,eraser">
+          <div class="settings-row">
+            <label>Color</label>
+            <input type="color" id="colorPicker" value="#ffffff" />
+            <span class="value" id="colorHex">#ffffff</span>
+          </div>
+
+          <div class="settings-row">
+            <label>Brush Size</label>
+            <input type="range" id="brushSize" min="1" max="80" value="16" />
+            <span class="value" id="brushSizeLabel">16 px</span>
+          </div>
+
+          <div class="settings-row">
+            <label>Opacity</label>
+            <input type="range" id="brushOpacity" min="0.1" max="1" step="0.05" value="1" />
+            <span class="value" id="brushOpacityLabel">100%</span>
+          </div>
+
+          <div class="hint-text">
+            Brush: วาดด้วยสีที่เลือก • Eraser: ลบแบบโปร่งใส (alpha)
+          </div>
+        </div>
+
+        <!-- Text -->
+        <div class="settings-block" data-settings="text">
+          <div class="settings-row">
+            <label>Text Color</label>
+            <input type="color" id="textColor" value="#ffffff" />
+            <span class="value" id="textColorHex">#ffffff</span>
+          </div>
+
+          <div class="settings-row">
+            <label>Size</label>
+            <input type="range" id="textSizeSlider" min="10" max="120" value="36" />
+            <span class="value" id="textSizeLabel">36 px</span>
+          </div>
+
+          <div class="settings-row">
+            <label><input type="checkbox" id="textBold" /> Bold</label>
+            <span class="value"></span>
+          </div>
+
+          <div class="hint-text">
+            คลิกบนภาพเพื่อเพิ่มข้อความ (ราสเตอร์ทันที แก้ไขที่หลังไม่ได้)
+          </div>
+        </div>
+
+        <!-- Shape -->
+        <div class="settings-block" data-settings="shape-rect">
+          <div class="settings-row">
+            <label>Stroke Color</label>
+            <input type="color" id="shapeColor" value="#ffffff" />
+            <span class="value" id="shapeColorHex">#ffffff</span>
+          </div>
+
+          <div class="settings-row">
+            <label>Stroke Width</label>
+            <input type="range" id="shapeStroke" min="1" max="40" value="6" />
+            <span class="value" id="shapeStrokeLabel">6 px</span>
+          </div>
+
+          <div class="hint-text">
+            ลากเมาส์บนภาพเพื่อสร้างกรอบสี่เหลี่ยม (stroke เท่านั้น)
+          </div>
+        </div>
+
+        <div class="section-label">Crop & Quick Transform</div>
+        <div class="small-btn-row">
+          <button class="btn-xs" id="btnActivateCrop">✂️ Crop Tool</button>
+          <button class="btn-xs" id="btnApplyCrop">✅ Apply Crop</button>
+          <button class="btn-xs" id="btnCancelCrop">❌ Cancel</button>
+        </div>
+
+        <div class="small-btn-row" style="margin-top:4px;">
+          <button class="btn-xs" id="btnFlipH">↔ Flip H</button>
+          <button class="btn-xs" id="btnFlipV">↕ Flip V</button>
+          <button class="btn-xs" id="btnFitToView">🧩 Fit to View</button>
+        </div>
+
+        <div class="panel-footer">
+          <span>เครื่องมือทั้งหมดทำงานบนชั้นเดียว (single layer)</span>
+          <span class="badge">PNG • alpha-safe</span>
+        </div>
+      </div>
+
+      <!-- Effects / History -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <span class="panel-title">Effects</span>
+          <span class="panel-tag">Pixel Ops</span>
+        </div>
+
+        <div class="section-label">One-Click Looks</div>
+        <div class="small-btn-row">
+          <button class="btn-xs" data-effect="bw">🎞 B&amp;W</button>
+          <button class="btn-xs" data-effect="invert">🌓 Invert</button>
+          <button class="btn-xs" data-effect="warm">🌅 Warm</button>
+        </div>
+
+        <div class="section-label">Fine Tuning</div>
+        <div class="slider-row">
+          <span>Exposure</span>
+          <input type="range" id="expSlider" min="-40" max="40" value="0">
+          <span id="expLabel">0</span>
+        </div>
+
+        <div class="slider-row">
+          <span>Contrast</span>
+          <input type="range" id="contrastSlider" min="-40" max="40" value="0">
+          <span id="contrastLabel">0</span>
+        </div>
+
+        <div class="section-label">History</div>
+        <div class="taglist">
+          <span class="tag tag-accent" id="historyState">0 steps</span>
+          <span class="tag">Ctrl+Z</span>
+          <span class="tag">Non-destructive</span>
+        </div>
+
+        <div class="panel-footer">
+          <span>Undo จะบันทึกทุก Brush / Crop / Effect</span>
+          <button class="btn-xs btn-danger" id="btnHardReset">Reset ทั้งหมด</button>
+        </div>
+      </div>
+
+      <!-- Layers UI (ตกแต่ง) -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <span class="panel-title">Layers</span>
+          <span class="panel-tag">UI Only</span>
+        </div>
+
+        <div class="layers-list">
+          <div class="layer-item">
+            <span><span class="layer-dot"></span> Composite (Paint / Text)</span>
+            <span>100%</span>
+          </div>
+          <div class="layer-item">
+            <span><span style="width:8px;height:8px;border-radius:999px;border:1px solid #4b5563;"></span> Base PNG</span>
+            <span>Locked</span>
+          </div>
+        </div>
+
+        <div class="notice">
+          รุ่นนี้เป็น <strong>Single Canvas Engine</strong> เลเยอร์เป็น UI แสดงสถานะเท่านั้น
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const canvas = document.getElementById("editorCanvas");
+      const ctx = canvas.getContext("2d");
+      const canvasInner = document.getElementById("canvasInner");
+      const canvasScroll = document.getElementById("canvasScroll");
+      const selectionRect = document.getElementById("selectionRect");
+
+      // File / buttons
+      const fileInput = document.getElementById("fileInput");
+      const btnOpen = document.getElementById("btnOpen");
+      const btnExport = document.getElementById("btnExport");
+      const btnUndo = document.getElementById("btnUndo");
+      const btnReset = document.getElementById("btnReset");
+      const btnHardReset = document.getElementById("btnHardReset");
+
+      // Crop / transform
+      const btnActivateCrop = document.getElementById("btnActivateCrop");
+      const btnApplyCrop = document.getElementById("btnApplyCrop");
+      const btnCancelCrop = document.getElementById("btnCancelCrop");
+      const btnFlipH = document.getElementById("btnFlipH");
+      const btnFlipV = document.getElementById("btnFlipV");
+      const btnFitToView = document.getElementById("btnFitToView");
+
+      // Labels
+      const fileNameLabel = document.getElementById("fileNameLabel");
+      const fileSizeLabel = document.getElementById("fileSizeLabel");
+      const fileError = document.getElementById("fileError");
+      const fileStatusDot = document.getElementById("fileStatusDot");
+      const statusText = document.getElementById("statusText");
+      const sizeLabel = document.getElementById("sizeLabel");
+      const metaResolution = document.getElementById("metaResolution");
+      const metaAspect = document.getElementById("metaAspect");
+      const metaBitDepth = document.getElementById("metaBitDepth");
+      const historyState = document.getElementById("historyState");
+      const zoomRange = document.getElementById("zoomRange");
+      const zoomLabel = document.getElementById("zoomLabel");
+      const docName = document.getElementById("docName");
+      const metaTool = document.getElementById("metaTool");
+
+      // Effects
+      const expSlider = document.getElementById("expSlider");
+      const expLabel = document.getElementById("expLabel");
+      const contrastSlider = document.getElementById("contrastSlider");
+      const contrastLabel = document.getElementById("contrastLabel");
+      const effectButtons = document.querySelectorAll(".btn-xs[data-effect]");
+
+      // Tool settings
+      const settingsBlocks = document.querySelectorAll(".settings-block");
+
+      const colorPicker = document.getElementById("colorPicker");
+      const colorHex = document.getElementById("colorHex");
+      const brushSizeSlider = document.getElementById("brushSize");
+      const brushSizeLabel = document.getElementById("brushSizeLabel");
+      const brushOpacitySlider = document.getElementById("brushOpacity");
+      const brushOpacityLabel = document.getElementById("brushOpacityLabel");
+
+      const textColorPicker = document.getElementById("textColor");
+      const textColorHex = document.getElementById("textColorHex");
+      const textSizeSlider = document.getElementById("textSizeSlider");
+      const textSizeLabel = document.getElementById("textSizeLabel");
+      const textBoldCheckbox = document.getElementById("textBold");
+
+      const shapeColorPicker = document.getElementById("shapeColor");
+      const shapeColorHex = document.getElementById("shapeColorHex");
+      const shapeStrokeSlider = document.getElementById("shapeStroke");
+      const shapeStrokeLabel = document.getElementById("shapeStrokeLabel");
+
+      const toolButtons = document.querySelectorAll(".tool-button");
+
+      // State
+      let imageLoaded = false;
+      let currentTool = "pointer";
+      let history = [];
+      const MAX_HISTORY = 25;
+
+      let selection = { active: false, drawing: false, x: 0, y: 0, w: 0, h: 0 };
+
+      let brushColor = "#ffffff";
+      let brushSize = 16;
+      let brushOpacity = 1;
+
+      let textColor = "#ffffff";
+      let textSize = 36;
+
+      let shapeColor = "#ffffff";
+      let shapeStroke = 6;
+
+      let painting = false;
+      let lastX = 0;
+      let lastY = 0;
+
+      function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      function updateMeta() {
+        const w = canvas.width;
+        const h = canvas.height;
+        sizeLabel.textContent = w + " × " + h + " px";
+        metaResolution.textContent = sizeLabel.textContent;
+
+        if (w && h) {
+          const ratio = (w / h).toFixed(2);
+          let label = ratio;
+          if (Math.abs(ratio - (16 / 9)) < 0.01) label += " (16:9)";
+          else if (Math.abs(ratio - (4 / 3)) < 0.01) label += " (4:3)";
+          else if (Math.abs(ratio - 1) < 0.01) label += " (1:1)";
+          metaAspect.textContent = label;
+        } else {
+          metaAspect.textContent = "–";
+        }
+      }
+
+      function pushHistory() {
+        if (!imageLoaded) return;
+        try {
+          const dataURL = canvas.toDataURL("image/png");
+          history.push(dataURL);
+          if (history.length > MAX_HISTORY) history.shift();
+          historyState.textContent = history.length + " steps";
+          btnUndo.disabled = history.length === 0;
+        } catch (e) {
+          console.warn("Failed to push history:", e);
+        }
+      }
+
+      function restoreFromDataURL(dataURL) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = function () {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            clearCanvas();
+            ctx.drawImage(img, 0, 0);
+            updateMeta();
+            resolve();
+          };
+          img.onerror = reject;
+          img.src = dataURL;
+        });
+      }
+
+      function handleUndo() {
+        if (history.length === 0) return;
+        const last = history.pop();
+        historyState.textContent = history.length + " steps";
+        btnUndo.disabled = history.length === 0;
+        restoreFromDataURL(last).then(() => {
+          statusText.textContent = "ย้อนกลับล่าสุดแล้ว";
+        }).catch(() => {
+          statusText.textContent = "ไม่สามารถ Undo ได้";
+        });
+      }
+
+      function applyZoom() {
+        const z = parseFloat(zoomRange.value);
+        canvasInner.style.transform = "scale(" + z + ")";
+        zoomLabel.textContent = Math.round(z * 100) + "%";
+      }
+
+      function showSelection() {
+        selectionRect.style.display = "block";
+        selectionRect.style.left = selection.x + "px";
+        selectionRect.style.top = selection.y + "px";
+        selectionRect.style.width = selection.w + "px";
+        selectionRect.style.height = selection.h + "px";
+      }
+
+      function hideSelection() {
+        selectionRect.style.display = "none";
+        selection.active = false;
+        selection.drawing = false;
+      }
+
+      function setTool(tool) {
+        currentTool = tool;
+        toolButtons.forEach(btn => {
+          if (btn.dataset.tool === tool) btn.classList.add("active");
+          else btn.classList.remove("active");
+        });
+
+        metaTool.textContent =
+          tool === "pointer" ? "Pointer" :
+          tool === "crop" ? "Crop" :
+          tool === "brush" ? "Brush" :
+          tool === "eraser" ? "Eraser" :
+          tool === "text" ? "Text" :
+          tool === "shape-rect" ? "Shape (Rect)" :
+          tool === "eyedropper" ? "Eyedropper" : tool;
+
+        if (tool === "crop" || tool === "shape-rect") {
+          zoomRange.value = 1;
+          applyZoom();
+          hideSelection();
+          statusText.textContent =
+            tool === "crop"
+              ? "Crop mode: ลากเพื่อเลือกพื้นที่ แล้วกด Apply Crop"
+              : "Shape mode: ลากเพื่อสร้างกรอบสี่เหลี่ยม";
+        }
+
+        updateToolSettingsUI();
+      }
+
+      function updateToolSettingsUI() {
+        settingsBlocks.forEach(block => {
+          const list = block.dataset.settings.split(",").map(s => s.trim());
+          if (list.includes(currentTool)) block.style.display = "block";
+          else block.style.display = "none";
+        });
+      }
+
+      function fitToView() {
+        if (!imageLoaded) return;
+        const shellRect = canvasScroll.getBoundingClientRect();
+        const margin = 80;
+        const maxW = shellRect.width - margin;
+        const maxH = shellRect.height - margin;
+        const scaleX = maxW / canvas.width;
+        const scaleY = maxH / canvas.height;
+        const z = Math.min(scaleX, scaleY, 2.5);
+        zoomRange.value = Math.max(0.3, z).toFixed(2);
+        applyZoom();
+        statusText.textContent = "ปรับ Zoom ให้พอดีกับหน้าจอแล้ว";
+      }
+
+      function flip(horizontal) {
+        if (!imageLoaded) return;
+        pushHistory();
+
+        const w = canvas.width;
+        const h = canvas.height;
+        const imgData = ctx.getImageData(0, 0, w, h);
+        const tempCanvas = document.createElement("canvas");
+        tempCanvas.width = w;
+        tempCanvas.height = h;
+        const tctx = tempCanvas.getContext("2d");
+        tctx.putImageData(imgData, 0, 0);
+
+        clearCanvas();
+        ctx.save();
+        if (horizontal) {
+          ctx.translate(w, 0);
+          ctx.scale(-1, 1);
+        } else {
+          ctx.translate(0, h);
+          ctx.scale(1, -1);
+        }
+        ctx.drawImage(tempCanvas, 0, 0);
+        ctx.restore();
+
+        statusText.textContent = horizontal ? "พลิกภาพแนวนอนแล้ว" : "พลิกภาพแนวตั้งแล้ว";
+      }
+
+      function applyCrop() {
+        if (!imageLoaded) return;
+        if (!selection.active || currentTool !== "crop") {
+          statusText.textContent = "ต้องอยู่ในโหมด Crop และลากพื้นที่ก่อน";
+          return;
+        }
+        if (selection.w < 5 || selection.h < 5) {
+          statusText.textContent = "พื้นที่ครอปเล็กเกินไป";
+          return;
+        }
+
+        pushHistory();
+
+        const sx = Math.round(selection.x);
+        const sy = Math.round(selection.y);
+        const sw = Math.round(selection.w);
+        const sh = Math.round(selection.h);
+
+        const tmpCanvas = document.createElement("canvas");
+        tmpCanvas.width = sw;
+        tmpCanvas.height = sh;
+        const tctx = tmpCanvas.getContext("2d");
+        tctx.drawImage(canvas, sx, sy, sw, sh, 0, 0, sw, sh);
+
+        canvas.width = sw;
+        canvas.height = sh;
+        clearCanvas();
+        ctx.drawImage(tmpCanvas, 0, 0);
+        hideSelection();
+        updateMeta();
+        statusText.textContent = "ครอปภาพเรียบร้อย";
+      }
+
+      function applyEffect(effect) {
+        if (!imageLoaded) return;
+        pushHistory();
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imgData.data;
+        const len = data.length;
+
+        if (effect === "bw") {
+          for (let i = 0; i < len; i += 4) {
+            const r = data[i], g = data[i + 1], b = data[i + 2];
+            const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+            data[i] = data[i + 1] = data[i + 2] = gray;
+          }
+          statusText.textContent = "แปลงภาพเป็นขาวดำแล้ว";
+        } else if (effect === "invert") {
+          for (let i = 0; i < len; i += 4) {
+            data[i] = 255 - data[i];
+            data[i + 1] = 255 - data[i + 1];
+            data[i + 2] = 255 - data[i + 2];
+          }
+          statusText.textContent = "กลับสี (invert) แล้ว";
+        } else if (effect === "warm") {
+          for (let i = 0; i < len; i += 4) {
+            data[i] = Math.min(255, data[i] + 10);
+            data[i + 2] = Math.max(0, data[i + 2] - 15);
+          }
+          statusText.textContent = "ปรับโทนอุ่นเล็กน้อยแล้ว";
+        }
+
+        ctx.putImageData(imgData, 0, 0);
+      }
+
+      function applyExposureContrast() {
+        if (!imageLoaded) return;
+        pushHistory();
+        const exposure = parseInt(expSlider.value, 10);
+        const contrast = parseInt(contrastSlider.value, 10);
+
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imgData.data;
+        const len = data.length;
+
+        const expFactor = exposure / 100;
+        const c = contrast;
+        const contrastFactor = (259 * (c + 255)) / (255 * (259 - c || 1));
+
+        for (let i = 0; i < len; i += 4) {
+          let r = data[i], g = data[i + 1], b = data[i + 2];
+
+          r = r + 255 * expFactor;
+          g = g + 255 * expFactor;
+          b = b + 255 * expFactor;
+
+          r = contrastFactor * (r - 128) + 128;
+          g = contrastFactor * (g - 128) + 128;
+          b = contrastFactor * (b - 128) + 128;
+
+          data[i] = Math.max(0, Math.min(255, r));
+          data[i + 1] = Math.max(0, Math.min(255, g));
+          data[i + 2] = Math.max(0, Math.min(255, b));
+        }
+
+        ctx.putImageData(imgData, 0, 0);
+        statusText.textContent = "ปรับ Exposure / Contrast แล้ว";
+        expLabel.textContent = exposure;
+        contrastLabel.textContent = contrast;
+      }
+
+      function resetFineControls() {
+        expSlider.value = 0;
+        contrastSlider.value = 0;
+        expLabel.textContent = "0";
+        contrastLabel.textContent = "0";
+      }
+
+      function hardReset() {
+        imageLoaded = false;
+        history = [];
+        clearCanvas();
+        fileNameLabel.textContent = "ยังไม่ได้เลือก";
+        fileSizeLabel.textContent = "–";
+        sizeLabel.textContent = "0 × 0 px";
+        metaResolution.textContent = "0 × 0 px";
+        metaAspect.textContent = "–";
+        metaBitDepth.textContent = "8-bit RGBA (virtual)";
+        historyState.textContent = "0 steps";
+        btnUndo.disabled = true;
+        statusText.textContent = "รีเซ็ตผืนงานทั้งหมดแล้ว";
+        zoomRange.value = 1;
+        applyZoom();
+        hideSelection();
+        resetFineControls();
+        docName.textContent = "Untitled PNG";
+        btnExport.disabled = true;
+      }
+
+      function softReset() {
+        if (!imageLoaded) {
+          hardReset();
+          return;
+        }
+        resetFineControls();
+        statusText.textContent = "เคลียร์การปรับ (Effects/Brush ยังอยู่)";
+      }
+
+      function onFileSelected(file) {
+        fileError.style.display = "none";
+
+        if (!file || file.type !== "image/png") {
+          fileError.style.display = "block";
+          statusText.textContent = "ไฟล์ไม่ใช่ PNG";
+          fileStatusDot.style.background = "#f97373";
+          fileStatusDot.style.boxShadow = "0 0 10px rgba(248,113,113,0.9)";
+          return;
+        }
+
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = function () {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          clearCanvas();
+          ctx.drawImage(img, 0, 0);
+          updateMeta();
+
+          imageLoaded = true;
+          statusText.textContent = "โหลด PNG สำเร็จแล้ว";
+          btnExport.disabled = false;
+          fileStatusDot.style.background = "#22c55e";
+          fileStatusDot.style.boxShadow = "0 0 10px rgba(34,197,94,0.9)";
+          fileNameLabel.textContent = file.name;
+          const kb = (file.size / 1024).toFixed(1);
+          fileSizeLabel.textContent = kb + " KB";
+          metaBitDepth.textContent = "8-bit RGBA (จำลอง)";
+          docName.textContent = file.name;
+
+          history = [];
+          pushHistory();
+          resetFineControls();
+          zoomRange.value = 1;
+          applyZoom();
+          hideSelection();
+          URL.revokeObjectURL(url);
+        };
+        img.onerror = function () {
+          statusText.textContent = "ไม่สามารถอ่านไฟล์ได้";
+          fileError.style.display = "block";
+        };
+        img.src = url;
+      }
+
+      function exportPNG() {
+        if (!imageLoaded) return;
+        try {
+          const dataURL = canvas.toDataURL("image/png");
+          const link = document.createElement("a");
+          link.href = dataURL;
+          link.download = "bemo-edited.png";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          statusText.textContent = "บันทึก PNG แล้ว (ดูในโฟลเดอร์ดาวน์โหลด)";
+        } catch (e) {
+          statusText.textContent = "เบราว์เซอร์ไม่อนุญาตให้ส่งออก";
+        }
+      }
+
+      function getCanvasCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        return {
+          x: (e.clientX - rect.left) * scaleX,
+          y: (e.clientY - rect.top) * scaleY
+        };
+      }
+
+      function drawStroke(x, y) {
+        ctx.save();
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.lineWidth = brushSize;
+        ctx.globalAlpha = brushOpacity;
+
+        if (currentTool === "eraser") {
+          ctx.globalCompositeOperation = "destination-out";
+          ctx.strokeStyle = "rgba(0,0,0,1)";
+        } else {
+          ctx.globalCompositeOperation = "source-over";
+          ctx.strokeStyle = brushColor;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.restore();
+
+        lastX = x;
+        lastY = y;
+      }
+
+      function pickColorAt(x, y) {
+        if (!imageLoaded) return;
+        const ix = Math.floor(x);
+        const iy = Math.floor(y);
+        if (ix < 0 || iy < 0 || ix >= canvas.width || iy >= canvas.height) {
+          statusText.textContent = "อยู่นอกพื้นที่ภาพ";
+          return;
+        }
+        const data = ctx.getImageData(ix, iy, 1, 1).data;
+        const r = data[0], g = data[1], b = data[2], a = data[3];
+
+        function toHex(v) {
+          return v.toString(16).padStart(2, "0");
+        }
+
+        const hex = "#" + toHex(r) + toHex(g) + toHex(b);
+        brushColor = hex;
+        textColor = hex;
+        shapeColor = hex;
+
+        colorPicker.value = hex;
+        colorHex.textContent = hex;
+        textColorPicker.value = hex;
+        textColorHex.textContent = hex;
+        shapeColorPicker.value = hex;
+        shapeColorHex.textContent = hex;
+
+        if (a === 0) {
+          statusText.textContent = "เลือกได้: โปร่งใส (alpha = 0) – สีประมาณ " + hex;
+        } else {
+          statusText.textContent = "เลือกสีแล้ว: " + hex;
+        }
+      }
+
+      // ==== Canvas mouse events ====
+      canvas.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        if (!imageLoaded && currentTool !== "pointer") return;
+
+        if (currentTool === "brush" || currentTool === "eraser") {
+          painting = true;
+          pushHistory();
+          const { x, y } = getCanvasCoords(e);
+          lastX = x;
+          lastY = y;
+          drawStroke(x, y);
+        } else if (currentTool === "crop" || currentTool === "shape-rect") {
+          const rect = canvas.getBoundingClientRect();
+          selection.drawing = true;
+          selection.active = true;
+          selection.x = e.clientX - rect.left;
+          selection.y = e.clientY - rect.top;
+          selection.w = 0;
+          selection.h = 0;
+          showSelection();
+        } else if (currentTool === "text") {
+          const { x, y } = getCanvasCoords(e);
+          const t = prompt("พิมพ์ข้อความ:");
+          if (!t) return;
+          pushHistory();
+          ctx.save();
+          ctx.fillStyle = textColor;
+          const isBold = textBoldCheckbox && textBoldCheckbox.checked;
+          ctx.font = (isBold ? "bold " : "") + textSize + "px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+          ctx.textBaseline = "top";
+          ctx.fillText(t, x, y);
+          ctx.restore();
+          statusText.textContent = "เพิ่มข้อความลงบนภาพแล้ว";
+        } else if (currentTool === "eyedropper") {
+          const { x, y } = getCanvasCoords(e);
+          pickColorAt(x, y);
+        }
+      });
+
+      canvas.addEventListener("mousemove", (e) => {
+        if (painting) {
+          const { x, y } = getCanvasCoords(e);
+          drawStroke(x, y);
+        } else if (selection.drawing) {
+          const rect = canvas.getBoundingClientRect();
+          const cx = e.clientX - rect.left;
+          const cy = e.clientY - rect.top;
+          let x = selection.x;
+          let y = selection.y;
+          let w = cx - selection.x;
+          let h = cy - selection.y;
+
+          if (w < 0) {
+            x = cx;
+            w = selection.x - cx;
+          }
+          if (h < 0) {
+            y = cy;
+            h = selection.y - cy;
+          }
+
+          selection.x = x;
+          selection.y = y;
+          selection.w = w;
+          selection.h = h;
+          showSelection();
+        }
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (painting) {
+          painting = false;
+          ctx.globalCompositeOperation = "source-over";
+        }
+        if (selection.drawing) {
+          selection.drawing = false;
+          if (selection.w < 3 || selection.h < 3) {
+            hideSelection();
+            statusText.textContent = "พื้นที่เล็กเกินไป";
+          } else if (currentTool === "shape-rect") {
+            pushHistory();
+            ctx.save();
+            ctx.globalAlpha = 1;
+            ctx.lineWidth = shapeStroke;
+            ctx.strokeStyle = shapeColor;
+            ctx.globalCompositeOperation = "source-over";
+            ctx.strokeRect(selection.x, selection.y, selection.w, selection.h);
+            ctx.restore();
+            hideSelection();
+            statusText.textContent = "วาดกรอบสี่เหลี่ยมเรียบร้อย";
+          } else if (currentTool === "crop") {
+            statusText.textContent = "เลือกพื้นที่แล้ว กด Apply Crop ทางขวา";
+          }
+        }
+      });
+
+      // ==== Controls / UI bindings ====
+      btnOpen.addEventListener("click", () => fileInput.click());
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        onFileSelected(file);
+      });
+
+      // Drag & drop
+      document.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "copy";
+      });
+      document.addEventListener("drop", (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files && e.dataTransfer.files[0];
+        if (file) onFileSelected(file);
+      });
+
+      btnExport.addEventListener("click", exportPNG);
+      btnUndo.addEventListener("click", handleUndo);
+      btnReset.addEventListener("click", softReset);
+      btnHardReset.addEventListener("click", hardReset);
+
+      zoomRange.addEventListener("input", applyZoom);
+
+      toolButtons.forEach(btn => {
+        if (btn.classList.contains("disabled")) return;
+        btn.addEventListener("click", () => {
+          const tool = btn.dataset.tool;
+          if (tool) setTool(tool);
+        });
+      });
+
+      // Crop / transform
+      btnActivateCrop.addEventListener("click", () => setTool("crop"));
+      btnApplyCrop.addEventListener("click", applyCrop);
+      btnCancelCrop.addEventListener("click", () => {
+        hideSelection();
+        statusText.textContent = "ยกเลิกการครอป/วาดกรอบ";
+      });
+
+      btnFlipH.addEventListener("click", () => flip(true));
+      btnFlipV.addEventListener("click", () => flip(false));
+      btnFitToView.addEventListener("click", fitToView);
+
+      // Effects
+      effectButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const effect = btn.dataset.effect;
+          if (effect) applyEffect(effect);
+        });
+      });
+
+      function sliderApplyOnRelease(slider, cb) {
+        let isDown = false;
+        slider.addEventListener("mousedown", () => { isDown = true; });
+        slider.addEventListener("mouseup", () => {
+          if (isDown) {
+            isDown = false;
+            cb();
+          }
+        });
+        slider.addEventListener("touchstart", () => { isDown = true; }, { passive: true });
+        slider.addEventListener("touchend", () => {
+          if (isDown) {
+            isDown = false;
+            cb();
+          }
+        }, { passive: true });
+        slider.addEventListener("change", () => {
+          if (!isDown) cb();
+        });
+      }
+
+      sliderApplyOnRelease(expSlider, applyExposureContrast);
+      sliderApplyOnRelease(contrastSlider, applyExposureContrast);
+
+      // Brush controls
+      colorPicker.addEventListener("input", (e) => {
+        brushColor = e.target.value;
+        colorHex.textContent = brushColor.toLowerCase();
+      });
+
+      brushSizeSlider.addEventListener("input", (e) => {
+        brushSize = parseInt(e.target.value, 10) || 1;
+        brushSizeLabel.textContent = brushSize + " px";
+      });
+
+      brushOpacitySlider.addEventListener("input", (e) => {
+        brushOpacity = parseFloat(e.target.value) || 1;
+        const pct = Math.round(brushOpacity * 100);
+        brushOpacityLabel.textContent = pct + "%";
+      });
+
+      // Text controls
+      textColorPicker.addEventListener("input", (e) => {
+        textColor = e.target.value;
+        textColorHex.textContent = textColor.toLowerCase();
+      });
+
+      textSizeSlider.addEventListener("input", (e) => {
+        textSize = parseInt(e.target.value, 10) || 10;
+        textSizeLabel.textContent = textSize + " px";
+      });
+
+      // Shape controls
+      shapeColorPicker.addEventListener("input", (e) => {
+        shapeColor = e.target.value;
+        shapeColorHex.textContent = shapeColor.toLowerCase();
+      });
+
+      shapeStrokeSlider.addEventListener("input", (e) => {
+        shapeStroke = parseInt(e.target.value, 10) || 1;
+        shapeStrokeLabel.textContent = shapeStroke + " px";
+      });
+
+      // Keyboard shortcuts
+      window.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && (e.key === "z" || e.key === "Z")) {
+          e.preventDefault();
+          handleUndo();
+        }
+        if (e.ctrlKey && (e.key === "s" || e.key === "S")) {
+          e.preventDefault();
+          exportPNG();
+        }
+      });
+
+      // Initial
+      clearCanvas();
+      updateMeta();
+      applyZoom();
+      updateToolSettingsUI();
+    })();
+  </script>
+</body>
+</html>

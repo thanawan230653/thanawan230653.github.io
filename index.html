@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pawarit Sosirikul (PAT) | Personal Landing</title>
+  <meta name="description" content="หน้าแนะนำตัวและผลงานของ Pawarit Sosirikul (PAT) — ซอฟต์แวร์, ฮาร์ดแวร์, เว็บ, Android และงานออโตเมชัน" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Pawarit Sosirikul (PAT)" />
+  <meta property="og:description" content="Personal Landing — เกี่ยวกับฉัน, ทักษะ, ไฮไลต์งาน และช่องทางติดต่อ" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0b1220" />
+
+  <style>
+    :root{
+      --bg0:#060a12;
+      --bg1:#0b1220;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.085);
+      --bd: rgba(255,255,255,.12);
+      --txt:#eaf0ff;
+      --muted:#b9c3da;
+      --shadow: 0 14px 50px rgba(0,0,0,.40);
+      --radius: 20px;
+      --accent:#6ee7ff;
+      --accent2:#b86cff;
+      --accent3:#2ef2a6;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--txt);
+      background:
+        radial-gradient(1100px 500px at 10% 10%, rgba(110,231,255,.16), transparent 60%),
+        radial-gradient(900px 600px at 90% 15%, rgba(184,108,255,.16), transparent 60%),
+        radial-gradient(800px 500px at 55% 100%, rgba(46,242,166,.10), transparent 65%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", Arial, sans-serif;
+      overflow-x:hidden;
+    }
+    /* Subtle noise */
+    body:before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.20'/%3E%3C/svg%3E");
+      opacity:.08;
+      mix-blend-mode:overlay;
+    }
+
+    a{color:inherit}
+    .container{max-width:1120px; margin:0 auto; padding:0 20px}
+
+    /* NAV */
+    .nav{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(11,18,32,.78), rgba(11,18,32,.55));
+      border-bottom: 1px solid var(--bd);
+    }
+    .nav-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; padding:12px 0;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; min-width: fit-content;
+      font-weight:900; letter-spacing:.2px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 6px rgba(110,231,255,.10);
+    }
+    .menu{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+    }
+    .menu a{
+      text-decoration:none;
+      font-weight:700;
+      color: rgba(234,240,255,.9);
+      padding:10px 12px;
+      border-radius:999px;
+      border: 1px solid transparent;
+      transition: .22s ease;
+      font-size:14px;
+    }
+    .menu a:hover{
+      border-color: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.05);
+      transform: translateY(-1px);
+    }
+    .nav-actions{display:flex; gap:10px; align-items:center}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--bd);
+      background: rgba(255,255,255,.06);
+      color: var(--txt);
+      text-decoration:none;
+      font-weight:800;
+      box-shadow: var(--shadow);
+      transition: .22s ease;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.10)}
+    .btn-primary{
+      border-color: rgba(110,231,255,.35);
+      background: linear-gradient(135deg, rgba(110,231,255,.16), rgba(184,108,255,.16));
+    }
+    .btn-ghost{
+      box-shadow:none;
+      background:transparent;
+      border: 1px solid rgba(255,255,255,.14);
+    }
+
+    /* HERO */
+    .hero{
+      padding: 34px 0 22px;
+    }
+    .hero-card{
+      border:1px solid var(--bd);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.045));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .hero-card:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(600px 240px at 30% 0%, rgba(110,231,255,.22), transparent 60%),
+                  radial-gradient(600px 240px at 80% 30%, rgba(184,108,255,.22), transparent 60%);
+      filter: blur(14px);
+      opacity:.7;
+      pointer-events:none;
+    }
+    .hero-inner{
+      position:relative;
+      display:grid;
+      grid-template-columns: 150px 1fr;
+      gap:22px;
+      padding: 22px;
+      align-items:center;
+    }
+    .avatar{
+      width:150px; height:150px; border-radius: 999px; overflow:hidden;
+      border: 2px solid rgba(255,255,255,.35);
+      box-shadow: 0 10px 40px rgba(0,0,0,.45);
+      background: rgba(255,255,255,.08);
+      position:relative;
+    }
+    .avatar:after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(135deg, rgba(110,231,255,.55), rgba(184,108,255,.55));
+      filter: blur(14px);
+      opacity:.25;
+      z-index:-1;
+    }
+    .avatar img{width:100%; height:100%; object-fit:cover; display:block}
+    .title{
+      margin:0;
+      font-size: clamp(26px, 3.4vw, 46px);
+      line-height:1.08;
+      letter-spacing:-.2px;
+      font-weight: 950;
+    }
+    .subtitle{
+      margin:10px 0 0;
+      color: var(--muted);
+      font-weight:700;
+      line-height:1.6;
+      font-size: 15px;
+    }
+    .chips{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top:14px;
+    }
+    .chip{
+      font-size:13px;
+      padding:8px 10px;
+      border-radius:999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.05);
+      color: rgba(234,240,255,.92);
+      font-weight:800;
+    }
+    .hero-cta{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px}
+
+    /* SECTIONS */
+    section{padding: 26px 0}
+    .section-title{
+      display:flex; align-items:end; justify-content:space-between; gap:14px;
+      margin: 24px 0 12px;
+    }
+    .section-title h2{
+      margin:0;
+      font-size: 20px;
+      letter-spacing:.1px;
+      font-weight: 950;
+    }
+    .section-title p{
+      margin:0;
+      color: var(--muted);
+      font-weight:700;
+      font-size: 13px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+    }
+    .card{
+      border:1px solid var(--bd);
+      background: rgba(255,255,255,.055);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+    .card.soft{
+      background: rgba(255,255,255,.045);
+      box-shadow:none;
+    }
+    .kpi{
+      display:flex; flex-direction:column; gap:6px;
+      min-height: 86px;
+    }
+    .kpi .label{color: var(--muted); font-weight:800; font-size:13px}
+    .kpi .value{font-weight:950; font-size:18px}
+
+    .skills .item{
+      display:flex; gap:12px; align-items:flex-start;
+    }
+    .skills .icon{
+      width:38px; height:38px; border-radius: 14px;
+      display:grid; place-items:center;
+      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(135deg, rgba(110,231,255,.12), rgba(184,108,255,.12));
+      font-size:18px;
+      flex:0 0 auto;
+    }
+    .skills h3{margin:0 0 4px; font-weight:950; font-size:15px}
+    .skills p{margin:0; color: var(--muted); font-weight:700; font-size:13px; line-height:1.6}
+
+    .list{
+      list-style:none; padding:0; margin:0;
+      display:grid; gap:10px;
+    }
+    .li{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:12px 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      border-radius: 16px;
+    }
+    .li b{font-weight:950}
+    .li .meta{color:var(--muted); font-weight:700; line-height:1.55}
+    .li .left{width:28px; text-align:center; opacity:.95}
+
+    .pillbar{display:flex; flex-wrap:wrap; gap:10px}
+
+    /* Contact reveal */
+    .secret{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:12px 12px;
+      border:1px dashed rgba(255,255,255,.18);
+      border-radius: 16px;
+      background: rgba(255,255,255,.04);
+    }
+    .secret .text{
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .secret .muted{
+      color: var(--muted);
+      font-weight:700;
+      font-size:13px;
+    }
+
+    /* Footer */
+    footer{
+      padding: 34px 0;
+      margin-top: 22px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      text-align:center;
+      color: var(--muted);
+      font-weight:700;
+    }
+
+    /* Modal (welcome + QR) */
+    .modal{
+      position:fixed; inset:0;
+      display:none;
+      align-items:center; justify-content:center;
+      background: rgba(0,0,0,.58);
+      z-index:80;
+      padding: 18px;
+    }
+    .modal.open{display:flex}
+    .modal .box{
+      width:min(520px, 100%);
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(11,18,32,.92);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .modal h3{margin:0 0 6px; font-weight:950}
+    .modal p{margin:0 0 12px; color:var(--muted); font-weight:700; line-height:1.65}
+    .modal .row{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; margin-top: 10px}
+    .input{
+      width:100%;
+      padding:12px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--txt);
+      font-weight:800;
+      outline:none;
+    }
+    .err{color:#ffb4b4; font-weight:800; font-size:13px; min-height: 18px}
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%; bottom:18px;
+      transform: translateX(-50%);
+      background: rgba(11,18,32,.88);
+      border:1px solid rgba(255,255,255,.16);
+      color: var(--txt);
+      padding: 10px 12px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      font-weight:900;
+      z-index:90;
+      opacity:0;
+      pointer-events:none;
+      transition: .22s ease;
+    }
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(-4px)}
+
+    /* Responsive */
+    @media (max-width: 760px){
+      .menu{display:none}
+      .hero-inner{grid-template-columns: 1fr; text-align:center}
+      .avatar{margin: 0 auto}
+      .hero-cta{justify-content:center}
+      .nav-actions{gap:8px}
+      .btn{padding:10px 12px}
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      *{scroll-behavior:auto !important; transition:none !important}
+    }
+    html{scroll-behavior:smooth}
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <header class="nav" role="banner">
+    <div class="container">
+      <div class="nav-inner">
+        <div class="brand" aria-label="Site brand">
+          <span class="dot" aria-hidden="true"></span>
+          <span>Pawarit <span style="opacity:.82">(PAT)</span></span>
+        </div>
+
+        <nav class="menu" aria-label="Primary navigation">
+          <a href="#about">เกี่ยวกับ</a>
+          <a href="#skills">ทักษะ</a>
+          <a href="#highlights">ไฮไลต์</a>
+          <a href="#details">ข้อมูลส่วนตัว</a>
+          <a href="#contact">ติดต่อ</a>
+        </nav>
+
+        <div class="nav-actions">
+          <button class="btn btn-ghost" id="welcomeOpen" type="button">👋 ยินดีต้อนรับ</button>
+          <a class="btn btn-primary" href="https://t.me/PAT230653" target="_blank" rel="noopener">✈️ Telegram</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <main>
+    <div class="container hero" id="about">
+      <div class="hero-card">
+        <div class="hero-inner">
+          <div class="avatar">
+            <img src="https://i0.wp.com/lifesara.co/wp-content/uploads/2023/05/%E0%B8%AD%E0%B8%99%E0%B8%B4%E0%B9%80%E0%B8%A1%E0%B8%B0%E0%B8%88%E0%B8%B5%E0%B8%99%E0%B8%A7%E0%B8%B2%E0%B8%A2_2.png" alt="Pawarit Avatar" />
+          </div>
+
+          <div>
+            <h1 class="title">Pawarit Sosirikul</h1>
+            <div class="subtitle">
+              ไม่ได้ทำให้ใครผิดก็ไม่มีสิตรชอบ
+            </div>
+
+            <div class="chips" aria-label="Quick tags">
+              <span class="chip">🛠️ Hardware</span>
+              <span class="chip">💾 Software</span>
+              <span class="chip">🌐 HTML/CSS/JS</span>
+              <span class="chip">🤖 Android</span>
+              <span class="chip">⚡ Automation</span>
+              <span class="chip">🎮 Game Dev</span>
+            </div>
+
+            <div class="hero-cta">
+              <a class="btn btn-primary" href="#highlights">✨ ดูไฮไลต์งาน</a>
+              <a class="btn" href="https://github.com/thanawan230653" target="_blank" rel="noopener">🧑‍💻 GitHub</a>
+              <a class="btn" href="http://pat-server1.duckdns.org:3661" target="_blank" rel="noopener">🔗 เว็บไซต์</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <section aria-label="Quick info">
+        <div class="grid">
+          <div class="card soft" style="grid-column: span 4;">
+            <div class="kpi">
+              <div class="label">ชื่อเล่น</div>
+              <div class="value">ต๊ะ</div>
+              <div class="label">ภาษาพูด</div>
+              <div class="value" style="font-size:15px; font-weight:900; opacity:.95">อีสาน, กลาง</div>
+            </div>
+          </div>
+          <div class="card soft" style="grid-column: span 4;">
+            <div class="kpi">
+              <div class="label">เรียนอยู่</div>
+              <div class="value" style="font-size:15px">โรงเรียนเทสบาล๑วัดเทียนดัด</div>
+              <div class="label">ระดับชั้น</div>
+              <div class="value" style="font-size:15px">ม.3/1</div>
+            </div>
+          </div>
+          <div class="card soft" style="grid-column: span 4;">
+            <div class="kpi">
+              <div class="label">โฟกัสงาน</div>
+              <div class="value" style="font-size:15px">เครื่องมือ/สคริปต์, แก้ปัญหา, ซัพพอร์ตไอที</div>
+              <div class="label">งานอดิเรก</div>
+              <div class="value" style="font-size:15px">ตกปลา</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <div class="container">
+        <div class="section-title">
+          <h2>ทักษะ</h2>
+          <p>สรุปแบบอ่านเร็ว • จัดใหม่ให้ดูเป็น Landing</p>
+        </div>
+
+        <div class="grid skills">
+          <div class="card" style="grid-column: span 6;">
+            <div class="item">
+              <div class="icon">💾</div>
+              <div>
+                <h3>ซอฟต์แวร์ / Automation</h3>
+                <p>สคริปต์, ออโตเมชัน, แก้ปัญหา, งานซัพพอร์ตไอที</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column: span 6;">
+            <div class="item">
+              <div class="icon">🛠️</div>
+              <div>
+                <h3>ฮาร์ดแวร์</h3>
+                <p>ซ่อม/วัดผล/จูนประสิทธิภาพ, งานช่างมือถือ (unlock / ยกชิพ)</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column: span 4;">
+            <div class="item">
+              <div class="icon">🌐</div>
+              <div>
+                <h3>เว็บ</h3>
+                <p>HTML/CSS/JS, UI/UX</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column: span 4;">
+            <div class="item">
+              <div class="icon">🤖</div>
+              <div>
+                <h3>Android</h3>
+                <p>พื้นฐาน Kotlin/Java, Build & Debug, UI</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column: span 4;">
+            <div class="item">
+              <div class="icon">🧩</div>
+              <div>
+                <h3>ภาษาคอมพิวเตอร์</h3>
+                <p>Python 3, Java, C++</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column: span 6;">
+            <div class="item">
+              <div class="icon">🎮</div>
+              <div>
+                <h3>นักพัฒนาเกม</h3>
+                <p>มายคราฟ (Add-ons, Mods, Plugins) และเกมอื่นๆ</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column: span 6;">
+            <div class="item">
+              <div class="icon">💬</div>
+              <div>
+                <h3>คอมมูนิเคชัน</h3>
+                <p>ซัพพอร์ต & สื่อสารงาน</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HIGHLIGHTS -->
+    <section id="highlights">
+      <div class="container">
+        <div class="section-title">
+          <h2>ไฮไลต์</h2>
+          <p>ปักหมุดลิงก์สำคัญไว้ให้กดง่าย</p>
+        </div>
+
+        <div class="grid">
+          <div class="card" style="grid-column: span 4;">
+            <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start">
+              <div>
+                <div style="font-weight:950; font-size:16px">GitHub</div>
+                <div style="color:var(--muted); font-weight:700; margin-top:6px; line-height:1.6">รวมโค้ด/โปรเจกต์ และงานทดลอง</div>
+              </div>
+              <div style="opacity:.9">🧑‍💻</div>
+            </div>
+            <div class="pillbar" style="margin-top:12px">
+              <a class="btn btn-ghost" href="https://github.com/thanawan230653" target="_blank" rel="noopener">เปิด GitHub</a>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column: span 4;">
+            <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start">
+              <div>
+                <div style="font-weight:950; font-size:16px">เว็บดีไซน์</div>
+                <div style="color:var(--muted); font-weight:700; margin-top:6px; line-height:1.6">หน้าทดลอง/หน้าโชว์งานด้านเว็บ</div>
+              </div>
+              <div style="opacity:.9">🌐</div>
+            </div>
+            <div class="pillbar" style="margin-top:12px">
+              <a class="btn btn-ghost" href="https://thanawan230653.github.io/pawarit.html" target="_blank" rel="noopener">เปิดตัวอย่าง</a>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column: span 4;">
+            <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start">
+              <div>
+                <div style="font-weight:950; font-size:16px">YouTube</div>
+                <div style="color:var(--muted); font-weight:700; margin-top:6px; line-height:1.6">ช่องทางวิดีโอ/คอนเทนต์</div>
+              </div>
+              <div style="opacity:.9">▶️</div>
+            </div>
+            <div class="pillbar" style="margin-top:12px">
+              <a class="btn btn-ghost" href="https://www.youtube.com/@hddc322" target="_blank" rel="noopener">เปิดช่อง</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DETAILS -->
+    <section id="details">
+      <div class="container">
+        <div class="section-title">
+          <h2>ข้อมูลส่วนตัว</h2>
+          <p>ข้อมูลจากไฟล์เดิม • จัดรูปแบบใหม่</p>
+        </div>
+
+        <div class="grid">
+          <div class="card" style="grid-column: span 7;">
+            <ul class="list">
+              <li class="li">
+                <div class="left">📍</div>
+                <div class="meta"><b>อาศัยอยู่ที่:</b> ข้าง วัดธรรมปัญยารามบางม่วง</div>
+              </li>
+              <li class="li">
+                <div class="left">🧑‍🎓</div>
+                <div class="meta"><b>ศึกษา:</b> โรงเรียนเทสบาล๑วัดเทียนดัด • <b>ชั้น:</b> ม.3/1</div>
+              </li>
+              <li class="li">
+                <div class="left">🍚</div>
+                <div class="meta"><b>อาชีพหลัก:</b> ช่วยงานร้านข้าวแม่ยาย</div>
+              </li>
+              <li class="li">
+                <div class="left">❤️</div>
+                <div class="meta"><b>แฟนชื่อ:</b> แตงโม</div>
+              </li>
+              <li class="li">
+                <div class="left">🎣</div>
+                <div class="meta"><b>งานอดิเรก:</b> ตกปลา</div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card" style="grid-column: span 5;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px">
+              <div style="font-weight:950; font-size:16px">สนับสนุน (TrueMoney/พร้อมเพ)</div>
+              <div style="opacity:.9">💚</div>
+            </div>
+            <div style="margin-top:10px; color:var(--muted); font-weight:700; line-height:1.7">
+              เบอร์สนับสนุน: <span style="color:var(--txt); font-weight:950" id="supportPhone">0842781903</span><br/>
+              eWallet: <span style="color:var(--txt); font-weight:950" id="ewallet">14000842781903</span>
+            </div>
+
+            <div class="hero-cta" style="margin-top:12px">
+              <button class="btn btn-primary" id="qrOpen" type="button">📷 เปิด QR</button>
+              <button class="btn" id="copySupport" type="button">📋 คัดลอกเบอร์</button>
+              <button class="btn" id="copyEwallet" type="button">📋 คัดลอก eWallet</button>
+            </div>
+
+            <div style="margin-top:10px; color:var(--muted); font-weight:700; font-size:12px">
+              * ไฟล์รูป QR ชื่อ <b>bt.jpg</b> (อยู่โฟลเดอร์เดียวกับไฟล์นี้)
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="container">
+        <div class="section-title">
+          <h2>ติดต่อ</h2>
+          <p>มีโหมดซ่อนข้อมูลติดต่อ (คลิกเพื่อแสดง)</p>
+        </div>
+
+        <div class="grid">
+          <div class="card" style="grid-column: span 6;">
+            <div style="font-weight:950; font-size:16px">โซเชียล</div>
+            <div class="hero-cta" style="margin-top:12px">
+              <a class="btn" href="https://t.me/PAT230653" target="_blank" rel="noopener">✈️ Telegram</a>
+              <a class="btn" href="https://www.facebook.com/kubsss7544" target="_blank" rel="noopener">📘 Facebook</a>
+              <a class="btn" href="https://www.instagram.com/pawarit.sosrirkul" target="_blank" rel="noopener">📷 Instagram</a>
+              <a class="btn" href="https://github.com/thanawan230653" target="_blank" rel="noopener">🧑‍💻 GitHub</a>
+              <a class="btn" href="https://www.youtube.com/@hddc322" target="_blank" rel="noopener">▶️ YouTube</a>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column: span 6;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px">
+              <div style="font-weight:950; font-size:16px">ข้อมูลติดต่อโดยตรง</div>
+              <button class="btn btn-ghost" id="revealBtn" type="button">🔓 แสดง</button>
+            </div>
+
+            <div style="margin-top:12px; display:grid; gap:10px">
+              <div class="secret">
+                <div>
+                  <div class="text" id="phoneText">📞 โทร: 084-XXX-XXXX</div>
+                  <div class="muted">คลิก “แสดง” เพื่อเปิดเผย</div>
+                </div>
+                <button class="btn" id="copyPhone" type="button" disabled>📋 คัดลอก</button>
+              </div>
+
+              <div class="secret">
+                <div>
+                  <div class="text" id="mailText">✉️ อีเมล: ********@gmail.com</div>
+                  <div class="muted">คลิก “แสดง” เพื่อเปิดเผย</div>
+                </div>
+                <button class="btn" id="copyMail" type="button" disabled>📋 คัดลอก</button>
+              </div>
+
+              <div style="color:var(--muted); font-weight:700; font-size:12px; line-height:1.7">
+                * การ “ซ่อน” เป็นแค่กันเผลอ (ไม่ได้เป็นระบบล็อกอินจริง) — ถ้าจะทำให้ปลอดภัยกว่านี้ค่อยต่อกับระบบหลังบ้านได้
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="year"></span> Pawarit Sosirikul • ทำเป็นหน้า Landing แบบ 1 หน้า • เวอร์ชันออกแบบใหม่ทั้งหมด
+  </footer>
+
+  <!-- Welcome Modal -->
+  <div class="modal" id="welcomeModal" aria-hidden="true">
+    <div class="box" role="dialog" aria-modal="true" aria-labelledby="wTitle">
+      <h3 id="wTitle">👋 ยินดีต้อนรับ!</h3>
+      <p>
+        นี่คือหน้าแนะนำตัวแบบ “หน้าเดียวจบ” — อ่านง่าย กดลิงก์ง่าย และเหมาะเอาไปแปะโปรไฟล์ (FB/IG/Telegram) ได้เลย
+      </p>
+      <div class="row">
+        <button class="btn btn-ghost" id="wDontShow" type="button">ไม่ต้องโชว์อีก</button>
+        <button class="btn" id="wClose" type="button">ปิด</button>
+        <a class="btn btn-primary" href="#highlights" id="wGo" type="button">ไปที่ไฮไลต์</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Modal -->
+  <div class="modal" id="qrModal" aria-hidden="true">
+    <div class="box" role="dialog" aria-modal="true" aria-labelledby="qrTitle">
+      <h3 id="qrTitle">📷 QR สนับสนุนพร้อมเพ</h3>
+      <p>ถ้าไฟล์ <b>bt.jpg</b> อยู่โฟลเดอร์เดียวกัน รูปจะขึ้นอัตโนมัติ</p>
+      <div style="text-align:center">
+        <img src="bt.jpg" alt="QR สนับสนุนพร้อมเพ" style="max-width:100%; border-radius:16px; border:1px solid rgba(255,255,255,.16)" onerror="this.style.display='none'; document.getElementById('qrFallback').style.display='block';" />
+        <div id="qrFallback" style="display:none; color:var(--muted); font-weight:800; padding:14px; border:1px dashed rgba(255,255,255,.18); border-radius:16px; background:rgba(255,255,255,.04)">
+          ไม่พบไฟล์ <b>bt.jpg</b> — วางรูป QR ไว้ชื่อ <b>bt.jpg</b> แล้วรีเฟรชหน้า
+        </div>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="qrClose" type="button">ปิด</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reveal Modal -->
+  <div class="modal" id="revealModal" aria-hidden="true">
+    <div class="box" role="dialog" aria-modal="true" aria-labelledby="rTitle">
+      <h3 id="rTitle">🔓 แสดงข้อมูลติดต่อ</h3>
+      <p>เพื่อกันเผลอเผยข้อมูลโดยไม่ตั้งใจ ใส่ “รหัสสั้นๆ” ก่อน (แก้ได้ในไฟล์นี้)</p>
+      <input class="input" id="pinInput" placeholder="ใส่รหัส เช่น PAT" inputmode="text" autocomplete="off" />
+      <div class="err" id="pinErr"></div>
+      <div class="row">
+        <button class="btn btn-ghost" id="pinCancel" type="button">ยกเลิก</button>
+        <button class="btn btn-primary" id="pinOk" type="button">ยืนยัน</button>
+      </div>
+      <div style="margin-top:10px; color:var(--muted); font-weight:700; font-size:12px; line-height:1.65">
+        * ตั้งค่า <b>CONTACT_PIN</b> ในสคริปต์ด้านล่างได้เลย
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // ========= Basic utils =========
+    const $ = (s) => document.querySelector(s);
+    const toast = $("#toast");
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=> toast.classList.remove("show"), 1600);
+    }
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast("คัดลอกแล้ว ✅");
+      }catch(e){
+        // fallback
+        const t = document.createElement("textarea");
+        t.value = text; document.body.appendChild(t);
+        t.select(); document.execCommand("copy");
+        document.body.removeChild(t);
+        showToast("คัดลอกแล้ว ✅");
+      }
+    }
+
+    // ========= Year =========
+    $("#year").textContent = new Date().getFullYear();
+
+    // ========= Welcome modal (first visit) =========
+    const welcomeModal = $("#welcomeModal");
+    const WKEY = "pat_welcome_hide";
+    function openModal(m){ m.classList.add("open"); m.setAttribute("aria-hidden","false"); }
+    function closeModal(m){ m.classList.remove("open"); m.setAttribute("aria-hidden","true"); }
+
+    $("#welcomeOpen").addEventListener("click", ()=> openModal(welcomeModal));
+    $("#wClose").addEventListener("click", ()=> closeModal(welcomeModal));
+    $("#wGo").addEventListener("click", ()=> closeModal(welcomeModal));
+    $("#wDontShow").addEventListener("click", ()=>{
+      localStorage.setItem(WKEY, "1");
+      closeModal(welcomeModal);
+      showToast("โอเค จะไม่โชว์อีก");
+    });
+
+    // auto open on first load (small delay)
+    if(!localStorage.getItem(WKEY)){
+      setTimeout(()=> openModal(welcomeModal), 380);
+    }
+
+    // ========= QR modal =========
+    const qrModal = $("#qrModal");
+    $("#qrOpen").addEventListener("click", ()=> openModal(qrModal));
+    $("#qrClose").addEventListener("click", ()=> closeModal(qrModal));
+    qrModal.addEventListener("click", (e)=>{ if(e.target === qrModal) closeModal(qrModal); });
+
+    // ========= Copy buttons =========
+    $("#copySupport").addEventListener("click", ()=> copyText($("#supportPhone").textContent.trim()));
+    $("#copyEwallet").addEventListener("click", ()=> copyText($("#ewallet").textContent.trim()));
+
+    // ========= Contact reveal (light privacy) =========
+    const CONTACT_PIN = "PAT"; // <<< เปลี่ยนรหัสได้ที่นี่
+    const phoneReal = "084-278-1903";
+    const mailReal  = "viv121oioppl@gmail.com";
+
+    let revealed = false;
+    const revealModal = $("#revealModal");
+
+    $("#revealBtn").addEventListener("click", ()=>{
+      if(revealed){
+        // hide back
+        revealed = false;
+        $("#phoneText").textContent = "📞 โทร: 084-XXX-XXXX";
+        $("#mailText").textContent  = "✉️ อีเมล: ********@gmail.com";
+        $("#copyPhone").disabled = true;
+        $("#copyMail").disabled  = true;
+        showToast("ซ่อนข้อมูลแล้ว");
+        return;
+      }
+      $("#pinInput").value = "";
+      $("#pinErr").textContent = "";
+      openModal(revealModal);
+      setTimeout(()=> $("#pinInput").focus(), 40);
+    });
+
+    $("#pinCancel").addEventListener("click", ()=> closeModal(revealModal));
+    $("#pinOk").addEventListener("click", ()=>{
+      const val = ($("#pinInput").value || "").trim();
+      if(!val){
+        $("#pinErr").textContent = "กรอกรหัสก่อนนะ";
+        return;
+      }
+      if(val !== CONTACT_PIN){
+        $("#pinErr").textContent = "รหัสไม่ถูกต้อง";
+        return;
+      }
+      revealed = true;
+      $("#phoneText").textContent = "📞 โทร: " + phoneReal;
+      $("#mailText").textContent  = "✉️ อีเมล: " + mailReal;
+      $("#copyPhone").disabled = false;
+      $("#copyMail").disabled  = false;
+      closeModal(revealModal);
+      showToast("แสดงข้อมูลแล้ว ✅");
+    });
+
+    revealModal.addEventListener("click", (e)=>{ if(e.target === revealModal) closeModal(revealModal); });
+
+    $("#copyPhone").addEventListener("click", ()=> copyText(phoneReal.replaceAll("-","")));
+    $("#copyMail").addEventListener("click", ()=> copyText(mailReal));
+
+    // ========= Close modals with ESC =========
+    window.addEventListener("keydown", (e)=>{
+      if(e.key !== "Escape") return;
+      [welcomeModal, qrModal, revealModal].forEach(m=>{
+        if(m.classList.contains("open")) closeModal(m);
+      });
+    });
+  </script>
+</body>
+</html>

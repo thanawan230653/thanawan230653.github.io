@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Images to PDF Converter</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111827;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      max-width: 800px;
+      width: 100%;
+      background: #020617;
+      padding: 20px;
+      border-radius: 18px;
+      border: 1px solid #1f2937;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px dashed #4b5563;
+      border-radius: 10px;
+      background: #020617;
+      color: #e5e7eb;
+    }
+    button {
+      padding: 10px 18px;
+      background: #22c55e;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+    .status {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #a5b4fc;
+      min-height: 1.2em;
+    }
+    .download-link {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 8px 14px;
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 9999px;
+      color: #e5e7eb;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Convert Multiple Images → Single PDF</h2>
+  <p>Supports: PNG, JPG, JPEG, BMP, WEBP, GIF</p>
+
+  <input id="fileInput" type="file"
+    accept="image/png,image/jpeg,image/jpg,image/bmp,image/webp,image/gif"
+    multiple />
+
+  <div class="status" id="fileStatus"></div>
+
+  <button id="convertBtn">📄 Convert to PDF</button>
+
+  <div class="status" id="status"></div>
+
+  <a id="downloadLink" class="download-link" href="#" download="combined.pdf" style="display:none;">
+    ⬇ Download combined.pdf
+  </a>
+</div>
+
+<script>
+const fileInput = document.getElementById("fileInput");
+const fileStatus = document.getElementById("fileStatus");
+const convertBtn = document.getElementById("convertBtn");
+const statusEl = document.getElementById("status");
+const downloadLink = document.getElementById("downloadLink");
+
+const allowedTypes = [
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/webp",
+  "image/bmp",
+  "image/gif"
+];
+
+fileInput.addEventListener("change", () => {
+  const files = Array.from(fileInput.files).filter(f => allowedTypes.includes(f.type));
+
+  if (files.length === 0) {
+    fileStatus.textContent = "No valid images selected!";
+    return;
+  }
+
+  fileStatus.textContent = `Selected: ${files.length} image(s).`;
+});
+
+convertBtn.addEventListener("click", async () => {
+  const files = Array.from(fileInput.files).filter(f => allowedTypes.includes(f.type));
+
+  if (files.length === 0) {
+    alert("Please select image files first.");
+    return;
+  }
+
+  downloadLink.style.display = "none";
+  convertBtn.disabled = true;
+  statusEl.textContent = "Loading images...";
+
+  try {
+    // Sort files by name to avoid ordering issues
+    files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+    const images = [];
+    let failed = 0;
+
+    for (const file of files) {
+      const img = await loadImage(file).catch(() => null);
+      if (img) images.push(img);
+      else failed++;
+    }
+
+    statusEl.textContent = `Loaded ${images.length} OK, ${failed} failed. Generating PDF...`;
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit: "mm", format: "a4" });
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    images.forEach((img, index) => {
+      const imgRatio = img.width / img.height;
+      const pageRatio = pageWidth / pageHeight;
+
+      let renderWidth, renderHeight;
+
+      if (imgRatio > pageRatio) {
+        renderWidth = pageWidth;
+        renderHeight = renderWidth / imgRatio;
+      } else {
+        renderHeight = pageHeight;
+        renderWidth = renderHeight * imgRatio;
+      }
+
+      const x = (pageWidth - renderWidth) / 2;
+      const y = (pageHeight - renderHeight) / 2;
+
+      pdf.addImage(img.dataURL, "PNG", x, y, renderWidth, renderHeight);
+
+      if (index < images.length - 1) pdf.addPage();
+    });
+
+    const blob = pdf.output("blob");
+    const url = URL.createObjectURL(blob);
+
+    downloadLink.href = url;
+    downloadLink.style.display = "inline-block";
+
+    statusEl.textContent = "Done!";
+  } catch (err) {
+    console.error(err);
+    statusEl.textContent = "Error: " + err.message;
+  }
+
+  convertBtn.disabled = false;
+});
+
+function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = e => {
+      const dataURL = e.target.result;
+      const img = new Image();
+
+      img.onload = () => resolve({ dataURL, width: img.width, height: img.height });
+      img.onerror = () => reject(new Error("Invalid image"));
+      img.src = dataURL;
+    };
+
+    reader.onerror = () => reject(new Error("File read error"));
+    reader.readAsDataURL(file);
+  });
+}
+</script>
+
+</body>
+</html>

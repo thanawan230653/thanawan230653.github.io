@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pawarit Sosirikul | Portfolio</title>
+<meta name="description" content="Portfolio ของ Pawarit อายุ 16 ปี อาชีพขายข้าว ความสามารถด้านซอฟต์แวร์และฮาร์ดแวร์" />
+<style>
+  :root{
+    --glass-bg: rgba(0,0,0,.45);
+    --glass-bd: rgba(255,255,255,.22);
+    --brand: #4cc9f0; --brand-2:#b5179e;
+    --txt:#f2f5f8; --muted:#bfc7d3; --shadow:0 10px 30px rgba(0,0,0,.35);
+    --radius:18px;
+  }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{
+    margin:0;color:var(--txt);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Thai",Arial;
+    background:url('https://f.ptcdn.info/719/083/000/sbchivd0dghrUbqrAjrY-o.jpg') center/cover fixed no-repeat;
+    overflow-x:hidden;
+  }
+  body:before,body:after{content:"";position:fixed;inset:0;pointer-events:none}
+  body:before{background:
+       radial-gradient(60vw 60vw at 10% 10%, rgba(76,201,240,.20), transparent 60%),
+       radial-gradient(70vw 70vw at 90% 20%, rgba(181,23,158,.20), transparent 60%),
+       linear-gradient(to bottom, rgba(0,0,0,.45), rgba(0,0,0,.65) 30%, rgba(0,0,0,.75));
+       mix-blend-mode:screen}
+  body:after{background-image:
+       radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.9) 50%, transparent 51%),
+       radial-gradient(2px 2px at 65% 15%, rgba(255,255,255,.7) 50%, transparent 51%),
+       radial-gradient(2px 2px at 85% 55%, rgba(255,255,255,.8) 50%, transparent 51%),
+       radial-gradient(2px 2px at 35% 75%, rgba(255,255,255,.8) 50%, transparent 51%);
+       animation:twinkle 8s linear infinite;opacity:.35}
+  @keyframes twinkle{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+  /* NAV */
+  .nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+       background:linear-gradient(to bottom, rgba(15,23,42,.55), rgba(15,23,42,.25));
+       border-bottom:1px solid var(--glass-bd)}
+  .nav .wrap{max-width:1120px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .menu{display:flex;gap:14px;justify-content:center;flex:1}
+  .menu a{color:var(--txt);text-decoration:none;font-weight:600;padding:10px 16px;border-radius:999px;border:1px solid transparent;transition:.25s}
+  .menu a:hover{border-color:rgba(255,255,255,.25);transform:translateY(-1px)}
+  .auth{display:flex;gap:10px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1px solid var(--glass-bd);
+       background:rgba(255,255,255,.08);color:var(--txt);cursor:pointer;font-weight:700;box-shadow:var(--shadow);transition:.25s}
+  .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.14)}
+  .btn-alt{background:linear-gradient(135deg, rgba(76,201,240,.25), rgba(181,23,158,.25))}
+
+  section{padding:80px 20px}
+  .wrap-main{max-width:1120px;margin:0 auto}
+  .hero{display:grid;gap:28px;align-items:center;grid-template-columns:140px 1fr;
+        background:rgba(0,0,0,.45);border:1px solid var(--glass-bd);border-radius:18px;box-shadow:var(--shadow);padding:26px;margin-top:28px}
+  .avatar{width:140px;height:140px;border-radius:50%;border:3px solid rgba(255,255,255,.9);overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.4);background:#fff}
+  .avatar img{width:100%;height:100%;object-fit:cover}
+  .title{font-size:clamp(24px,3.2vw,40px);line-height:1.1;margin:0 0 8px;font-weight:800;text-shadow:0 2px 12px rgba(0,0,0,.45)}
+  .typing{border-right:2px solid var(--brand);white-space:nowrap;overflow:hidden;display:inline-block}
+
+  /* badges */
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .badge{
+    display:inline-block;
+    text-decoration:none;
+    color:var(--txt);
+    font-size:14px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:linear-gradient(135deg, rgba(76,201,240,.25), rgba(181,23,158,.25));
+    border:1px solid rgba(255,255,255,.25);
+    transition:.25s;
+  }
+  .badge:hover{transform:translateY(-1px);filter:brightness(1.05)}
+
+  .sub{color:var(--muted);margin-top:6px}
+  .player{display:flex;align-items:center;gap:14px;margin-top:16px;flex-wrap:wrap}
+  .viz{display:flex;gap:3px;height:22px;align-items:flex-end}
+  .bar{width:4px;height:6px;background:linear-gradient(180deg, var(--brand), var(--brand-2));border-radius:2px;opacity:.35;transform-origin:bottom}
+  .viz.playing .bar{opacity:1;animation:beat 1s ease-in-out infinite}
+  .bar:nth-child(odd){animation-delay:.1s}.bar:nth-child(3n){animation-delay:.2s}.bar:nth-child(5n){animation-delay:.3s}.bar:nth-child(7n){animation-delay:.4s}
+  @keyframes beat{0%,100%{height:6px}50%{height:22px}}
+
+  .card{background:rgba(2,6,23,.7);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+  .social{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .link{text-decoration:none;color:var(--txt);border:1px solid var(--glass-bd);border-radius:12px;padding:10px 14px;background:rgba(255,255,255,.06);transition:.25s;display:inline-flex;align-items:center;gap:8px}
+  .link:hover{transform:translateY(-1px);background:rgba(255,255,255,.12)}
+  .locked{opacity:.55;filter:grayscale(.3);cursor:not-allowed;pointer-events:auto}
+  .locked:hover{transform:none;background:rgba(255,255,255,.06)}
+  footer{text-align:center;color:var(--muted);padding:30px 20px;border-top:1px solid var(--glass-bd);background:rgba(0,0,0,.45);backdrop-filter:blur(8px)}
+  html{scroll-behavior:smooth}
+  @media (max-width:700px){.hero{grid-template-columns:1fr;text-align:center}.avatar{margin:0 auto}}
+
+  /* Modal */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:60}
+  .modal.open{display:flex}
+  .modal .box{background:rgba(2,6,23,.9);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:20px 22px;max-width:380px;width:92%;box-shadow:var(--shadow)}
+  .field{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+  .field input{padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--txt)}
+  .row{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+  .err{color:#ffb4b4;font-size:13px;min-height:18px}
+</style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <div class="nav">
+    <div class="wrap">
+      <div class="menu">
+        <a href="#about">เกี่ยวกับฉัน</a>
+        <a href="#skills">ทักษะ</a>
+        <a href="#details">รายละเอียดส่วนตัว</a>
+        <a href="#contact">ติดต่อ</a>
+      </div>
+      <div class="auth">
+        <button class="btn" id="loginOpen">🔐 ล็อกอิน</button>
+        <a class="btn btn-alt" href="https://t.me/PAT230653" target="_blank" rel="noopener">📝 สมัครสมาชิก</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO / ABOUT -->
+  <section id="about">
+    <div class="wrap-main">
+      <div class="hero">
+        <div class="avatar">
+          <img src="https://i0.wp.com/lifesara.co/wp-content/uploads/2023/05/%E0%B8%AD%E0%B8%99%E0%B8%B4%E0%B9%80%E0%B8%A1%E0%B8%B0%E0%B8%88%E0%B8%B5%E0%B8%99%E0%B8%A7%E0%B8%B2%E0%B8%A2_2.png" alt="Pawarit Avatar">
+        </div>
+        <div>
+          <h1 class="title"><span class="typing" id="typing" data-text="Pawarit Sosirikul - PAT"></span></h1>
+          <div class="sub">อายุ 16 ปี | อาชีพ: ขายข้าว | ความสามารถ: ซอฟต์แวร์ & ฮาร์ดแวร์</div>
+
+          <!-- badges -->
+          <div class="badges">
+            <a class="badge" href="https://thanawan230653.github.io/pawarit.html" target="_blank" rel="noopener">🌐 เว็บดีไซน์</a>
+            <span class="badge">🛠️ ฮาร์ดแวร์</span>
+            <span class="badge">💾 ซอฟต์แวร์</span>
+            <span class="badge">🤖 Android Developer</span>
+            <span class="badge">⚡ Automations</span>
+          </div>
+
+          <!-- Player -->
+          <div class="player">
+            <button class="btn" id="playBtn" aria-label="Play music">▶️ เล่นเพลง</button>
+            <div class="viz" id="viz" aria-hidden="true">
+              <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+              <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+              <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+              <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+            <audio id="audio" preload="none" src="https://cast.requestradio.in.th:810/https://cast.requestradio.in.th:810/"></audio>
+          </div>
+
+          <!-- Quick contact (ล็อกก่อนล็อกอิน) -->
+          <div class="social" style="margin-top:14px;flex-wrap:wrap">
+            <a class="link locked" data-protect="contact" data-href="tel:0842781903" data-label="📞 โทร: 084-278-1903" href="#locked">📞 โทร: 084-XXX-XXXX</a>
+            <a class="link locked" data-protect="contact" data-href="mailto:viv121oioppl@gmail.com" data-label="✉️ อีเมล: viv121oioppl@gmail.com" href="#locked">✉️ อีเมล: ********@gmail.com</a>
+            <a class="link" href="https://www.youtube.com/@hddc322" target="_blank" rel="noopener">▶️ YouTube: @hddc322</a>
+          </div>
+
+          <!-- Socials -->
+          <div class="social" style="margin-top:8px">
+            <a class="link" href="https://github.com/thanawan230653" target="_blank" rel="noopener">🧑‍💻 GitHub</a>
+            <a class="link" href="https://t.me/PAT230653" target="_blank" rel="noopener">✈️ Telegram</a>
+            <a class="link" href="https://www.facebook.com/kubsss7544" target="_blank" rel="noopener">📘 Facebook</a>
+            <a class="link" href="https://www.instagram.com/pawarit.sosrirkul" target="_blank" rel="noopener">📷 Instagram</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="wrap-main">
+      <div class="card">
+        <h2 style="margin:0 0 12px">ทักษะ</h2>
+        <div style="display:grid;gap:18px;margin-top:10px;grid-template-columns:repeat(auto-fit, minmax(240px,1fr))">
+          <!-- ซอฟต์แวร์ + ไอทีซัพผอต -->
+          <div class="card">
+            <h3 style="margin:0 0 8px">ซอฟต์แวร์</h3>
+            <div style="color:var(--muted);font-size:14px">
+              สคริปต์, ออโตเมชัน, แก้ปัญหา, ไอทีซัพผอต
+            </div>
+          </div>
+          <!-- ฮาร์ดแวร์ + ช่างมือถือ -->
+          <div class="card">
+            <h3 style="margin:0 0 8px">ฮาร์ดแวร์</h3>
+            <div style="color:var(--muted);font-size:14px">
+              ซ่อม/วัดผล/จูนประสิทธิภาพ, ช่างมือถือ - unlock - ยก ชิบ
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="margin:0 0 8px">เว็บ</h3>
+            <div style="color:var(--muted);font-size:14px">HTML/CSS/JS, UI/UX</div>
+          </div>
+          <div class="card">
+            <h3 style="margin:0 0 8px">Android Developer</h3>
+            <div style="color:var(--muted);font-size:14px">พื้นฐาน Kotlin/Java, Build & Debug, UI</div>
+          </div>
+          <div class="card">
+            <h3 style="margin:0 0 8px">คอมมูนิเคชัน</h3>
+            <div style="color:var(--muted);font-size:14px">ซัพพอร์ต & สื่อสารงาน</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DETAILS -->
+  <section id="details">
+    <div class="wrap-main">
+      <div class="card">
+        <h2 style="margin:0 0 12px">รายละเอียดส่วนตัว</h2>
+        <ul style="margin:8px 0 16px;padding-left:20px;color:var(--muted);line-height:1.7">
+          <li>ชื่อเล่น: ต๊ะ</li>
+          <li>อายุ: 16 ปี</li>
+          <li>อาศัยอยู่ที่: อ้อมใหญ่</li>
+          <li>ศึกษาที่: วิทยาลัยการจัดการเพรชเกษม</li>
+          <li>สาขา: เทคโนโลยีทุกิจดิจิทัล ปี 1</li>
+          <li>แฟนชื่อ: ส่วนนี้เดียวผมแก้เอง</li>
+          <li>งานอดิเรก: ตกปลา</li>
+          <li>อาชีพหลัก: ช่วยงานร้านข้าวแม่ยาย</li>
+          <li>สนับสนุน: ทรูมันนี้ 0881458456</li>
+          <li>อีวอเลท: 140008881458456</li>
+        </ul>
+
+        <!-- ปุ่ม QR สนับสนุนพร้อมเพ -->
+        <button class="btn btn-alt" id="supportQrBtn">
+          📷 QR สนับสนุนพร้อมเพ
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="wrap-main">
+      <h2 style="margin:0 0 12px">ติดต่อ</h2>
+      <div class="card" style="display:flex;gap:12px;flex-wrap:wrap">
+        <a class="link locked" data-protect="contact" data-href="tel:0842781903" data-label="📞 โทร: 084-278-1903" href="#locked">📞 โทร: 084-XXX-XXXX</a>
+        <a class="link locked" data-protect="contact" data-href="mailto:viv121oioppl@gmail.com" data-label="✉️ อีเมล: viv121oioppl@gmail.com" href="#locked">✉️ อีเมล: ********@gmail.com</a>
+        <a class="link" href="https://www.youtube.com/@hddc322" target="_blank" rel="noopener">▶️ YouTube: @hddc322</a>
+        <a class="link" href="https://t.me/PAT230653" target="_blank" rel="noopener">✈️ Telegram</a>
+        <a class="link" href="https://www.facebook.com/kubsss7544" target="_blank" rel="noopener">📘 Facebook</a>
+        <a class="link" href="https://www.instagram.com/pawarit.sosrirkul" target="_blank" rel="noopener">📷 Instagram</a>
+        <a class="link" href="https://github.com/thanawan230653" target="_blank" rel="noopener">🧑‍💻 GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>© <span id="year"></span> Pawarit Sosirikul</footer>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal" id="loginModal" aria-hidden="true">
+    <div class="box" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+      <h3 id="loginTitle" style="margin:0 0 6px">ล็อกอิน</h3>
+      <div class="field">
+        <label for="email">อีเมล</label>
+        <input id="email" type="email" placeholder="กรอกอีเมล" autocomplete="username" />
+      </div>
+      <div class="field">
+        <label for="password">รหัสผ่าน</label>
+        <input id="password" type="password" placeholder="รหัสผ่าน" autocomplete="current-password" />
+      </div>
+      <div class="err" id="loginErr"></div>
+      <div class="row">
+        <button class="btn" id="loginCancel">ยกเลิก</button>
+        <button class="btn btn-alt" id="loginSubmit">เข้าสู่ระบบ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR SUPPORT MODAL -->
+  <div class="modal" id="qrModal" aria-hidden="true">
+    <div class="box" role="dialog" aria-modal="true" aria-labelledby="qrTitle">
+      <h3 id="qrTitle" style="margin:0 0 10px">QR สนับสนุนพร้อมเพ</h3>
+      <div style="text-align:center">
+        <img src="bt.jpg"
+             alt="QR สนับสนุนพร้อมเพ"
+             style="max-width:100%;border-radius:12px;border:1px solid rgba(255,255,255,.25)">
+      </div>
+      <div class="row" style="margin-top:16px">
+        <button class="btn" id="qrClose">ปิด</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS แยกไฟล์ -->
+  <script src="index.js"></script>
+</body>
+</html>

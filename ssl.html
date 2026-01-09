@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Search By PAT</title>
+
+  <style>
+    :root{
+      --text:#ffffff;
+      --muted: rgba(255,255,255,.75);
+      --line: rgba(255,255,255,.18);
+      --shadow: 0 22px 60px rgba(0,0,0,.55);
+      --radius: 22px;
+      --pill: 999px;
+
+      --neon-cyan:#00f5ff;
+      --neon-pink:#ff2bd6;
+      --neon-lime:#7CFF4A;
+      --ink:#060810;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans Thai", sans-serif;
+      color:var(--text);
+
+      /* Background image */
+      background:
+        radial-gradient(1200px 800px at 10% 10%, rgba(0,0,0,.20), rgba(0,0,0,.65)),
+        url("https://static.cdntap.com/tap-assets-prod/wp-content/uploads/sites/25/2021/11/gift5_1.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat:no-repeat;
+      background-attachment: fixed;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* moving scanlines + grid */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px) 0 0/100% 3px,
+        linear-gradient(to right, rgba(0,245,255,.10) 1px, transparent 1px) 0 0/64px 64px;
+      mix-blend-mode: screen;
+      opacity:.22;
+      pointer-events:none;
+      animation: scan 6s linear infinite;
+      z-index:0;
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:-2px;
+      background:
+        radial-gradient(900px 650px at 50% 30%, rgba(0,245,255,.14), transparent 60%),
+        radial-gradient(900px 650px at 70% 70%, rgba(255,43,214,.12), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.65));
+      pointer-events:none;
+      z-index:0;
+    }
+    @keyframes scan{
+      0%{ transform: translateY(0); }
+      100%{ transform: translateY(12px); }
+    }
+
+    /* Watermark/credit */
+    .credit-badge{
+      position:fixed;
+      top:14px;
+      right:14px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.28);
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      font-size:12px;
+      color: rgba(255,255,255,.92);
+      text-shadow: 0 6px 18px rgba(0,0,0,.45);
+      z-index:5;
+      user-select:none;
+      text-align:right;
+      line-height:1.2;
+    }
+    .credit-badge .brand{
+      font-weight: 900;
+      letter-spacing: .2px;
+      background: linear-gradient(90deg, #5c91ff, #ff4da6, #ffe66b, #7cffc6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .credit-badge .wai{
+      font-weight: 900;
+      color: #ffe66b;
+      text-shadow: 0 6px 18px rgba(0,0,0,.40);
+    }
+
+    .wrap{
+      width:min(760px, 100%);
+      text-align:center;
+      position:relative;
+      z-index:2; /* above FX layers */
+    }
+
+    .title{
+      margin:0 0 10px;
+      font-size:44px;
+      font-weight:900;
+      letter-spacing:-.8px;
+      user-select:none;
+      text-shadow:
+        0 0 18px rgba(0,245,255,.35),
+        0 0 34px rgba(255,43,214,.22),
+        0 10px 28px rgba(0,0,0,.45);
+    }
+
+    /* glitch title */
+    .glitch{
+      position:relative;
+      display:inline-block;
+    }
+    .glitch::before,
+    .glitch::after{
+      content: attr(data-text);
+      position:absolute;
+      inset:0;
+      opacity:.75;
+      pointer-events:none;
+    }
+    .glitch::before{
+      transform: translate(2px, 0);
+      color: var(--neon-cyan);
+      clip-path: inset(0 0 55% 0);
+      filter: blur(.2px);
+      animation: glitch1 2.2s infinite linear alternate-reverse;
+    }
+    .glitch::after{
+      transform: translate(-2px, 0);
+      color: var(--neon-pink);
+      clip-path: inset(45% 0 0 0);
+      filter: blur(.2px);
+      animation: glitch2 1.9s infinite linear alternate-reverse;
+    }
+    @keyframes glitch1{
+      0%{ clip-path: inset(0 0 60% 0); }
+      50%{ clip-path: inset(0 0 40% 0); }
+      100%{ clip-path: inset(0 0 55% 0); }
+    }
+    @keyframes glitch2{
+      0%{ clip-path: inset(52% 0 0 0); }
+      50%{ clip-path: inset(42% 0 0 0); }
+      100%{ clip-path: inset(48% 0 0 0); }
+    }
+
+    .subtitle{
+      margin:0 0 18px;
+      font-size:14px;
+      color:var(--muted);
+      text-shadow: 0 10px 28px rgba(0,0,0,.45);
+    }
+
+    .card{
+      position:relative;
+      border-radius: var(--radius);
+      padding:18px;
+      background: linear-gradient(180deg, rgba(5,8,16,.62), rgba(5,8,16,.34));
+      border: 1px solid rgba(0,245,255,.22);
+      box-shadow:
+        0 22px 60px rgba(0,0,0,.65),
+        0 0 0 1px rgba(255,43,214,.10) inset,
+        0 0 30px rgba(0,245,255,.10);
+      backdrop-filter: blur(10px);
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      border-radius: var(--radius);
+      padding:1px;
+      background: linear-gradient(90deg, rgba(0,245,255,.65), rgba(255,43,214,.55), rgba(124,255,74,.40));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events:none;
+      opacity:.55;
+    }
+
+    /* Toggle pills */
+    .toggle{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius: var(--pill);
+      border:1px solid rgba(0,245,255,.18);
+      background: rgba(0,0,0,.18);
+      cursor:pointer;
+      user-select:none;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+      font-weight:800;
+      font-size:13px;
+    }
+    .pill:hover{
+      background: rgba(255,255,255,.08);
+      border-color: rgba(0,245,255,.26);
+    }
+    .pill:active{ transform: translateY(1px); }
+    .pill input{ display:none; }
+    .pill[data-active="true"]{
+      border-color: rgba(0,245,255,.45);
+      box-shadow: 0 0 0 1px rgba(0,245,255,.18) inset, 0 0 18px rgba(0,245,255,.12);
+      background: rgba(255,255,255,.10);
+    }
+
+    .searchbar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--pill);
+      padding:10px 12px;
+      background: rgba(0,0,0,.22);
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .searchbar:focus-within{
+      border-color: rgba(0,245,255,.55);
+      box-shadow: 0 0 0 1px rgba(0,245,255,.18) inset, 0 0 22px rgba(0,245,255,.14);
+    }
+    .icon{
+      width:22px;
+      height:22px;
+      opacity:.95;
+      flex:0 0 auto;
+    }
+    input[type="search"]{
+      flex:1;
+      min-width:0;
+      border:none;
+      outline:none;
+      background:transparent;
+      color:var(--text);
+      font-size:16px;
+      padding:8px 6px;
+    }
+    input[type="search"]::placeholder{ color: rgba(255,255,255,.65); }
+
+    .actions{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+    button{
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      padding:10px 14px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight:900;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+    button:hover{
+      background: rgba(255,255,255,.10);
+      border-color: rgba(255,43,214,.35);
+      box-shadow: 0 0 20px rgba(255,43,214,.10);
+    }
+    button:active{ transform: translateY(1px); }
+
+    .hint{
+      margin-top:10px;
+      font-size:12px;
+      color: rgba(255,255,255,.70);
+      user-select:none;
+    }
+
+    .error{
+      margin-top:10px;
+      display:none;
+      font-size:12px;
+      color: #ffd1d1;
+      background: rgba(255,0,0,.12);
+      border: 1px solid rgba(255,0,0,.25);
+      padding:10px 12px;
+      border-radius: 14px;
+      text-align:left;
+    }
+
+    /* ad slot */
+    .ad-slot{
+      margin-top:14px;
+      padding:12px 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(0,245,255,.22);
+      background: linear-gradient(90deg, rgba(0,245,255,.10), rgba(255,43,214,.08), rgba(0,0,0,.18));
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      box-shadow: 0 0 22px rgba(0,245,255,.08);
+    }
+    .ad-left{ text-align:left; }
+    .ad-tag{
+      display:inline-block;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.9px;
+      color: rgba(255,255,255,.85);
+      border:1px solid rgba(255,255,255,.16);
+      padding:4px 8px;
+      border-radius:999px;
+      background: rgba(0,0,0,.22);
+      margin-bottom:6px;
+    }
+    .ad-title{
+      font-weight:900;
+      font-size:13px;
+      text-shadow: 0 0 16px rgba(0,245,255,.18);
+    }
+    .ad-desc{
+      font-size:12px;
+      color: rgba(255,255,255,.75);
+      margin-top:2px;
+    }
+    .ad-right{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex:0 0 auto;
+    }
+    .ad-btn{
+      text-decoration:none;
+      font-weight:900;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,43,214,.30);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.92);
+      box-shadow: 0 0 18px rgba(255,43,214,.10);
+      transition: transform .08s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      white-space:nowrap;
+    }
+    .ad-btn:hover{
+      border-color: rgba(0,245,255,.45);
+      box-shadow: 0 0 22px rgba(0,245,255,.10);
+      background: rgba(255,255,255,.08);
+    }
+    .ad-btn:active{ transform: translateY(1px); }
+
+    .ad-x{
+      width:40px;
+      height:40px;
+      padding:0;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.85);
+      font-weight: 900;
+      cursor:pointer;
+      box-shadow:none;
+    }
+    .ad-x:hover{
+      border-color: rgba(255,43,214,.35);
+      box-shadow: 0 0 20px rgba(255,43,214,.10);
+      background: rgba(255,255,255,.08);
+    }
+
+    footer{
+      margin-top:14px;
+      font-size:12px;
+      color: rgba(255,255,255,.70);
+      text-shadow: 0 10px 28px rgba(0,0,0,.35);
+      user-select:none;
+    }
+
+    @media (max-width:420px){
+      .title{ font-size:34px; }
+      .card{ padding:14px; }
+      .ad-slot{ flex-direction:column; align-items:stretch; }
+      .ad-right{ justify-content:space-between; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="credit-badge">
+    จัดทำโดย <span class="brand">PAT Studio</span><br/>
+    ทำเพื่อ <span class="wai">wai</span> โดยเฉพราะ
+  </div>
+
+  <main class="wrap">
+    <h1 class="title glitch" data-text="Search By PAT">Search By PAT</h1>
+    <p class="subtitle">เลือกก่อนว่า “เซิร์ชปกติ” หรือ “ค้นรูป” แล้วค่อยค้นหา</p>
+
+    <section class="card" aria-label="Search Card">
+      <div class="toggle" role="radiogroup" aria-label="Search type">
+        <label class="pill" id="pill-web" data-active="true">
+          <input type="radio" name="mode" value="web" checked />
+          <!-- globe icon -->
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M2 12h20" stroke="currentColor" stroke-width="2" opacity=".9"/>
+            <path d="M12 2c3 3 3 17 0 20" stroke="currentColor" stroke-width="2" opacity=".9"/>
+            <path d="M12 2c-3 3-3 17 0 20" stroke="currentColor" stroke-width="2" opacity=".9"/>
+          </svg>
+          เซิร์ชปกติ
+        </label>
+
+        <label class="pill" id="pill-img" data-active="false">
+          <input type="radio" name="mode" value="img" />
+          <!-- image icon -->
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 19a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M8 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" fill="currentColor" opacity=".85"/>
+            <path d="M4 17l5-5 4 4 2-2 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          ค้นรูป
+        </label>
+      </div>
+
+      <form id="searchForm" autocomplete="off">
+        <div class="searchbar">
+          <!-- search icon -->
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M10.5 19a8.5 8.5 0 1 1 0-17 8.5 8.5 0 0 1 0 17Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M16.8 16.8 22 22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+
+          <input id="q" type="search" placeholder="พิมพ์คำค้นหา..." />
+        </div>
+
+        <div class="actions">
+          <button type="submit">Search</button>
+          <button type="button" id="clearBtn">Clear</button>
+        </div>
+
+        <div class="error" id="errorBox">กรุณาเลือก “เซิร์ชปกติ” หรือ “ค้นรูป” ก่อนค้นหา</div>
+        <div class="hint">Enter เพื่อค้นหา • มือถือกดปุ่มค้นหาบนคีย์บอร์ด</div>
+      </form>
+
+      <!-- AD SLOT (PAT) -->
+      <div class="ad-slot" id="adSlot" aria-label="Advertisement">
+        <div class="ad-left">
+          <div class="ad-tag">SPONSORED</div>
+          <div class="ad-title" id="adTitle">PAT Studio • รับทำเว็บสาย Cyber</div>
+          <div class="ad-desc" id="adDesc">Landing Page / ระบบฟอร์ม / งานแต่ง UI • สั่งปรับได้</div>
+        </div>
+
+        <div class="ad-right">
+          <!-- เปลี่ยนลิงก์ตรง href ได้ -->
+          <a class="ad-btn" id="adLink" href="#" target="_blank" rel="noopener">ดูรายละเอียด</a>
+          <button class="ad-x" id="adClose" type="button" aria-label="Hide ad">✕</button>
+        </div>
+      </div>
+    </section>
+
+    <footer>© PAT Studio</footer>
+  </main>
+
+  <script>
+    const q = document.getElementById('q');
+    const form = document.getElementById('searchForm');
+    const clearBtn = document.getElementById('clearBtn');
+    const errorBox = document.getElementById('errorBox');
+
+    const pillWeb = document.getElementById('pill-web');
+    const pillImg = document.getElementById('pill-img');
+    const radios = Array.from(document.querySelectorAll('input[name="mode"]'));
+
+    // Ad elements
+    const adSlot = document.getElementById('adSlot');
+    const adTitle = document.getElementById('adTitle');
+    const adDesc  = document.getElementById('adDesc');
+    const adLink  = document.getElementById('adLink');
+    const adClose = document.getElementById('adClose');
+
+    // Focus input
+    q.focus();
+
+    // Update pill UI
+    function syncPills() {
+      const mode = (radios.find(r => r.checked) || {}).value;
+      pillWeb.dataset.active = (mode === 'web') ? "true" : "false";
+      pillImg.dataset.active = (mode === 'img') ? "true" : "false";
+    }
+    radios.forEach(r => r.addEventListener('change', () => {
+      errorBox.style.display = "none";
+      syncPills();
+    }));
+    syncPills();
+
+    clearBtn.addEventListener('click', () => {
+      q.value = "";
+      q.focus();
+      errorBox.style.display = "none";
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const query = q.value.trim();
+      const picked = radios.find(r => r.checked);
+
+      if (!picked) {
+        errorBox.style.display = "block";
+        return;
+      }
+      if (!query) {
+        q.focus();
+        return;
+      }
+
+      // Build Google URL based on mode
+      let url = "";
+      if (picked.value === "web") {
+        url = "https://www.google.com/search?q=" + encodeURIComponent(query);
+      } else {
+        url = "https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(query);
+      }
+      window.location.href = url;
+    });
+
+    // Simple ad rotation (แก้ข้อความ/ลิงก์ได้เอง)
+    const ads = [
+      {
+        title: "PAT Studio • รับทำเว็บสาย Cyber",
+        desc: "Landing Page / ระบบฟอร์ม / งานแต่ง UI • สั่งปรับได้",
+        link: "#"
+      },
+      {
+        title: "WAI Special • หน้า Search ส่วนตัว",
+        desc: "ทำหน้าเหมือน Google + ปรับธีม + ใส่ลิงก์ต่อได้",
+        link: "#"
+      },
+      {
+        title: "PAT Studio • งานด่วนก็รับ",
+        desc: "HTML ไฟล์เดียว • มือถือสวย • เร็ว • เบา",
+        link: "#"
+      }
+    ];
+
+    function pickAd() {
+      const idx = Math.floor(Math.random() * ads.length);
+      const a = ads[idx];
+      adTitle.textContent = a.title;
+      adDesc.textContent  = a.desc;
+      adLink.href         = a.link;
+    }
+
+    // Hide ad (session only)
+    adClose.addEventListener('click', () => {
+      adSlot.style.display = "none";
+    });
+
+    pickAd();
+  </script>
+</body>
+</html>
