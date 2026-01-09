@@ -1,0 +1,420 @@
+/* style.css */
+
+/* --- Variables & Base Styles --- */
+:root {
+    --bg-dark: #121212;
+    --bg-card: #1e1e1e;
+    --text-light: #e0e0e0;
+    --color-primary: #007bff; /* Blue */
+    --color-secondary: #6c757d; /* Gray */
+    --color-accent: #28a745; /* Green for success/support */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding-top: 70px; /* Space for sticky navbar */
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Modern Flat Card Style */
+.card {
+    background: var(--bg-card);
+    border: 1px solid #333333;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5), 0 0 5px var(--color-primary);
+}
+
+h1, h2, h3 {
+    color: white;
+    font-weight: 700;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #4daeff;
+}
+
+/* --- Navigation Bar --- */
+#navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: var(--bg-dark);
+    border-bottom: 2px solid var(--color-primary);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    padding: 10px 0;
+}
+
+#navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: white;
+    letter-spacing: 1px;
+}
+
+.nav-links a {
+    margin: 0 15px;
+    font-weight: 500;
+    color: var(--text-light);
+}
+
+.nav-links a:hover {
+    color: var(--color-primary);
+}
+
+.nav-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, opacity 0.3s;
+}
+
+.primary-btn {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #0056b3;
+}
+
+.secondary-btn {
+    background-color: var(--color-secondary);
+    color: white;
+}
+.secondary-btn:hover {
+    background-color: #5a6268;
+}
+
+/* --- Divider (HR) --- */
+hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), var(--color-primary), rgba(0, 0, 0, 0));
+    margin: 40px 0;
+}
+
+
+/* --- Hero Section (ABOUT) --- */
+.hero-section {
+    text-align: center;
+    padding: 40px 0 60px 0;
+}
+
+.profile-img {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--color-primary);
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+    margin-bottom: 20px;
+}
+
+#typing-container {
+    font-size: 3em;
+    margin-top: 0;
+    min-height: 1.2em;
+}
+
+#typing {
+    color: var(--color-primary);
+    border-right: 4px solid var(--text-light); /* Cursor */
+    padding-right: 5px;
+}
+
+.subtitle {
+    font-size: 1.2em;
+    color: var(--text-light);
+    margin-bottom: 30px;
+}
+
+/* Quick Contact and Social Links */
+.quick-contact, .social-links {
+    margin-bottom: 20px;
+}
+
+.contact-item {
+    display: inline-block;
+    padding: 8px 15px;
+    margin: 5px;
+    background: #333;
+    border-radius: 5px;
+}
+
+.locked-contact {
+    cursor: pointer;
+    color: var(--text-light) !important;
+}
+
+.locked-contact:hover {
+    color: var(--color-primary) !important;
+}
+
+.social-links a {
+    font-size: 1.8em;
+    margin: 0 12px;
+    color: var(--text-light);
+}
+
+.social-links a:hover {
+    color: var(--color-primary);
+}
+
+/* Music Player */
+.music-player {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 20px;
+    margin-top: 20px;
+    background: #252525;
+    border: 1px solid #444;
+}
+
+.music-player button {
+    padding: 8px 15px;
+}
+
+.equalizer {
+    display: flex;
+    gap: 3px;
+    height: 20px;
+    align-items: flex-end;
+}
+
+.viz.bar {
+    width: 5px;
+    background-color: var(--color-accent);
+    border-radius: 2px;
+    height: 10%;
+    /* Animations defined in JS file for activation */
+}
+
+.music-player.playing .viz.bar:nth-child(1) { animation: sound 500ms ease-in-out infinite alternate; }
+.music-player.playing .viz.bar:nth-child(2) { animation: sound 500ms ease-in-out infinite alternate-reverse; animation-delay: -300ms; }
+.music-player.playing .viz.bar:nth-child(3) { animation: sound 600ms ease-in-out infinite alternate; animation-delay: -500ms; }
+.music-player.playing .viz.bar:nth-child(4) { animation: sound 400ms ease-in-out infinite alternate-reverse; animation-delay: -700ms; }
+.music-player.playing .viz.bar:nth-child(5) { animation: sound 550ms ease-in-out infinite alternate; animation-delay: -200ms; }
+
+@keyframes sound {
+    0% { height: 10%; }
+    100% { height: 100%; }
+}
+
+/* --- SKILLS Section --- */
+.section-title {
+    text-align: center;
+    font-size: 2.2em;
+    margin-bottom: 30px;
+    color: white;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.skill-item {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.skill-item i {
+    font-size: 3em;
+    color: var(--color-primary);
+    margin-bottom: 15px;
+}
+
+.skill-item h3 {
+    margin-top: 0;
+    color: white;
+}
+
+.skill-item p {
+    color: var(--text-light);
+    font-size: 0.9em;
+}
+
+/* --- DETAILS Section --- */
+.details-card {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.details-card ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.details-card li {
+    padding: 8px 0;
+    border-bottom: 1px solid #333333;
+    font-size: 1.05em;
+}
+
+.details-card li:last-child {
+    border-bottom: none;
+}
+
+.support-info {
+    border-top: 1px solid #333333;
+    padding-top: 15px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.btn-full-width {
+    width: 100%;
+}
+
+/* --- CONTACT Section --- */
+.contact-card {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.contact-list a {
+    background: #333;
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: var(--text-light);
+}
+
+.contact-list a:hover {
+    background: #444;
+    color: var(--color-primary);
+}
+
+/* --- Footer --- */
+footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    border-top: 1px solid #333;
+    color: #999;
+}
+
+/* --- Modals (Pop-ups) --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    padding-top: 60px;
+}
+
+.modal-content {
+    margin: 5% auto;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    background: var(--bg-card);
+    padding: 30px;
+}
+
+#loginForm input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 8px 0 15px 0;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background: #333;
+    color: white;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.error-message {
+    color: red;
+    min-height: 1.2em;
+    margin: 5px 0;
+}
+
+.qr-image {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 5px solid white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    #navbar .container {
+        flex-direction: column;
+    }
+    .nav-links {
+        display: none; 
+    }
+    .nav-actions {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+    .nav-btn {
+        flex-grow: 1;
+    }
+
+    #typing-container {
+        font-size: 2em;
+    }
+    
+    .music-player {
+        flex-direction: column;
+        width: 100%;
+    }
+}
