@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ข้อสอบวิทยาศาสตร์ ม.3 – วงจรไฟฟ้าและเคมี</title>
+  <style>
+    /*
+      Dark themed quiz styles with support for two subjects.  
+      The primary colour palette switches between electric (blue) and chemistry (green) themes.
+      Responsive layout works well on both desktop and mobile devices.
+    */
+    :root{
+      --bg-dark: #0d1224;
+      --bg-darker: #080c18;
+      --card: rgba(13, 18, 36, 0.82);
+      --line: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.95);
+      --muted: rgba(255,255,255,0.75);
+      --electric-main: #39d0ff;
+      --electric-light: #8cf5ff;
+      --chem-main: #46f7a7;
+      --chem-light: #c8ffe6;
+      --ok: #30d158;
+      --bad: #ff453a;
+    }
+    body{
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Tahoma", "Noto Sans Thai", sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .wrap{
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 20px 15px 60px;
+      width: 100%;
+    }
+    h1, h2, h3, h4 {
+      margin: 0;
+    }
+    .top{
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .brand .title {
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .brand .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .progress-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .progress-bar {
+      width: 220px;
+      height: 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-bar > div{
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--electric-main), var(--electric-light));
+      transition: width 0.3s ease;
+      border-radius: 999px;
+    }
+    .mode-indicator {
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+    }
+    .card {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 18px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.4);
+      overflow: hidden;
+    }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+      font-size: 11px;
+      color: var(--text);
+    }
+    .badge b {
+      color: var(--electric-light);
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      background: rgba(255,255,255,0.06);
+      user-select: none;
+    }
+    .tab.active {
+      background: rgba(255,255,255,0.15);
+    }
+    .card-body {
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      gap: 0;
+    }
+    @media (max-width: 860px){
+      .card-body {
+        grid-template-columns: 1fr;
+      }
+    }
+    .pane {
+      padding: 18px 18px 20px;
+    }
+    .image-pane {
+      border-left: 1px solid var(--line);
+      padding: 18px;
+      background: rgba(255,255,255,0.04);
+    }
+    @media (max-width: 860px){
+      .image-pane {
+        border-left: none;
+        border-top: 1px solid var(--line);
+      }
+    }
+    .image-frame {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #000;
+      aspect-ratio: 4 / 3;
+    }
+    .image-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(1.05) contrast(1.05);
+    }
+    .image-caption {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .question-title {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+    .question-meta {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .choices {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+    .choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+      cursor: pointer;
+      transition: transform 0.08s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+    .choice:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+    }
+    .choice.selected {
+      border-color: rgba(255,255,255,0.28);
+      background: rgba(255,255,255,0.15);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+    .choice .label {
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: rgba(0,0,0,0.85);
+      background: linear-gradient(180deg, var(--electric-light), var(--electric-main));
+      box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+      margin-top: 2px;
+    }
+    .choice .text {
+      flex: 1 1 auto;
+      font-weight: 650;
+      line-height: 1.4;
+    }
+    .actions {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+    .actions .group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .button {
+      padding: 12px 14px;
+      border: none;
+      border-radius: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.08s ease, opacity 0.18s ease;
+      min-width: 120px;
+    }
+    .button.primary {
+      background: linear-gradient(180deg, var(--electric-light), var(--electric-main));
+      color: rgba(0,0,0,0.88);
+    }
+    .button.secondary {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+    .button.danger {
+      background: rgba(255,69,58,0.12);
+      color: rgba(255,69,58,0.92);
+      border: 1px solid rgba(255,69,58,0.25);
+    }
+    .button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .mini-stats {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+      font-size: 12px;
+    }
+    .mini-stats .chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+    }
+    .mini-stats .chip b {
+      color: var(--electric-light);
+    }
+    .start-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 18px;
+    }
+    @media (max-width: 860px){
+      .start-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .mode-select {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+    }
+    .mode-select h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--electric-light);
+    }
+    .mode-select p {
+      margin: 0 0 12px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .footer {
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+    /*
+      Result styles
+    */
+    .result-header {
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .score-summary {
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.25;
+      color: var(--electric-light);
+    }
+    .score-summary small {
+      display: block;
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .review-list {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+    .review-item {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .review-item .item-head {
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .review-item .item-head .title {
+      font-weight: 800;
+      line-height: 1.35;
+      flex: 1 1 auto;
+    }
+    .review-item .item-head .status {
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      font-size: 12px;
+    }
+    .status.ok {
+      border-color: rgba(48,209,88,0.25);
+      background: rgba(48,209,88,0.12);
+      color: rgba(48,209,88,0.92);
+    }
+    .status.bad {
+      border-color: rgba(255,69,58,0.25);
+      background: rgba(255,69,58,0.12);
+      color: rgba(255,69,58,0.92);
+    }
+    .review-item .item-body {
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    @media (max-width: 560px){
+      .review-item .item-body {
+        grid-template-columns: 1fr;
+      }
+    }
+    .review-item .thumb {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,0.2);
+      aspect-ratio: 4/3;
+    }
+    .review-item .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .review-item .explanation {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .review-item .explanation .muted {
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="title">ข้อสอบวิทยาศาสตร์ ม.3</div>
+        <div class="subtitle">วงจรไฟฟ้า 1–50 และ เคมี 51–100 — มีภาพประกอบทุกข้อ</div>
+      </div>
+      <div class="progress-container">
+        <div class="mode-indicator" id="modeIndicator">โหมด: -</div>
+        <div class="progress-bar"><div id="progress"></div></div>
+        <div class="mode-indicator" id="progressText">0/0</div>
+      </div>
+    </div>
+    <div class="card" id="card"></div>
+    <div class="footer">
+      หมายเหตุ: สามารถข้ามข้อหรือข้ามวิชาได้ ระบุข้อใหม่โดยใช้ช่อง “ไปข้อที่” และกด “Next” หลังเลือกคำตอบ<br/>
+      ผลสอบจะสรุปคะแนนแยกตามวิชาและรวม พร้อมตัวเลือกดาวน์โหลดไฟล์ TXT สรุปคะแนนของคุณ
+    </div>
+  </div>
+  <script>
+    // Remote image mapping
+    const images = {
+      // Updated direct links to 640px thumbnails on Wikimedia Commons.  These URLs have been tested to load
+      // correctly in modern browsers and avoid cross‑origin or 403 errors.  Each key corresponds to a
+      // thematic category used in the question bank.
+      circuit: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Basic_electric_circuit.svg/640px-Basic_electric_circuit.svg.png',
+      battery: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/AA_battery.png/640px-AA_battery.png',
+      resistor: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Resistor.jpg/640px-Resistor.jpg',
+      switch: 'https://upload.wikimedia.org/wikipedia/commons/8/80/On-Off_Switch.jpg',
+      led: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/LEDs.jpg/640px-LEDs.jpg',
+      multimeter: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Digital_Multimeter.jpg/640px-Digital_Multimeter.jpg',
+      // Use the beakers image to represent general laboratory glassware since the previous
+      // Laboratory_glassware thumbnail returned a 404 during testing.
+      lab: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Beakers_%28glassware%29.jpg/640px-Beakers_%28glassware%29.jpg',
+      beakers: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Beakers_%28glassware%29.jpg/640px-Beakers_%28glassware%29.jpg',
+      ph: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/PH_Scale.svg/640px-PH_Scale.svg.png',
+      litmus: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Litmus_paper.jpg/640px-Litmus_paper.jpg',
+      salt: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Table_salt.jpg/640px-Table_salt.jpg',
+      sugar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Sugar_Cubes.jpg/640px-Sugar_Cubes.jpg',
+      rust: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Rust_on_iron.jpg/640px-Rust_on_iron.jpg',
+      vinegar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Vinegar_in_a_bottle.jpg/640px-Vinegar_in_a_bottle.jpg',
+      soap: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Soap.jpg/640px-Soap.jpg',
+      flame: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Candle_flame_closeup.jpg/640px-Candle_flame_closeup.jpg'
+    };
+    // Electric and chemistry image orders for cycling
+    const electricOrder = ['circuit','battery','resistor','switch','led','multimeter'];
+    const chemOrder    = ['lab','beakers','ph','litmus','salt','sugar','rust','vinegar','soap','flame'];
+    // Helper to assign images to questions by cycling through a given order
+    function assignImagesTo(questions, order) {
+      for (let i = 0; i < questions.length; i++) {
+        const key = order[i % order.length];
+        questions[i].img = images[key];
+      }
+    }
+    // Questions for electric (1-50)
+    const electric = [
+      { no: 1,  q: 'วงจรไฟฟ้า “ปิด” หมายถึงข้อใด?', choices: ['กระแสไหลครบทางกลับแหล่งจ่าย', 'มีแบตเตอรี่อย่างเดียว', 'มีโหลดอย่างเดียว', 'มีสายไฟแต่ไม่ต่อครบ'], correct: 0, explain: 'วงจรปิดจะต้องมีทางเดินครบจากแหล่งจ่าย ผ่านตัวนำและโหลด และกลับคืนสู่แหล่งจ่าย' },
+      { no: 2,  q: 'ข้อใดคือองค์ประกอบ “จำเป็น” ของวงจรง่ายๆ ให้หลอดติด?', choices: ['แบตเตอรี่ + สายไฟ + หลอดไฟ', 'สวิตช์อย่างเดียว', 'หลอดไฟ 2 ดวง', 'ตัวต้านทานอย่างเดียว'], correct: 0, explain: 'อย่างน้อยต้องมีแหล่งจ่ายไฟ ตัวนำ และโหลด (เช่น หลอดไฟ) จึงจะครบวงจร' },
+      { no: 3,  q: 'สวิตช์ในวงจรมีหน้าที่หลักคืออะไร?', choices: ['เพิ่มแรงดัน', 'เปิด-ปิดทางเดินกระแส', 'ลดความต้านทาน', 'เปลี่ยนชนิดกระแส'], correct: 1, explain: 'สวิตช์ใช้เปิดหรือปิดวงจร เพื่อให้กระแสไหลหรือหยุดไหลตามต้องการ' },
+      { no: 4,  q: 'โหลด (Load) ในวงจรคืออะไร?', choices: ['อุปกรณ์ที่ใช้พลังงานไฟฟ้า', 'สายไฟ', 'แบตเตอรี่', 'ฉนวนหุ้มสาย'], correct: 0, explain: 'โหลดคืออุปกรณ์ที่แปลงพลังงานไฟฟ้าเป็นพลังงานรูปอื่น เช่น หลอดไฟ มอเตอร์' },
+      { no: 5,  q: 'ถ้าวงจร “เปิด” ผลจะเป็นอย่างไร?', choices: ['หลอดสว่างปกติ', 'กระแสไหลไม่ได้ หลอดไม่ติด', 'แรงดันเพิ่มขึ้นทันที', 'กระแสไหลมากขึ้น'], correct: 1, explain: 'วงจรเปิดหมายถึงทางเดินไม่ครบ กระแสจึงไหลไม่ได้ หลอดไม่สว่าง' },
+      { no: 6,  q: 'ต่อหลอดไฟ 2 ดวง “อนุกรม” แล้วเกิดอะไรเมื่อหลอดหนึ่งขาด?', choices: ['อีกหลอดยังติด', 'ทั้งสองดับ', 'สว่างกว่าเดิม', 'ไม่เปลี่ยนแปลง'], correct: 1, explain: 'ในวงจรอนุกรม กระแสไหลทางเดียว ถ้าหลอดใดหลอดหนึ่งขาด วงจรจะเปิด ทำให้ทั้งคู่ดับ' },
+      { no: 7,  q: 'ต่อหลอดไฟ 2 ดวง “ขนาน” แล้วหลอดหนึ่งขาด จะเป็นอย่างไร?', choices: ['อีกหลอดยังติดได้', 'ทั้งสองดับ', 'กระแสหยุดทั้งหมด', 'แรงดันที่อีกหลอดเป็นศูนย์'], correct: 0, explain: 'ในวงจรขนาน แต่ละกิ่งทำงานอิสระ หากหนึ่งหลอดเสีย อีกหลอดยังคงได้รับแรงดันเท่ากันและติดได้' },
+      { no: 8,  q: 'ในวงจรอนุกรม กระแสไฟฟ้าในแต่ละอุปกรณ์เป็นอย่างไร?', choices: ['เท่ากันทุกจุด', 'มากขึ้นเรื่อยๆ', 'น้อยลงเรื่อยๆ', 'ขึ้นกับตำแหน่งอย่างเดียว'], correct: 0, explain: 'กระแสในวงจรอนุกรมมีค่าเท่ากันในทุกส่วนของวงจร' },
+      { no: 9,  q: 'ในวงจรขนาน แรงดันคร่อมแต่ละกิ่งเป็นอย่างไร?', choices: ['เท่ากับแหล่งจ่าย', 'เป็นศูนย์', 'รวมกันแล้วเท่ากับแหล่งจ่ายเท่านั้น', 'ขึ้นกับความยาวสายไฟ'], correct: 0, explain: 'ในวงจรขนาน แรงดันไฟฟ้าคร่อมแต่ละกิ่งเท่ากับแรงดันของแหล่งจ่าย' },
+      { no: 10, q: 'หน่วยของกระแสไฟฟ้าคืออะไร?', choices: ['โวลต์ (V)', 'แอมแปร์ (A)', 'โอห์ม (Ω)', 'วัตต์ (W)'], correct: 1, explain: 'กระแสไฟฟ้าวัดเป็นแอมแปร์ (A)' },
+      { no: 11, q: 'หน่วยของความต่างศักย์ (แรงดัน) คืออะไร?', choices: ['โวลต์ (V)', 'แอมแปร์ (A)', 'โอห์ม (Ω)', 'คูลอมบ์ (C)'], correct: 0, explain: 'แรงดันไฟฟ้าวัดเป็นโวลต์ (V)' },
+      { no: 12, q: 'หน่วยของความต้านทานคืออะไร?', choices: ['โวลต์ (V)', 'แอมแปร์ (A)', 'โอห์ม (Ω)', 'จูล (J)'], correct: 2, explain: 'ความต้านทานมีหน่วยเป็นโอห์ม (Ω)' },
+      { no: 13, q: 'เครื่องมือวัด “กระแสไฟฟ้า” คือ?', choices: ['โวลต์มิเตอร์', 'แอมมิเตอร์', 'เทอร์โมมิเตอร์', 'บารอมิเตอร์'], correct: 1, explain: 'แอมมิเตอร์ใช้วัดกระแสไฟฟ้า' },
+      { no: 14, q: 'เครื่องมือวัด “แรงดันไฟฟ้า” คือ?', choices: ['โวลต์มิเตอร์', 'แอมมิเตอร์', 'ไฮโดรมิเตอร์', 'ออสซิลโลสโคปเท่านั้น'], correct: 0, explain: 'โวลต์มิเตอร์ใช้วัดแรงดันไฟฟ้า' },
+      { no: 15, q: 'การต่อแอมมิเตอร์ควรต่อแบบใดกับโหลด?', choices: ['ขนาน', 'อนุกรม', 'ต่อคร่อมแบตเตอรี่เสมอ', 'ต่อแบบสุ่มได้'], correct: 1, explain: 'แอมมิเตอร์มีความต้านทานต่ำ ต้องต่อให้กระแสไหลผ่านเครื่องโดยต่ออนุกรมกับวงจร' },
+      { no: 16, q: 'การต่อโวลต์มิเตอร์ควรต่อแบบใดกับอุปกรณ์ที่ต้องการวัด?', choices: ['อนุกรม', 'ขนาน', 'ต่อที่สายกราวด์เท่านั้น', 'ต่อที่สวิตช์เท่านั้น'], correct: 1, explain: 'โวลต์มิเตอร์ต้องต่อขนานกับอุปกรณ์ เพื่อวัดแรงดันคร่อมอุปกรณ์นั้น' },
+      { no: 17, q: 'ถ้าเพิ่มความต้านทานในวงจร (แรงดันคงที่) กระแสจะ?', choices: ['เพิ่ม', 'ลด', 'คงเดิม', 'เป็นศูนย์เสมอ'], correct: 1, explain: 'ตามกฎของโอห์ม I = V/R เมื่อ R เพิ่มขึ้น กระแส I จะลดลง' },
+      { no: 18, q: 'กฎของโอห์มคือความสัมพันธ์ใด?', choices: ['V = I/R', 'V = IR', 'I = VR', 'R = VI^2'], correct: 1, explain: 'กฎของโอห์มระบุว่า V = IR' },
+      { no: 19, q: 'ถ้า V=12V, R=6Ω กระแส I เท่าไร?', choices: ['1A', '2A', '3A', '6A'], correct: 1, explain: 'I = V/R = 12/6 = 2 แอมแปร์' },
+      { no: 20, q: 'ถ้า I=0.5A, R=10Ω แรงดัน V เท่าไร?', choices: ['2V', '5V', '10V', '20V'], correct: 1, explain: 'V = IR = 0.5 × 10 = 5 โวลต์' },
+      { no: 21, q: 'ต่อแบตเตอรี่ 2 ก้อน “อนุกรม” ผลหลักคือ?', choices: ['แรงดันรวมเพิ่ม', 'กระแสคงที่เสมอ', 'ความต้านทานรวมลด', 'แรงดันลด'], correct: 0, explain: 'การต่อแบตเตอรี่อนุกรมทำให้แรงดันรวมมากขึ้น (รวมแรงดันของแต่ละก้อน)' },
+      { no: 22, q: 'ต่อแบตเตอรี่ 2 ก้อน “ขนาน” ผลหลักคือ?', choices: ['แรงดันเพิ่มเท่าตัว', 'แรงดันเท่าเดิมแต่จ่ายได้นานขึ้น', 'ทำให้ความต้านทานโหลดเพิ่ม', 'ทำให้ไฟเป็น AC'], correct: 1, explain: 'เมื่อแบตเตอรี่ต่อขนาน แรงดันเท่าเดิม แต่ความจุเพิ่ม ทำให้จ่ายกระแสได้นานขึ้น' },
+      { no: 23, q: 'ตัวต้านทานมีไว้ทำอะไรในวงจร?', choices: ['เก็บประจุ', 'จำกัดกระแส/แบ่งแรงดัน', 'เปลี่ยน AC เป็น DC', 'สร้างสนามแม่เหล็ก'], correct: 1, explain: 'ตัวต้านทานใช้ควบคุมกระแสและแบ่งแรงดันภายในวงจร' },
+      { no: 24, q: 'LED ต้องต่อร่วมกับตัวต้านทานมักเพราะเหตุใด?', choices: ['ทำให้สว่างขึ้น', 'ป้องกันกระแสเกินทำให้ LED เสีย', 'ทำให้เป็นสีอื่น', 'ทำให้แรงดันเพิ่ม'], correct: 1, explain: 'LED มีความต้านทานต่ำ จำเป็นต้องจำกัดกระแสด้วยตัวต้านทาน' },
+      { no: 25, q: 'ฟิวส์มีหน้าที่อะไร?', choices: ['เพิ่มกระแส', 'ป้องกันกระแสเกิน โดยขาดเมื่อเกินพิกัด', 'ลดแรงดันเสมอ', 'วัดแรงดัน'], correct: 1, explain: 'ฟิวส์เป็นอุปกรณ์ป้องกัน เมื่อกระแสสูงเกินพิกัดฟิวส์จะขาดเพื่อหยุดกระแส' },
+      { no: 26, q: 'สายไฟ “ตัวนำ” ที่ดีควรมีคุณสมบัติใด?', choices: ['ความต้านทานสูงมาก', 'ความต้านทานต่ำ', 'เป็นฉนวน', 'ละลายน้ำได้'], correct: 1, explain: 'ตัวนำที่ดีมีความต้านทานต่ำ ทำให้กระแสไหลได้สะดวก' },
+      { no: 27, q: 'ฉนวนไฟฟ้าทำหน้าที่?', choices: ['ให้กระแสไหลได้ดี', 'กันไฟรั่ว/กันอันตราย', 'เพิ่มแรงดัน', 'ทำให้กระแสเป็นศูนย์เสมอ'], correct: 1, explain: 'ฉนวนใช้ป้องกันการสัมผัสกับตัวนำและป้องกันการรั่วของกระแสไฟ' },
+      { no: 28, q: 'วงจรในบ้านส่วนใหญ่ใช้การต่อแบบใด และทำไม?', choices: ['อนุกรม เพราะประหยัดสาย', 'ขนาน เพราะอุปกรณ์ทำงานอิสระ', 'ผสมเท่านั้นเพราะถูกกฎหมาย', 'อนุกรมเพราะแรงดันเท่ากัน'], correct: 1, explain: 'วงจรในบ้านต่อแบบขนาน เพื่อให้อุปกรณ์แต่ละตัวสามารถเปิดปิดได้อิสระ' },
+      { no: 29, q: 'เมื่อเพิ่มจำนวนหลอดใน “อนุกรม” ความสว่างโดยรวมมัก?', choices: ['สว่างขึ้น', 'มืดลง', 'เท่าเดิม', 'สว่างเฉพาะหลอดแรก'], correct: 1, explain: 'การเพิ่มหลอดในอนุกรมเพิ่มความต้านทานรวม ทำให้กระแสลดและหลอดแต่ละดวงสว่างน้อยลง' },
+      { no: 30, q: 'เมื่อเพิ่มจำนวนหลอดใน “ขนาน” (แหล่งจ่ายจำกัด) กระแสรวมจะ?', choices: ['ลดลงเสมอ', 'เพิ่มขึ้น', 'เป็นศูนย์', 'เท่าเดิมเสมอ'], correct: 1, explain: 'การเพิ่มกิ่งขนานทำให้ความต้านทานรวมลดลง กระแสรวมเพิ่มขึ้น' },
+      { no: 31, q: 'ความต้านทานรวมของตัวต้านทานต่ออนุกรมคือ?', choices: ['Rรวม=R1+R2+...', 'Rรวม=R1×R2', 'Rรวม=R1/R2', 'Rรวม=0 เสมอ'], correct: 0, explain: 'ต่ออนุกรม: Rรวม = R1 + R2 + ...' },
+      { no: 32, q: 'ความต้านทานรวมของตัวต้านทานต่อขนานสัมพันธ์แบบใด?', choices: ['1/Rรวม=1/R1+1/R2+...', 'Rรวม=R1+R2', 'Rรวม=R1×R2', 'Rรวม=มากที่สุดเสมอ'], correct: 0, explain: 'ต่อขนาน: 1/Rรวม = 1/R1 + 1/R2 + ...' },
+      { no: 33, q: 'ถ้า R1=6Ω, R2=3Ω ต่ออนุกรม Rรวมเท่าไร?', choices: ['2Ω', '3Ω', '6Ω', '9Ω'], correct: 3, explain: 'ต่ออนุกรม: Rรวม = 6 + 3 = 9 Ω' },
+      { no: 34, q: 'ถ้า R1=6Ω, R2=3Ω ต่อขนาน Rรวมเท่าไร?', choices: ['2Ω', '3Ω', '4Ω', '9Ω'], correct: 0, explain: 'ต่อขนาน: 1/Rรวม = 1/6 + 1/3 = 1/6 + 2/6 = 3/6 จึง Rรวม = 2 Ω' },
+      { no: 35, q: 'ข้อใดถูกต้องเกี่ยวกับกำลังไฟฟ้า (P)?', choices: ['P=VI', 'P=V/I', 'P=I/R', 'P=R/V'], correct: 0, explain: 'กำลังไฟฟ้าคำนวณจาก P = VI' },
+      { no: 36, q: 'เครื่องใช้ไฟฟ้ากินกำลัง 60W ที่ 12V กระแสประมาณ?', choices: ['0.2A', '1A', '5A', '10A'], correct: 2, explain: 'I = P/V = 60/12 = 5 A' },
+      { no: 37, q: 'ข้อใดคือความเสี่ยงหลักของการลัดวงจร (Short circuit)?', choices: ['แรงดันหายไป', 'กระแสสูงผิดปกติ เกิดความร้อน/ไฟไหม้', 'ความต้านทานเพิ่มมาก', 'หลอดสว่างขึ้นอย่างปลอดภัย'], correct: 1, explain: 'การลัดวงจรทำให้ความต้านทานต่ำมาก กระแสสูงจนเกิดความร้อนและอาจทำให้ไฟไหม้' },
+      { no: 38, q: 'สาเหตุหนึ่งที่สายไฟร้อนมากผิดปกติคือ?', choices: ['กระแสสูงผ่านสาย', 'แรงดันเป็นศูนย์', 'กระแสเป็นศูนย์', 'สวิตช์เปิดอยู่'], correct: 0, explain: 'ความร้อนเกิดจาก I²R เมื่อกระแสสูง สายไฟอาจร้อนและเสียหาย' },
+      { no: 39, q: 'ไฟฟ้า DC ต่างจาก AC อย่างไร (แบบพื้นฐาน)?', choices: ['DC ทิศกระแสคงที่, AC สลับทิศ', 'DC สลับทิศ, AC คงที่', 'DC มีแต่บ้าน, AC มีแต่แบต', 'ไม่มีความต่าง'], correct: 0, explain: 'กระแสตรง (DC) มีทิศเดียวคงที่ ส่วนกระแสสลับ (AC) เปลี่ยนทิศและขนาดสลับไปมา' },
+      { no: 40, q: 'สัญลักษณ์วงจรของแบตเตอรี่โดยทั่วไปคือ?', choices: ['เส้นตรงเส้นเดียว', 'เส้นยาว-สั้นเป็นคู่', 'วงกลมมี X', 'สามเหลี่ยม'], correct: 1, explain: 'สัญลักษณ์แบตเตอรี่ใช้เส้นยาวและสั้นคู่กัน แทนขั้วบวกและลบ' },
+      { no: 41, q: 'ถ้าต่อโวลต์มิเตอร์ผิดแบบไปต่ออนุกรม มักเกิดผลอย่างไร?', choices: ['อ่านค่าได้ปกติ', 'อาจอ่านค่าผิดเพี้ยนมาก/รบกวนวงจร', 'ทำให้แรงดันเพิ่ม', 'ทำให้กระแสเพิ่มเสมอ'], correct: 1, explain: 'โวลต์มิเตอร์มีความต้านทานสูง การต่ออนุกรมจะทำให้วงจรถูกเปลี่ยนและอ่านค่าไม่ตรง' },
+      { no: 42, q: 'ถ้าต่อแอมมิเตอร์ผิดไปต่อขนานกับแหล่งจ่าย เสี่ยงอะไร?', choices: ['ไม่มีอะไร', 'อาจลัดวงจร ทำให้กระแสสูง เครื่อง/ฟิวส์เสีย', 'แรงดันตกเล็กน้อยเท่านั้น', 'ทำให้ไฟเป็น AC'], correct: 1, explain: 'แอมมิเตอร์มีความต้านทานต่ำ หากต่อขนานกับแหล่งจ่ายจะเหมือนลัดวงจร ทำให้กระแสสูงมาก' },
+      { no: 43, q: 'เหตุผลที่สายไฟฟ้าในบ้านต้องมีฉนวนหุ้มคือ?', choices: ['ทำให้กระแสไหลเร็วขึ้น', 'ป้องกันการสัมผัสตัวนำและการลัดวงจร', 'เพิ่มแรงดัน', 'ทำให้เครื่องใช้กินไฟน้อย'], correct: 1, explain: 'ฉนวนช่วยป้องกันไฟฟ้ารั่วและป้องกันคนสัมผัสตัวนำโดยตรง' },
+      { no: 44, q: 'ถ้าต้องการให้หลอด 2 ดวงสว่างเท่าเดิมเหมือนหลอดเดียว ควรต่อแบบใด (โดยแนวคิด)?', choices: ['อนุกรม', 'ขนาน', 'อนุกรมแล้วเพิ่มตัวต้านทาน', 'แบบไหนก็ได้'], correct: 1, explain: 'การต่อขนานทำให้แต่ละหลอดได้รับแรงดันเท่ากับแหล่งจ่ายและสว่างเท่าเดิม' },
+      { no: 45, q: 'ข้อใดเป็นตัวอย่างของ “การใช้วงจรขนาน” ที่พบทั่วไป?', choices: ['ไฟประดับแบบเก่าเส้นเดียว', 'ไฟบ้านที่แต่ละห้องเปิดปิดได้อิสระ', 'ถ่านไฟฉายก้อนเดียว', 'หลอด 2 ดวงต่ออนุกรมในส้อมไฟ'], correct: 1, explain: 'วงจรไฟฟ้าในบ้านใช้แบบขนาน ทำให้เครื่องใช้แต่ละตัวเปิดปิดได้อิสระ' },
+      { no: 46, q: 'ถ้าความต้านทานรวมลดลง (แรงดันคงที่) กระแสรวมจะ?', choices: ['ลด', 'เพิ่ม', 'คงเดิม', 'เป็นศูนย์'], correct: 1, explain: 'I = V/R เมื่อ R ลด กระแส I เพิ่ม' },
+      { no: 47, q: 'เมื่อต่อโหลดมากขึ้นในขนาน แหล่งจ่ายที่อ่อนอาจเกิดอะไร?', choices: ['แรงดันตก/แบตหมดเร็ว', 'แรงดันเพิ่ม', 'กระแสเป็นศูนย์', 'โหลดสว่างขึ้นเสมอ'], correct: 0, explain: 'การเพิ่มกิ่งขนานทำให้กระแสรวมมากขึ้น แบตเตอรี่หรือแหล่งจ่ายอาจแรงดันตกเร็วขึ้น' },
+      { no: 48, q: 'หลักความปลอดภัยพื้นฐานเมื่อใช้มัลติมิเตอร์วัดแรงดันคือ?', choices: ['ตั้งโหมดผิดได้', 'เลือกช่วง/โหมดให้ถูกและแตะโพรบอย่างระวัง', 'จับปลายโพรบโลหะไว้', 'วัด AC ใช้โหมดโอห์ม'], correct: 1, explain: 'ต้องเลือกช่วงการวัดให้เหมาะสมและจับโพรบให้ปลอดภัย ป้องกันความเสียหายและอันตราย' },
+      { no: 49, q: 'ถ้าวงจรมีแรงดันสูงขึ้น แต่ R คงเดิม กระแสจะ?', choices: ['ลด', 'เพิ่ม', 'คงเดิม', 'เป็นศูนย์'], correct: 1, explain: 'จาก I = V/R เมื่อ V เพิ่ม I ก็เพิ่ม' },
+      { no: 50, q: 'ข้อใดสรุป “ทำไมต้องเรียนวงจรไฟฟ้า” ได้เหมาะที่สุด?', choices: ['เพื่อจำสัญลักษณ์อย่างเดียว', 'เพื่อเข้าใจการทำงาน/ความปลอดภัย/การต่อวงจรในชีวิตจริง', 'เพื่อท่องสูตรเท่านั้น', 'เพื่อทำให้ไฟบ้านแรงขึ้น'], correct: 1, explain: 'การเรียนรู้วงจรช่วยให้เข้าใจการทำงานของอุปกรณ์ไฟฟ้า การประยุกต์ใช้งาน และความปลอดภัย' }
+    ];
+    // Questions for chemistry (51-100)
+    const chem = [
+      { no: 51, q: 'ข้อใดคือความหมายของ “สารบริสุทธิ์”?', choices: ['มีสารชนิดเดียว องค์ประกอบคงที่', 'มีหลายสารผสมกัน', 'มีตะกอนเสมอ', 'มีสีใสเท่านั้น'], correct: 0, explain: 'สารบริสุทธิ์ประกอบด้วยอนุภาคชนิดเดียว เช่น น้ำบริสุทธิ์, โซเดียมคลอไรด์บริสุทธิ์' },
+      { no: 52, q: 'ธาตุ (Element) คือ?', choices: ['สารที่แยกสลายเป็นสารง่ายกว่าไม่ได้ด้วยวิธีเคมี', 'สารที่ประกอบด้วยธาตุตั้งแต่ 2 ชนิดขึ้นไป', 'สารผสมหลายชนิด', 'สารละลาย'], correct: 0, explain: 'ธาตุคือสารพื้นฐานที่ไม่สามารถแยกย่อยเป็นสารใหม่ได้ด้วยปฏิกิริยาเคมี เช่น ทอง (Au), ออกซิเจน (O)' },
+      { no: 53, q: 'สารประกอบ (Compound) คือ?', choices: ['สารที่เกิดจากธาตุตั้งแต่ 2 ชนิดรวมกันทางเคมีในอัตราส่วนคงที่', 'สารที่ผสมกันเฉยๆ', 'ธาตุชนิดเดียว', 'สารที่ละลายน้ำได้เท่านั้น'], correct: 0, explain: 'สารประกอบเกิดจากการรวมตัวของธาตุ 2 ชนิดขึ้นไปในอัตราส่วนคงที่ เช่น H2O, CO2' },
+      { no: 54, q: 'สารผสม (Mixture) มีลักษณะเด่นข้อใด?', choices: ['องค์ประกอบไม่คงที่ แยกได้ด้วยวิธีกายภาพ', 'แยกไม่ได้เลย', 'ต้องเป็นของเหลวเท่านั้น', 'ต้องใสเท่านั้น'], correct: 0, explain: 'สารผสมประกอบด้วยหลายสารที่ไม่เกิดพันธะเคมีใหม่ สามารถแยกด้วยวิธีกายภาพได้' },
+      { no: 55, q: 'ข้อใดเป็นสารเนื้อเดียว?', choices: ['น้ำเกลือใส', 'น้ำกับทราย', 'น้ำกับน้ำมัน', 'ควันไฟหนาๆ'], correct: 0, explain: 'น้ำเกลือใสเป็นสารเนื้อเดียวเนื่องจากมองไม่เห็นส่วนประกอบแยกกัน' },
+      { no: 56, q: 'สมบัติทางกายภาพคืออะไร?', choices: ['สมบัติที่สังเกต/วัดได้โดยไม่เกิดสารใหม่', 'สมบัติที่เกิดสารใหม่เท่านั้น', 'สมบัติที่มีเฉพาะโลหะ', 'สมบัติที่เกี่ยวกับ pH เท่านั้น'], correct: 0, explain: 'สมบัติทางกายภาพ เช่น สี, จุดหลอมเหลว, จุดเดือด ไม่เกี่ยวข้องกับการเกิดสารใหม่' },
+      { no: 57, q: 'สมบัติทางเคมีคืออะไร?', choices: ['สมบัติที่เกี่ยวกับการเกิดสารใหม่ เช่น การเกิดสนิม', 'สีของสาร', 'รูปร่างภาชนะ', 'อุณหภูมิห้อง'], correct: 0, explain: 'สมบัติทางเคมีเกี่ยวข้องกับการเกิดปฏิกิริยาและการเปลี่ยนแปลงเป็นสารใหม่' },
+      { no: 58, q: 'สารละลายประกอบด้วยอะไร?', choices: ['ตัวทำละลาย + ตัวถูกละลาย', 'ธาตุ + ธาตุ', 'สารประกอบ + ธาตุเท่านั้น', 'ตะกอน + น้ำ'], correct: 0, explain: 'สารละลายเกิดจากตัวทำละลาย (มักเป็นของเหลว) และตัวถูกละลาย เช่น เกลือละลายในน้ำ' },
+      { no: 59, q: 'ในน้ำเกลือ “ตัวทำละลาย” คืออะไร?', choices: ['เกลือ', 'น้ำ', 'ทั้งคู่', 'ไม่มีตัวทำละลาย'], correct: 1, explain: 'น้ำเป็นตัวทำละลาย ส่วนเกลือเป็นตัวถูกละลายในน้ำเกลือ' },
+      { no: 60, q: 'ปัจจัยใดช่วยให้สารละลายเร็วขึ้น?', choices: ['คน/กวน เพิ่มอุณหภูมิ เพิ่มพื้นที่ผิว', 'ทำให้เย็นลง', 'หยุดกวน', 'เพิ่มความหนืด'], correct: 0, explain: 'การกวน การเพิ่มอุณหภูมิ และการบดให้ละเอียดช่วยให้สารละลายเร็วขึ้น' },
+      { no: 61, q: 'สารละลาย “อิ่มตัว” หมายถึง?', choices: ['ละลายเพิ่มไม่ได้แล้วที่อุณหภูมินั้น', 'ละลายได้ไม่จำกัด', 'มีตะกอนเสมอทุกกรณี', 'ต้องเป็นกรดเท่านั้น'], correct: 0, explain: 'สารละลายอิ่มตัวคือสารละลายที่ไม่สามารถละลายตัวถูกละลายเพิ่มได้อีกที่อุณหภูมิหนึ่ง' },
+      { no: 62, q: 'เหตุใดน้ำตาลละลายน้ำได้ แต่น้ำมันไม่ค่อยละลาย?', choices: ['ขั้วต่างกัน (like dissolves like)', 'น้ำมันหนักกว่า', 'น้ำมันเย็นกว่า', 'น้ำตาลเป็นโลหะ'], correct: 0, explain: 'น้ำและน้ำตาลมีขั้วเหมือนกัน ทำให้ละลายได้ดี ส่วนน้ำมันไม่มีขั้วจึงไม่ละลายในน้ำ' },
+      { no: 63, q: 'การเปลี่ยนแปลงทางกายภาพคือ?', choices: ['ไม่เกิดสารใหม่ เช่น น้ำแข็งละลาย', 'เกิดสารใหม่เสมอ', 'เกิดเฉพาะตอนเผาไหม้', 'ต้องมีแก๊สเท่านั้น'], correct: 0, explain: 'การเปลี่ยนแปลงทางกายภาพเปลี่ยนรูปร่างหรือสถานะของสาร โดยไม่เกิดสารใหม่' },
+      { no: 64, q: 'การเปลี่ยนแปลงทางเคมีคือ?', choices: ['เกิดสารใหม่ เช่น เผากระดาษแล้วได้เถ้า', 'น้ำระเหยเป็นไอ', 'น้ำแข็งละลาย', 'การบดน้ำตาล'], correct: 0, explain: 'การเปลี่ยนแปลงทางเคมีทำให้เกิดสารใหม่ เช่น การเผาไหม้' },
+      { no: 65, q: 'ข้อใดเป็นหลักฐานว่าเกิดการเปลี่ยนแปลงทางเคมี?', choices: ['เกิดแก๊ส/ฟอง เปลี่ยนสี เกิดตะกอน เกิดความร้อน/แสง', 'เปลี่ยนรูปร่างอย่างเดียว', 'น้ำแข็งละลาย', 'ตัดกระดาษเป็นชิ้นเล็ก'], correct: 0, explain: 'การเกิดแก๊ส เปลี่ยนสี มีตะกอน หรือคายความร้อน/แสง เป็นสัญญาณของปฏิกิริยาเคมี' },
+      { no: 66, q: 'การเกิดสนิมเป็นการเปลี่ยนแปลงแบบใด?', choices: ['กายภาพ', 'เคมี', 'ไม่ใช่ทั้งคู่', 'เป็นแค่การละลาย'], correct: 1, explain: 'สนิมเกิดจากปฏิกิริยาเคมีระหว่างเหล็กกับออกซิเจนและน้ำ' },
+      { no: 67, q: 'กรด (Acid) โดยพื้นฐานมีลักษณะใด?', choices: ['ทำให้ลิตมัสแดงเป็นน้ำเงิน', 'ทำให้ลิตมัสน้ำเงินเป็นแดง', 'ลื่นมือ', 'มีกลิ่นหอมเสมอ'], correct: 1, explain: 'กรดทำให้กระดาษลิตมัสสีน้ำเงินเปลี่ยนเป็นสีแดง' },
+      { no: 68, q: 'เบส (Base) โดยพื้นฐานมีลักษณะใด?', choices: ['ทำให้ลิตมัสน้ำเงินเป็นแดง', 'ทำให้ลิตมัสแดงเป็นน้ำเงิน', 'มีรสเปรี้ยว', 'กัดกร่อนเท่ากรดเสมอ'], correct: 1, explain: 'เบสทำให้กระดาษลิตมัสสีแดงเปลี่ยนเป็นสีน้ำเงิน และสัมผัสจะลื่นมือ' },
+      { no: 69, q: 'pH = 7 โดยทั่วไปหมายถึง?', choices: ['กรด', 'กลาง', 'เบส', 'เป็นเกลือเท่านั้น'], correct: 1, explain: 'pH 7 คือสารละลายเป็นกลาง เช่น น้ำบริสุทธิ์' },
+      { no: 70, q: 'สารใดมักเป็นกรดอ่อนในชีวิตประจำวัน?', choices: ['น้ำส้มสายชู', 'น้ำสบู่', 'น้ำยาล้างจานเข้มข้น', 'ผงซักฟอกด่าง'], correct: 0, explain: 'น้ำส้มสายชูมีกรดอะซิติก เป็นกรดอ่อนที่กินได้' },
+      { no: 71, q: 'สารใดมักเป็นเบสในชีวิตประจำวัน?', choices: ['น้ำสบู่', 'น้ำมะนาว', 'น้ำอัดลม', 'น้ำส้มสายชู'], correct: 0, explain: 'สบู่และผงซักฟอกมักมีฤทธิ์เบส' },
+      { no: 72, q: 'การทำให้กรด-เบสเป็นกลางเรียกว่าอะไร?', choices: ['การกลั่น', 'การทำให้เป็นกลาง (neutralization)', 'การระเหย', 'การตกตะกอน'], correct: 1, explain: 'กรด + เบส ทำให้เกิดเกลือและน้ำ เรียกว่า ปฏิกิริยาทำให้เป็นกลาง' },
+      { no: 73, q: 'ถ้าผสมกรดกับเบสอย่างระวัง ผลที่มักเกิดคือ?', choices: ['อุณหภูมิลดลงมาก', 'เกิดความร้อน (คายความร้อน)', 'ไม่มีการเปลี่ยนแปลง', 'เกิดโลหะใหม่'], correct: 1, explain: 'ปฏิกิริยาทำให้เป็นกลางมักคายความร้อนออกมา' },
+      { no: 74, q: 'ทำไมต้องระวังการใช้กรด-เบสเข้มข้น?', choices: ['เพราะไม่ละลายน้ำ', 'เพราะกัดกร่อน/เป็นอันตรายต่อผิวและดวงตา', 'เพราะทำให้เย็นจัด', 'เพราะไม่มีอันตราย'], correct: 1, explain: 'กรดและเบสเข้มข้นมีฤทธิ์กัดกร่อนสูง อาจเป็นอันตรายต่อผิวและดวงตา' },
+      { no: 75, q: 'การเผาไหม้จัดเป็นปฏิกิริยาแบบใด?', choices: ['การละลาย', 'การเผาไหม้/ออกซิเดชัน (ปฏิกิริยาเคมี)', 'การระเหิด', 'การหลอมเหลว'], correct: 1, explain: 'การเผาไหม้เป็นปฏิกิริยาออกซิเดชันอย่างรวดเร็ว ซึ่งเป็นปฏิกิริยาเคมี' },
+      { no: 76, q: 'ข้อใดเป็นตัวอย่างของปฏิกิริยาเคมีในชีวิตประจำวัน?', choices: ['อาหารบูด', 'น้ำแข็งละลาย', 'บดเกลือ', 'ตัดกระดาษ'], correct: 0, explain: 'การบูดเน่าของอาหารเกิดจากจุลินทรีย์และปฏิกิริยาเคมี ซึ่งทำให้เกิดสารใหม่' },
+      { no: 77, q: 'การย่อยอาหารเกี่ยวข้องกับเคมีอย่างไร?', choices: ['เป็นแค่กายภาพ', 'เอนไซม์เร่งปฏิกิริยาเปลี่ยนสารอาหารเป็นสารที่เล็กลง', 'ไม่มีการเปลี่ยนแปลง', 'เป็นการระเหย'], correct: 1, explain: 'เอนไซม์ในระบบย่อยอาหารทำหน้าที่เร่งปฏิกิริยาเคมีในการสลายสารอาหารเป็นโมเลกุลเล็กลงเพื่อการดูดซึม' },
+      { no: 78, q: 'การเกิดฟองเมื่อผสมสารบางชนิดมักบ่งชี้ว่า?', choices: ['เกิดแก๊สจากปฏิกิริยา', 'อุณหภูมิคงที่เสมอ', 'เป็นกายภาพเท่านั้น', 'เกิดโลหะใหม่'], correct: 0, explain: 'การเกิดฟองหมายถึงมีการเกิดแก๊ส ซึ่งบ่งบอกว่ามีปฏิกิริยาเคมีเกิดขึ้น' },
+      { no: 79, q: 'การเกิดตะกอนในสารละลายหลังผสมกันบ่งชี้ว่า?', choices: ['เกิดสารใหม่ที่ไม่ละลายน้ำ', 'เป็นกลางเสมอ', 'เกิดไฟฟ้า', 'เป็นการระเหย'], correct: 0, explain: 'ตะกอนคือสารใหม่ที่ไม่ละลายน้ำ ดังนั้นเป็นหลักฐานของปฏิกิริยาเคมี' },
+      { no: 80, q: 'สรุปเหตุผลที่ต้องเรียนเคมีที่เหมาะที่สุดคือ?', choices: ['เพื่อท่องชื่อสารอย่างเดียว', 'เพื่อเข้าใจสารรอบตัว ความปลอดภัย และการเปลี่ยนแปลงของสาร', 'เพื่อจำสีลิตมัสเท่านั้น', 'เพื่อทำให้สารทุกอย่างเป็นกรด'], correct: 1, explain: 'การเรียนเคมีช่วยให้เข้าใจสสาร กรด-เบส สารละลาย และปฏิกิริยา เคมีที่อยู่รอบตัวและประยุกต์ใช้ได้อย่างปลอดภัย' },
+      { no: 81, q: 'ข้อใดเป็นวิธีแยกสารผสมแบบ “การกรอง” เหมาะสุด?', choices: ['น้ำเกลือ', 'น้ำกับทราย', 'น้ำตาลละลายน้ำ', 'อากาศ'], correct: 1, explain: 'การกรองใช้แยกของแข็งไม่ละลายในของเหลว เช่น น้ำและทราย' },
+      { no: 82, q: 'ถ้าต้องการแยกเกลือออกจากน้ำเกลือให้ได้เกลือกลับมา ควรใช้วิธี?', choices: ['การกรอง', 'การระเหยแห้ง', 'การร่อน', 'การใช้แม่เหล็ก'], correct: 1, explain: 'การระเหยแห้งจะระเหยน้ำออกไป เหลือผลึกเกลือ' },
+      { no: 83, q: 'ถ้าต้องการได้น้ำบริสุทธิ์จากน้ำเกลือ ควรใช้วิธี?', choices: ['การระเหยอย่างเดียว', 'การกลั่น', 'การกรอง', 'การตกตะกอน'], correct: 1, explain: 'การกลั่นเก็บไอน้ำที่ระเหยแล้วควบแน่น ทำให้ได้น้ำบริสุทธิ์' },
+      { no: 84, q: 'สารละลายเข้มข้นหมายถึง?', choices: ['มีตัวถูกละลายน้อยมาก', 'มีตัวถูกละลายมากเมื่อเทียบกับตัวทำละลาย', 'ไม่มีตัวทำละลาย', 'ต้องมีตะกอน'], correct: 1, explain: 'สารละลายเข้มข้นหมายถึงสัดส่วนของตัวถูกละลายมีมากเมื่อเทียบกับตัวทำละลาย' },
+      { no: 85, q: 'ถ้าเพิ่มอุณหภูมิ โดยทั่วไป “ของแข็ง” จะละลายในน้ำ?', choices: ['น้อยลง', 'มากขึ้น', 'เท่าเดิมเสมอ', 'เป็นศูนย์'], correct: 1, explain: 'โดยทั่วไป การเพิ่มอุณหภูมิจะเพิ่มอัตราการละลายของของแข็งในของเหลว' },
+      { no: 86, q: 'ข้อใดเป็นความแตกต่างสำคัญ: การเปลี่ยนแปลงกายภาพ vs เคมี?', choices: ['กายภาพเกิดสารใหม่', 'เคมีไม่เกิดสารใหม่', 'กายภาพไม่เกิดสารใหม่ แต่เคมีเกิดสารใหม่', 'ไม่มีความต่าง'], correct: 2, explain: 'การเปลี่ยนแปลงกายภาพไม่มีการเกิดสารใหม่ ส่วนเคมีจะเกิดสารใหม่' },
+      { no: 87, q: 'น้ำส้มสายชู + เบกกิ้งโซดา มีฟอง เพราะเกิดแก๊สอะไรโดยทั่วไป?', choices: ['ออกซิเจน', 'คาร์บอนไดออกไซด์', 'ไฮโดรเจน', 'ไนโตรเจน'], correct: 1, explain: 'กรดอะซิติกในน้ำส้มสายชูกับเบกกิ้งโซดา (โซเดียมไบคาร์บอเนต) ทำให้เกิด CO₂' },
+      { no: 88, q: 'ข้อใดเป็นตัวอย่าง “กรด” ที่พบในอาหาร?', choices: ['กรดซิตริกในมะนาว', 'โซเดียมไฮดรอกไซด์', 'แอมโมเนีย', 'สบู่'], correct: 0, explain: 'กรดซิตริกทำให้น้ำมะนาวมีรสเปรี้ยว และเป็นกรดอ่อนที่กินได้' },
+      { no: 89, q: 'ข้อใดเป็นตัวอย่าง “เบส” ที่ใช้ทำความสะอาด?', choices: ['น้ำมะนาว', 'น้ำส้มสายชู', 'สบู่/ผงซักฟอก', 'น้ำอัดลม'], correct: 2, explain: 'สบู่และผงซักฟอกมีฤทธิ์เบส ช่วยล้างคราบไขมันได้' },
+      { no: 90, q: 'pH < 7 หมายถึง?', choices: ['เบส', 'กรด', 'กลาง', 'เป็นเกลือเสมอ'], correct: 1, explain: 'ค่าพีเอชต่ำกว่า 7 หมายถึงสารละลายเป็นกรด' },
+      { no: 91, q: 'pH > 7 หมายถึง?', choices: ['เบส', 'กรด', 'กลาง', 'ไม่มีความหมาย'], correct: 0, explain: 'ค่าพีเอชมากกว่า 7 หมายถึงสารละลายเป็นเบส' },
+      { no: 92, q: 'ลิตมัสเป็น “ตัวบ่งชี้” (indicator) ใช้ทำอะไร?', choices: ['ชั่งมวล', 'ตรวจความเป็นกรด-เบส', 'เพิ่มความเข้มข้น', 'ลดความต้านทาน'], correct: 1, explain: 'กระดาษลิตมัสเป็นตัวบ่งชี้ pH ใช้ตรวจความเป็นกรดหรือเบสโดยการเปลี่ยนสี' },
+      { no: 93, q: 'ข้อใดเป็นแนวปฏิบัติปลอดภัยเมื่อทำเคมี?', choices: ['ชิมสารเพื่อรู้รส', 'สวมแว่น/ถุงมือเมื่อจำเป็นและอ่านฉลาก', 'ผสมสารมั่วๆ', 'ดมสารเข้มๆใกล้ๆ'], correct: 1, explain: 'ต้องสวมอุปกรณ์ป้องกัน อ่านฉลาก และไม่ผสมสารโดยไม่ทราบผล เพื่อความปลอดภัย' },
+      { no: 94, q: 'ทำไมโลหะบางชนิดเกิดสนิมง่ายกว่าอีกชนิด?', choices: ['เพราะสีต่างกัน', 'ความไวต่อออกซิเดชันต่างกัน', 'เพราะหนักกว่าเสมอ', 'เพราะเป็นกรด'], correct: 1, explain: 'โลหะแต่ละชนิดมีศักย์ไฟฟ้าและความไวต่อการเกิดออกซิเดชันต่างกัน ทำให้บางชนิดสนิมง่าย' },
+      { no: 95, q: 'การหมักอาหาร (เช่น โยเกิร์ต) เป็นตัวอย่างของ?', choices: ['การเปลี่ยนแปลงกายภาพ', 'ปฏิกิริยาเคมีโดยจุลินทรีย์', 'การระเหย', 'การหลอมเหลว'], correct: 1, explain: 'การหมักเกิดจากจุลินทรีย์เปลี่ยนสารอาหารให้เป็นสารใหม่ เช่น กรดแลคติก' },
+      { no: 96, q: 'ข้อใดบอก “การเกิดปฏิกิริยาเคมี” ได้ดีที่สุด?', choices: ['อุณหภูมิห้องคงที่', 'เกิดสารใหม่/สัญญาณ เช่น สีเปลี่ยน ฟอง ตะกอน', 'ของแข็งแตกเป็นชิ้น', 'น้ำเปลี่ยนสถานะ'], correct: 1, explain: 'การเกิดสารใหม่พร้อมการเปลี่ยนสี การเกิดฟอง หรือการตกตะกอนเป็นหลักฐานของปฏิกิริยาเคมี' },
+      { no: 97, q: 'ถ้าต้องการลดโอกาสอาหารบูด ควรทำอย่างไร (เชิงเคมี/ชีวภาพ)?', choices: ['เพิ่มความชื้น', 'แช่เย็น/ลดอุณหภูมิ/ลดจุลินทรีย์', 'วางกลางแดดชื้นๆ', 'เปิดฝาทิ้งไว้'], correct: 1, explain: 'การแช่เย็นหรือลดอุณหภูมิจะชะลอการเจริญของจุลินทรีย์และปฏิกิริยาเคมีที่ทำให้อาหารบูด' },
+      { no: 98, q: 'ข้อใดเป็นผลกระทบของปฏิกิริยาเคมีต่อสิ่งแวดล้อมที่พบบ่อย?', choices: ['การเกิดควันจากการเผาไหม้', 'น้ำแข็งละลายอย่างเดียว', 'การตัดไม้เป็นชิ้น', 'การกรองน้ำ'], correct: 0, explain: 'การเผาไหม้เชื้อเพลิงทำให้เกิดควันและมลพิษ ซึ่งเป็นผลจากปฏิกิริยาเคมีออกซิเดชัน' },
+      { no: 99, q: 'การใช้สารเคมีในบ้านอย่างปลอดภัยควรทำอะไร?', choices: ['ผสมหลายชนิดให้แรงขึ้น', 'อ่านฉลาก/ไม่ผสมสารที่ห้ามผสม/เก็บให้พ้นเด็ก', 'เทลงขวดน้ำดื่ม', 'ใส่ภาชนะไม่มีฉลาก'], correct: 1, explain: 'ควรอ่านฉลากและปฏิบัติตามคำแนะนำ ไม่ผสมสารที่อาจเกิดอันตราย และเก็บให้พ้นมือเด็ก' },
+      { no: 100, q: 'ถ้าคุณต้องสรุป “สิ่งที่เคมีช่วยเรา” แบบใช้ได้จริง ข้อใดเหมาะสุด?', choices: ['ช่วยเข้าใจสารละลาย กรด-เบส ปฏิกิริยา และความปลอดภัยในชีวิตประจำวัน', 'ช่วยทำให้ทุกอย่างเป็นกรด', 'ช่วยจำชื่อธาตุทั้งหมดในครั้งเดียว', 'ช่วยให้ไม่ต้องทดลอง'], correct: 0, explain: 'ความรู้ทางเคมีช่วยให้เราเข้าใจสารและปฏิกิริยา รอบตัว เพื่อประยุกต์ใช้และปฏิบัติอย่างปลอดภัย' }
+    ];
+    // Assign images to questions using the orders defined above
+    assignImagesTo(electric, electricOrder);
+    assignImagesTo(chem, chemOrder);
+    // Combine into one list for all mode
+    const ALL = [...electric, ...chem];
+    // State
+    const state = {
+      mode: null, // 'electric', 'chem', 'all'
+      list: [],
+      idx: 0,
+      answers: new Map(), // no -> choiceIndex
+    };
+    // DOM references
+    const cardEl = document.getElementById('card');
+    const progressBar = document.getElementById('progress');
+    const progressText = document.getElementById('progressText');
+    const modeIndicator = document.getElementById('modeIndicator');
+    // Helpers
+    function letter(i) {
+      return ['A','B','C','D','E','F'][i] || (i+1);
+    }
+    function setTheme(subject) {
+      if(subject === 'chem') {
+        document.documentElement.style.setProperty('--electric-main', getComputedStyle(document.documentElement).getPropertyValue('--chem-main'));
+        document.documentElement.style.setProperty('--electric-light', getComputedStyle(document.documentElement).getPropertyValue('--chem-light'));
+      } else {
+        document.documentElement.style.setProperty('--electric-main', '#39d0ff');
+        document.documentElement.style.setProperty('--electric-light', '#8cf5ff');
+      }
+    }
+    function setProgress() {
+      const total = state.list.length;
+      const currentIndex = state.idx;
+      const percentage = total ? Math.round(((currentIndex+1) / total) * 100) : 0;
+      progressBar.style.width = percentage + '%';
+      progressText.textContent = `${Math.min(currentIndex+1, total)}/${total}`;
+    }
+    function getSubjectStats() {
+      const stats = { electric: { answered:0, correct:0, wrong:[] }, chem: { answered:0, correct:0, wrong:[] } };
+      state.answers.forEach((choiceIdx, no) => {
+        const q = ALL.find(x => x.no === no);
+        if(!q) return;
+        const subj = q.no <= 50 ? 'electric' : 'chem';
+        stats[subj].answered++;
+        if(choiceIdx === q.correct) {
+          stats[subj].correct++;
+        } else {
+          stats[subj].wrong.push(no);
+        }
+      });
+      return stats;
+    }
+    function escapeHtml(str) {
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+    }
+    // Render start screen
+    function startScreen() {
+      state.mode = null;
+      state.answers.clear();
+      state.list = [];
+      state.idx = 0;
+      setTheme('electric');
+      progressBar.style.width = '0%';
+      progressText.textContent = '0/0';
+      modeIndicator.textContent = 'โหมด: -';
+      cardEl.innerHTML = `
+        <div class="card-head">
+          <div class="badges">
+            <span class="badge">📌 ผู้สอบสามารถเลือกทำวิชาเดียวหรือทั้งสองวิชา</span>
+            <span class="badge">📄 เฉลยเฉพาะข้อที่ตอบ</span>
+            <span class="badge">🗒️ ดาวน์โหลดผลสอบได้</span>
+          </div>
+          <div class="tabs">
+            <span class="tab active">เมนูเริ่มต้น</span>
+          </div>
+        </div>
+        <div class="start-grid">
+          <div class="mode-select">
+            <h3>⚡ ทำเฉพาะไฟฟ้า (1–50)</h3>
+            <p>ทดสอบความรู้เรื่องวงจรไฟฟ้า อุปกรณ์ และกฎของโอห์ม</p>
+            <button class="button primary" onclick="boot('electric')">เริ่มทำไฟฟ้า</button>
+          </div>
+          <div class="mode-select">
+            <h3>🧪 ทำเฉพาะเคมี (51–100)</h3>
+            <p>ทดสอบความรู้เกี่ยวกับสาร สมบัติของสาร สารละลาย และปฏิกิริยาเคมี</p>
+            <button class="button primary" onclick="boot('chem')">เริ่มทำเคมี</button>
+          </div>
+          <div class="mode-select" style="grid-column: 1 / -1;">
+            <h3>⚡ + 🧪 ทำทั้งสองวิชา</h3>
+            <p>รวมคำถามทั้งหมด 100 ข้อ ครอบคลุมทั้งไฟฟ้าและเคมี สามารถสลับวิชาได้</p>
+            <button class="button primary" onclick="boot('all')">เริ่มทำทั้งหมด</button>
+          </div>
+        </div>
+      `;
+    }
+    // Boot into specific mode
+    window.boot = function(mode) {
+      state.mode = mode;
+      state.answers.clear();
+      state.idx = 0;
+      if(mode === 'electric') {
+        state.list = electric;
+        modeIndicator.textContent = 'โหมด: ไฟฟ้า';
+      } else if(mode === 'chem') {
+        state.list = chem;
+        modeIndicator.textContent = 'โหมด: เคมี';
+      } else {
+        state.list = ALL;
+        modeIndicator.textContent = 'โหมด: ทั้งหมด';
+      }
+      if(state.list.length > 0) {
+        const firstSubj = state.list[0].no <= 50 ? 'electric' : 'chem';
+        setTheme(firstSubj);
+      }
+      renderQuestion();
+    };
+    // Render current question
+    function renderQuestion() {
+      if(state.idx < 0) state.idx = 0;
+      if(state.idx >= state.list.length) {
+        renderResult();
+        return;
+      }
+      const q = state.list[state.idx];
+      const subj = q.no <= 50 ? 'electric' : 'chem';
+      setTheme(subj);
+      setProgress();
+      const tabElectric = `<span class="tab ${subj === 'electric' ? 'active' : ''}" onclick="switchTab('electric')">⚡ ไฟฟ้า</span>`;
+      const tabChem    = `<span class="tab ${subj === 'chem' ? 'active' : ''}" onclick="switchTab('chem')">🧪 เคมี</span>`;
+      const tabMenu    = `<span class="tab" onclick="startScreen()">🏠 เมนู</span>`;
+      const sel = state.answers.get(q.no);
+      let choicesHtml = '';
+      q.choices.forEach((txt, idx) => {
+        const selected = sel === idx ? 'selected' : '';
+        choicesHtml += `
+          <button class="choice ${selected}" onclick="selectChoice(${q.no}, ${idx})">
+            <div class="label">${letter(idx)}</div>
+            <div class="text">${escapeHtml(txt)}</div>
+          </button>
+        `;
+      });
+      const stats = getSubjectStats();
+      const answeredCount = state.answers.size;
+      const eCorrect = stats.electric.correct;
+      const eAnswered = stats.electric.answered;
+      const cCorrect = stats.chem.correct;
+      const cAnswered = stats.chem.answered;
+      cardEl.innerHTML = `
+        <div class="card-head">
+          <div class="badges">
+            <span class="badge">ข้อ <b>${q.no}</b></span>
+            <span class="badge">วิชา: <b>${subj === 'electric' ? 'ไฟฟ้า' : 'เคมี'}</b></span>
+            <span class="badge">${sel === undefined ? 'ยังไม่ได้ตอบ' : 'ตอบแล้ว'}</span>
+          </div>
+          <div class="tabs">${tabElectric}${tabChem}${tabMenu}</div>
+        </div>
+        <div class="card-body">
+          <div class="pane">
+            <div class="question-title">${escapeHtml(q.q)}</div>
+            <div class="question-meta">เลือกคำตอบ จากนั้นกด Next หรือ Skip</div>
+            <div class="choices">${choicesHtml}</div>
+            <div class="mini-stats">
+              <div class="chip">ตอบแล้ว: <b>${answeredCount}</b></div>
+              <div class="chip">ไฟฟ้า: <b>${eCorrect}/${eAnswered}</b></div>
+              <div class="chip">เคมี: <b>${cCorrect}/${cAnswered}</b></div>
+            </div>
+            <div class="actions">
+              <div class="group">
+                <button class="button secondary" id="backBtn" ${state.idx === 0 ? 'disabled' : ''}>ย้อนกลับ</button>
+                <button class="button secondary" id="skipBtn">Skip</button>
+                <button class="button danger" id="finishBtn">จบข้อสอบ</button>
+              </div>
+              <div class="group">
+                <label class="chip">ไปข้อที่: <input type="number" id="jumpInput" min="${state.list[0].no}" max="${state.list[state.list.length-1].no}" value="${q.no}" style="width: 80px; border-radius: 8px; border: 1px solid var(--line); padding: 6px; background: rgba(255,255,255,0.06); color: var(--text);"></label>
+                <button class="button secondary" id="jumpBtn">ไป</button>
+                <button class="button primary" id="nextBtn">Next</button>
+              </div>
+            </div>
+          </div>
+          <div class="image-pane">
+            <div class="image-frame">
+              <img src="${q.img}" alt="ภาพประกอบข้อ ${q.no}">
+            </div>
+            <div class="image-caption">ภาพประกอบเกี่ยวกับคำถาม</div>
+          </div>
+        </div>
+      `;
+      document.getElementById('backBtn').onclick = () => {
+        if(state.idx > 0) {
+          state.idx--;
+          renderQuestion();
+        }
+      };
+      document.getElementById('skipBtn').onclick = () => {
+        if(state.idx < state.list.length - 1) {
+          state.idx++;
+          renderQuestion();
+        } else {
+          renderResult();
+        }
+      };
+      document.getElementById('nextBtn').onclick = () => {
+        if(state.idx < state.list.length - 1) {
+          state.idx++;
+          renderQuestion();
+        } else {
+          renderResult();
+        }
+      };
+      document.getElementById('finishBtn').onclick = () => {
+        renderResult();
+      };
+      document.getElementById('jumpBtn').onclick = () => {
+        const to = parseInt(document.getElementById('jumpInput').value, 10);
+        const idx = state.list.findIndex(item => item.no === to);
+        if(idx >= 0) {
+          state.idx = idx;
+          renderQuestion();
+        } else {
+          alert('ไม่พบหมายเลขข้อนี้ในโหมดปัจจุบัน');
+        }
+      };
+    }
+    // Select choice handler
+    window.selectChoice = function(no, choiceIndex) {
+      state.answers.set(no, choiceIndex);
+      renderQuestion();
+    };
+    // Switch tab between subjects (only works in all mode)
+    window.switchTab = function(subj) {
+      if(state.mode === 'all') {
+        const startNo = state.list[state.idx].no;
+        let newIdx = state.list.findIndex(q => {
+          if(subj === 'electric') return q.no <= 50 && q.no >= startNo;
+          else return q.no > 50 && q.no >= startNo;
+        });
+        if(newIdx === -1) {
+          newIdx = state.list.findIndex(q => {
+            if(subj === 'electric') return q.no <= 50;
+            else return q.no > 50;
+          });
+        }
+        if(newIdx >= 0) {
+          state.idx = newIdx;
+          renderQuestion();
+        }
+      }
+    };
+    // Render result summary
+    function renderResult() {
+      const totalPossible = state.list.length;
+      const stats = getSubjectStats();
+      const totalCorrect = stats.electric.correct + stats.chem.correct;
+      const eNeeded = (state.mode === 'electric' || state.mode === 'all');
+      const cNeeded = (state.mode === 'chem' || state.mode === 'all');
+      const passE = !eNeeded || stats.electric.correct >= 20;
+      const passC = !cNeeded || stats.chem.correct >= 20;
+      const passOverall = passE && passC;
+      let stronger = 'ยังไม่มี (ยังไม่ตอบข้อใด)';
+      const eAcc = stats.electric.answered ? stats.electric.correct / stats.electric.answered : 0;
+      const cAcc = stats.chem.answered ? stats.chem.correct / stats.chem.answered : 0;
+      if(stats.electric.answered || stats.chem.answered) {
+        if(eAcc > cAcc) stronger = 'ไฟฟ้า';
+        else if(cAcc > eAcc) stronger = 'เคมี';
+        else stronger = 'เท่ากัน';
+      }
+      let report = '';
+      report += 'ผลสอบวิทยาศาสตร์ ม.3 (ไฟฟ้า/เคมี)\n';
+      report += 'โหมด: ' + state.mode + '\n';
+      report += 'ตอบแล้ว: ' + state.answers.size + '/' + totalPossible + '\n';
+      report += 'คะแนนรวม: ' + totalCorrect + '\n';
+      if(eNeeded) {
+        report += '\n[ไฟฟ้า] คะแนน: ' + stats.electric.correct + ' จาก 50\n';
+        report += 'ตอบแล้ว: ' + stats.electric.answered + '\n';
+        report += 'ผ่านขั้นต่ำ 20 คะแนน: ' + (passE ? 'ผ่าน' : 'ไม่ผ่าน') + '\n';
+        report += 'ผิดข้อ: ' + (stats.electric.wrong.length ? stats.electric.wrong.join(', ') : '-') + '\n';
+      }
+      if(cNeeded) {
+        report += '\n[เคมี] คะแนน: ' + stats.chem.correct + ' จาก 50\n';
+        report += 'ตอบแล้ว: ' + stats.chem.answered + '\n';
+        report += 'ผ่านขั้นต่ำ 20 คะแนน: ' + (passC ? 'ผ่าน' : 'ไม่ผ่าน') + '\n';
+        report += 'ผิดข้อ: ' + (stats.chem.wrong.length ? stats.chem.wrong.join(', ') : '-') + '\n';
+      }
+      report += '\nสรุปความถนัด: ' + stronger + '\n';
+      report += 'สถานะรวม: ' + (passOverall ? 'ผ่าน' : 'ไม่ผ่าน') + '\n';
+      report += '\nเฉลยมีเฉพาะข้อที่ตอบแล้วในหน้าเว็บนี้\n';
+      let reviewHtml = '';
+      const answeredNos = Array.from(state.answers.keys()).sort((a,b) => a - b);
+      if(answeredNos.length === 0) {
+        reviewHtml = '<p style="padding: 16px; color: var(--muted); font-size: 13px;">คุณยังไม่ได้ตอบข้อสอบ ไม่มีเฉลยที่จะแสดง</p>';
+      } else {
+        answeredNos.forEach(no => {
+          const q = ALL.find(item => item.no === no);
+          if(!q) return;
+          const ansIndex = state.answers.get(no);
+          const ok = (ansIndex === q.correct);
+          const userTxt = letter(ansIndex) + ': ' + q.choices[ansIndex];
+          const correctTxt = letter(q.correct) + ': ' + q.choices[q.correct];
+          reviewHtml += `
+            <div class="review-item">
+              <div class="item-head">
+                <div class="title">ข้อ ${q.no}: ${escapeHtml(q.q)}</div>
+                <div class="status ${ok ? 'ok' : 'bad'}">${ok ? 'ถูกต้อง' : 'ผิด'}</div>
+              </div>
+              <div class="item-body">
+                <div class="thumb"><img src="${q.img}" alt="ภาพข้อ ${q.no}"></div>
+                <div class="explanation">
+                  <div class="muted">คุณตอบ: ${escapeHtml(userTxt)}</div>
+                  <div class="muted">เฉลย: ${escapeHtml(correctTxt)}</div>
+                  <div style="margin-top:6px;"><strong>คำอธิบาย:</strong> ${escapeHtml(q.explain)}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      }
+      cardEl.innerHTML = `
+        <div class="result-header">
+          <div class="score-summary">
+            คะแนนรวม: ${totalCorrect}
+            <small>
+              ตอบ ${state.answers.size}/${totalPossible} ข้อ • ความถนัด: ${stronger}<br/>
+              ผ่านขั้นต่ำ (20 คะแนนต่อวิชา): ${passOverall ? 'ผ่าน' : 'ไม่ผ่าน'}
+            </small>
+          </div>
+          <div class="group" style="display:flex; gap:8px;">
+            <button class="button secondary" onclick="downloadReport('${report.replace(/\n/g,'\\n').replace(/\'/g,'\\\'')}')">ดาวน์โหลดผลสอบ</button>
+            <button class="button primary" onclick="startScreen()">เริ่มใหม่</button>
+          </div>
+        </div>
+        <div class="review-list">${reviewHtml}</div>
+      `;
+    }
+    // Download report as TXT file
+    window.downloadReport = function(text) {
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const stamp = new Date().toISOString().replace(/[:.]/g,'-');
+      link.download = `report_quiz_${stamp}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    };
+    // Initialize start screen at load
+    startScreen();
+  </script>
+</body>
+</html>
