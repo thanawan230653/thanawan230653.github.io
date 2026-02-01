@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>เกมข้อสอบช่างยนต์ (20 ข้อ) – พร้อมรูป</title>
+  <style>
+    :root{
+      --bg1:#2b0a0a; --bg2:#120406; --card:#1a0b10cc; --stroke:#ffffff1f;
+      --text:#fff7e6; --muted:#ffd9a3b8; --gold:#f8d46a;
+      --good:#34d399; --bad:#fb7185; --focus:#60a5fa;
+      --shadow: 0 18px 55px rgba(0,0,0,.45);
+      --radius: 18px;
+      --ring: 0 0 0 3px rgba(248,212,106,.25);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans Thai", Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 0%, rgba(248,212,106,.18), transparent 55%),
+        radial-gradient(900px 600px at 90% 5%, rgba(255,59,59,.18), transparent 50%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:22px 16px 52px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+      padding:14px 16px;
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.12));
+      box-shadow:var(--shadow);
+      position:sticky;top:0;z-index:20;
+      backdrop-filter: blur(10px);
+    }
+    .brand{display:flex;align-items:center;gap:10px;min-width:0}
+    .badge{
+      width:42px;height:42px;border-radius:14px;display:grid;place-items:center;
+      background: linear-gradient(135deg, rgba(255,59,59,.95), rgba(248,212,106,.85));
+      border:1px solid rgba(255,255,255,.15);
+      user-select:none;
+    }
+    .brand h1{font-size:16px;margin:0;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+    .pill{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;font-size:12px;color:var(--muted)}
+    .pill .chip{padding:8px 10px;border-radius:999px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);white-space:nowrap}
+    .progress{width:220px;max-width:34vw;height:10px;border-radius:999px;border:1px solid var(--stroke);background:rgba(255,255,255,.06);overflow:hidden}
+    .progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg, rgba(248,212,106,.95), rgba(255,59,59,.9));border-radius:999px;transition:width .35s ease}
+
+    .grid{display:grid;grid-template-columns: 1.05fr .95fr; gap:16px;margin-top:16px}
+    @media (max-width: 900px){.grid{grid-template-columns:1fr}.progress{width:160px}}
+    .card{border:1px solid var(--stroke);border-radius:20px;background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(0,0,0,.16));box-shadow:var(--shadow);overflow:hidden}
+    .hd{padding:16px 16px 10px;border-bottom:1px solid var(--stroke)}
+    .kicker{color:var(--muted);font-size:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .kicker b{color:var(--gold);font-weight:700}
+    .title{margin:10px 0 0;font-size:18px;line-height:1.35}
+    .body{padding:16px}
+    .imgbox{background:rgba(0,0,0,.25);border:1px dashed rgba(255,255,255,.18);border-radius:16px;padding:10px}
+    .imgbox img{width:100%;height:auto;display:block;border-radius:14px;background:rgba(255,255,255,.04)}
+    .caption{margin-top:10px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .caption a{text-decoration:none;border-bottom:1px dotted rgba(248,212,106,.55);color:var(--gold)}
+
+    .choices{display:grid;gap:10px}
+    .choice{border:1px solid var(--stroke);border-radius:16px;padding:12px;background:rgba(255,255,255,.05);display:flex;gap:10px;align-items:flex-start;cursor:pointer;user-select:none;transition:transform .08s ease,border-color .15s ease,background .15s ease}
+    .choice:hover{transform:translateY(-1px);border-color:rgba(248,212,106,.35)}
+    .choice.selected{border-color:rgba(248,212,106,.75);box-shadow:var(--ring);background:rgba(248,212,106,.08)}
+    .bullet{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.35);display:grid;place-items:center;flex:0 0 auto;margin-top:1px}
+    .choice.selected .bullet{border-color:rgba(248,212,106,.95)}
+    .dot{width:8px;height:8px;border-radius:50%;background:transparent}
+    .choice.selected .dot{background:rgba(248,212,106,.95)}
+    .txt{font-size:14px;line-height:1.35}
+    .hint{color:var(--muted);font-size:12px;margin-top:12px}
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap;padding:14px 16px;border-top:1px solid var(--stroke);background:rgba(0,0,0,.08)}
+    .btn{appearance:none;border:1px solid var(--stroke);background:rgba(255,255,255,.06);color:var(--text);padding:10px 12px;border-radius:14px;cursor:pointer;font-weight:800}
+    .btn.primary{border-color:rgba(248,212,106,.65);background:linear-gradient(135deg, rgba(255,59,59,.95), rgba(248,212,106,.9));color:#1b0a0a}
+    .btn:focus{outline:none;box-shadow:0 0 0 3px rgba(96,165,250,.25)}
+    .btn[disabled]{opacity:.55;cursor:not-allowed}
+
+    .center{display:grid;place-items:center;min-height:calc(100vh - 70px);padding:26px 0}
+    .start{max-width:860px;width:100%;padding:22px}
+    .start h2{margin:0;font-size:22px}
+    .start p{margin:10px 0 0;color:var(--muted);line-height:1.55}
+    .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+
+    .sep{height:1px;background:rgba(255,255,255,.12);margin:14px 0}
+    .small{font-size:12px;color:var(--muted);line-height:1.55}
+    .hide{display:none !important}
+
+    .list{margin-top:14px;display:grid;gap:10px}
+    .item{border:1px solid var(--stroke);border-radius:16px;background:rgba(255,255,255,.05);padding:12px}
+    .item .q{font-weight:900;line-height:1.4}
+    .item .a{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.45}
+    .item .a b{color:var(--text)}
+    .ok{color:rgba(52,211,153,.95);font-weight:950}
+    .no{color:rgba(251,113,133,.98);font-weight:950}
+    .thumb{margin-top:10px}
+    .thumb img{width:100%;height:auto;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <div class="badge">🏮</div>
+        <div style="min-width:0">
+          <h1>เกมข้อสอบ “ช่างยนต์” (20 ข้อ)</h1>
+          <div class="sub">กด Next / ข้ามข้อ / กระโดดไปข้ออื่น • เฉลยตอนจบเท่านั้น • ภาพจาก Wikimedia (ลิงก์ใช้ได้จริง)</div>
+        </div>
+      </div>
+      <div class="pill">
+        <div class="chip" id="chipStatus">ยังไม่เริ่ม</div>
+        <div class="progress"><i id="progressBar"></i></div>
+      </div>
+    </header>
+
+    <section class="center" id="screenStart">
+      <div class="card start">
+        <div class="hd">
+          <div class="kicker"><span>🧰 ช่างยนต์พื้นฐาน</span><span>•</span><span>20 ข้อ</span><span>•</span><span>ภาพประกอบทุกข้อ</span></div>
+          <h2 class="title" style="font-size:22px;margin-top:8px">เริ่มทำข้อสอบเลยไหม?</h2>
+          <p>เลือกคำตอบ → กด <b>Next</b> ไปข้อถัดไป (ยังไม่เฉลย) • ถ้ายังไม่พร้อมให้กด <b>ข้ามข้อ</b> • ตอนจบมีสรุป + ดาวน์โหลดรายงาน .txt</p>
+        </div>
+        <div class="body">
+          <div class="row">
+            <button class="btn primary" id="btnStart">เริ่มทำข้อสอบ</button>
+            <button class="btn" id="btnToggleJump" disabled>เลือกข้อ (เริ่มก่อน)</button>
+          </div>
+          <div class="small" style="margin-top:10px">
+            ภาพประกอบใช้ลิงก์ <b>Wikimedia Commons Special:FilePath</b> (เชื่อถือได้) และมีปุ่ม “เปิดที่มา” ในทุกข้อ
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenQuiz" class="hide">
+      <div class="grid">
+        <div class="card">
+          <div class="hd">
+            <div class="kicker">
+              <span>ข้อ <b id="qNo">1</b>/<span id="qTotal">20</span></span>
+              <span>•</span>
+              <span>หมวด: <b id="qTag">-</b></span>
+              <span>•</span>
+              <span>สถานะ: <b id="qState">ยังไม่ตอบ</b></span>
+            </div>
+            <h2 class="title" id="qText">—</h2>
+          </div>
+          <div class="body">
+            <div class="choices" id="choices"></div>
+            <div class="hint">กด “เลือกข้อ” เพื่อกระโดดไปทำข้ออื่นได้</div>
+          </div>
+          <div class="actions">
+            <button class="btn" id="btnPrev">ย้อนกลับ</button>
+            <button class="btn" id="btnSkip">ข้ามข้อ</button>
+            <button class="btn" id="btnJump">เลือกข้อ</button>
+            <button class="btn primary" id="btnNext">Next</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <div class="kicker"><span>🖼️ ภาพประกอบ</span><span>•</span><span>คลิก “เปิดที่มา” ถ้ารูปไม่ขึ้น</span></div>
+            <h3 class="title" style="margin:10px 0 0;font-size:16px" id="imgTitle">—</h3>
+          </div>
+          <div class="body">
+            <div class="imgbox">
+              <img id="img" alt="" loading="lazy" />
+              <div class="caption">
+                <span id="imgCaption">—</span>
+                <span><a id="imgSource" href="#" target="_blank" rel="noopener">เปิดที่มา</a></span>
+              </div>
+            </div>
+            <div class="small" style="margin-top:12px">
+              ถ้าบางเครือข่ายบล็อกภาพ ให้เปิด “เปิดที่มา” แล้วลองรีเฟรชหน้าเว็บ
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card hide" id="jumpBox" style="margin-top:16px">
+        <div class="hd">
+          <div class="kicker"><span>🧭 เลือกข้อ</span><span>•</span><span>กดเพื่อไปข้อที่ต้องการ</span></div>
+          <h3 class="title" style="margin-top:8px;font-size:16px">กระโดดไปข้อ…</h3>
+        </div>
+        <div class="body">
+          <div id="jumpGrid" style="display:grid;grid-template-columns: repeat(10, minmax(0,1fr)); gap:8px"></div>
+          <div class="small" style="margin-top:12px">สีทอง = ตอบแล้ว • สีแดง = ยังไม่ตอบ/ข้าม</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenResult" class="hide">
+      <div class="grid">
+        <div class="card">
+          <div class="hd">
+            <div class="kicker"><span>🎉 จบเกมแล้ว</span><span>•</span><span>สรุปผล + ดาวน์โหลด .txt</span></div>
+            <h3 class="title" style="margin-top:8px">สรุปคะแนน</h3>
+          </div>
+          <div class="body">
+            <div style="font-size:30px;font-weight:950;color:var(--gold)" id="scoreBig">0/20</div>
+            <div class="small" id="scoreMeta" style="margin-top:10px">—</div>
+            <div class="sep"></div>
+            <div class="row">
+              <button class="btn primary" id="btnDownload">ดาวน์โหลดรายงาน .txt</button>
+              <button class="btn" id="btnRestart">ทำใหม่</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="hd">
+            <div class="kicker"><span>❌ ข้อที่ตอบผิด</span><span>•</span><span>แสดงเฉพาะข้อที่ตอบ</span></div>
+            <h3 class="title" style="margin-top:8px;font-size:16px">เฉลย + อธิบาย + รูป</h3>
+          </div>
+          <div class="body">
+            <div id="wrongList" class="list"></div>
+            <div id="noWrong" class="small hide">ไม่มีข้อที่ตอบผิด 🎊</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="hd">
+          <div class="kicker"><span>✅ ข้อที่ตอบถูก</span><span>•</span><span>แสดงเฉพาะข้อที่ตอบ</span></div>
+          <h3 class="title" style="margin-top:8px;font-size:16px">ทบทวนสั้น ๆ</h3>
+        </div>
+        <div class="body">
+          <div id="correctList" class="list"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+  // Wikimedia helpers (ลิงก์ใช้ได้จริง)
+  function filePathUrl(file, width=1100){
+    return "https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(file) + "?width=" + width;
+  }
+  function filePageUrl(file){
+    const safe = file.replace(/ /g, "_");
+    return "https://commons.wikimedia.org/wiki/File:" + encodeURIComponent(safe);
+  }
+
+  // 20 ข้อ + ไฟล์รูปที่ “มีอยู่จริง” (ชื่อไฟล์เป็นที่รู้จัก/ใช้บ่อยบน Commons)
+  const questions = [
+    {tag:"ไฟฟ้ารถยนต์", q:"หัวเทียน (Spark Plug) มีหน้าที่หลักอะไรในเครื่องยนต์เบนซิน?",
+      choices:["กรองฝุ่นก่อนเข้าห้องเผาไหม้","สร้างประกายไฟจุดระเบิดส่วนผสมอากาศ-เชื้อเพลิง","เพิ่มแรงดันน้ำมันเชื้อเพลิง","ลดอุณหภูมิน้ำหล่อเย็น"],
+      correct:1, explain:"หัวเทียนสร้างประกายไฟเพื่อจุดระเบิดส่วนผสมอากาศ-เชื้อเพลิงในห้องเผาไหม้", file:"Spark_plug.jpg",
+      imgTitle:"หัวเทียน (Spark plug)", imgCaption:"ภาพหัวเทียนตัวอย่าง"},
+    {tag:"บำรุงรักษา", q:"ไส้กรองน้ำมันเครื่องมีหน้าที่หลักอะไร?",
+      choices:["กรองสิ่งสกปรก/เศษโลหะออกจากน้ำมันเครื่อง","เพิ่มกำลังเครื่องยนต์ทันที","ทำให้น้ำมันเบรกเดือดยาก","ทำให้เครื่องยนต์สตาร์ทง่ายขึ้นโดยตรง"],
+      correct:0, explain:"ไส้กรองน้ำมันเครื่องช่วยดักเขม่า/เศษโลหะ ทำให้น้ำมันสะอาด ลดการสึกหรอ", file:"Oil_filter.jpg",
+      imgTitle:"ไส้กรองน้ำมันเครื่อง (Oil filter)", imgCaption:"ภาพไส้กรองน้ำมันเครื่อง"},
+    {tag:"ไฟฟ้ารถยนต์", q:"ไดชาร์จ (Alternator) มีหน้าที่หลักข้อใดถูกต้องที่สุด?",
+      choices:["สร้างแรงอัดในกระบอกสูบ","ผลิตกระแสไฟและชาร์จแบตเตอรี่ขณะเครื่องยนต์ทำงาน","กรองน้ำมันเครื่องไม่ให้มีสิ่งสกปรก","เพิ่มแรงดันน้ำมันเบรก"],
+      correct:1, explain:"ไดชาร์จแปลงพลังงานกลเป็นไฟฟ้าเพื่อจ่ายระบบไฟและชาร์จแบตเตอรี่", file:"Alternator_1.jpg",
+      imgTitle:"ไดชาร์จ (Alternator)", imgCaption:"ตัวอย่างไดชาร์จ"},
+    {tag:"ไฟฟ้ารถยนต์", q:"มอเตอร์สตาร์ท (Starter Motor) ทำงานเมื่อใด และทำเพื่ออะไร?",
+      choices:["ทำงานตลอดเวลา เพื่อระบายความร้อน","ทำงานตอนเหยียบเบรก เพื่อช่วยหยุดรถ","ทำงานตอนบิดกุญแจ/กดสตาร์ท เพื่อหมุนเครื่องยนต์ให้ติด","ทำงานตอนเปิดไฟหน้า เพื่อเพิ่มแรงดันไฟ"],
+      correct:2, explain:"มอเตอร์สตาร์ทหมุนเครื่องยนต์ช่วงเริ่มติดเครื่อง", file:"Starter_motor.jpg",
+      imgTitle:"มอเตอร์สตาร์ท (Starter motor)", imgCaption:"ตัวอย่างมอเตอร์สตาร์ท"},
+    {tag:"ไฟฟ้ารถยนต์", q:"แบตเตอรี่รถยนต์มีหน้าที่สำคัญที่สุดข้อใด?",
+      choices:["เพิ่มความเร็วรถโดยตรง","เก็บและจ่ายพลังงานไฟฟ้า โดยเฉพาะตอนสตาร์ทและตอนโหลดสูง","กรองน้ำหล่อเย็น","ควบคุมการเปลี่ยนเกียร์อัตโนมัติทั้งหมด"],
+      correct:1, explain:"แบตฯ จ่ายกระแสสูงตอนสตาร์ทและสำรองไฟให้อุปกรณ์ไฟฟ้า", file:"Car_battery.jpg",
+      imgTitle:"แบตเตอรี่รถยนต์ (Car battery)", imgCaption:"ภาพแบตเตอรี่รถยนต์"},
+    {tag:"ไฟฟ้ารถยนต์", q:"ฟิวส์ (Fuse) ในรถยนต์มีไว้เพื่ออะไร?",
+      choices:["เพิ่มแรงดันไฟให้สูงขึ้น","ตัดวงจรเมื่อมีกระแสเกิน เพื่อป้องกันสายไฟ/อุปกรณ์เสียหาย","ทำให้เครื่องยนต์เดินเบานิ่งขึ้น","ช่วยให้ยางเกาะถนนดีขึ้น"],
+      correct:1, explain:"ฟิวส์ขาดเมื่อกระแสเกิน เพื่อตัดไฟและป้องกันความเสียหาย/ไฟไหม้", file:"Blade_fuses.jpg",
+      imgTitle:"ฟิวส์แบบใบมีด (Blade fuses)", imgCaption:"ฟิวส์ที่ใช้ในรถยนต์"},
+    {tag:"บำรุงรักษา", q:"น้ำมันเครื่องมีหน้าที่สำคัญข้อใด?",
+      choices:["หล่อลื่น ลดการสึกหรอ และช่วยระบายความร้อนบางส่วน","เพิ่มแรงดันเชื้อเพลิงให้หัวฉีด","ทำให้ผ้าเบรกกัดจานดีขึ้น","ทำให้ยางนิ่มขึ้น"],
+      correct:0, explain:"น้ำมันเครื่องลดแรงเสียดทาน/สึกหรอ และช่วยพาความร้อน/สิ่งสกปรกไปกรอง", file:"Engine_oil.jpg",
+      imgTitle:"น้ำมันเครื่อง (Engine oil)", imgCaption:"ภาพน้ำมันเครื่อง"},
+    {tag:"บำรุงรักษา", q:"ถ้าไส้กรองอากาศอุดตันมาก ๆ รถมักมีอาการใด?",
+      choices:["กินน้ำมันมากขึ้น/อืด/เร่งไม่ขึ้น เพราะอากาศเข้าไม่พอ","เบรกหนืด เพราะน้ำมันเบรกข้น","ไฟหน้าสว่างขึ้น เพราะแรงดันไฟสูง","เกียร์กระตุกทันทีทุกครั้ง"],
+      correct:0, explain:"ไส้กรองอากาศตันทำให้อากาศเข้าเครื่องน้อย ส่วนผสมเพี้ยน กำลังตก/กินน้ำมัน", file:"Air_filter.jpg",
+      imgTitle:"ไส้กรองอากาศ (Air filter)", imgCaption:"ภาพไส้กรองอากาศ"},
+    {tag:"ระบบระบายความร้อน", q:"หม้อน้ำ (Radiator) ทำหน้าที่หลักอะไรในระบบระบายความร้อน?",
+      choices:["กรองเชื้อเพลิงก่อนเข้าเครื่องยนต์","ระบายความร้อนจากน้ำหล่อเย็นสู่อากาศภายนอก","เพิ่มแรงดันน้ำมันเครื่อง","แปลงไฟ DC เป็น AC"],
+      correct:1, explain:"หม้อน้ำถ่ายเทความร้อนจากน้ำหล่อเย็นสู่บรรยากาศ", file:"Car_radiator.jpg",
+      imgTitle:"หม้อน้ำ (Radiator)", imgCaption:"ภาพหม้อน้ำรถยนต์"},
+    {tag:"ระบบระบายความร้อน", q:"การเช็กระดับน้ำหล่อเย็นที่ถังพักควรทำเมื่อใดจึงปลอดภัยที่สุด?",
+      choices:["ตอนเครื่องร้อนจัดเพื่ออ่านค่าแม่นสุด","ตอนเครื่องเย็น/ดับเครื่องแล้ว เพื่อลดแรงดันและไอน้ำร้อน","ตอนกำลังเร่งแซงบนถนน","ตอนไฟเตือนแบตขึ้นเท่านั้น"],
+      correct:1, explain:"ควรเช็กตอนเครื่องเย็น ระดับอยู่ระหว่าง MIN–MAX ลดเสี่ยงถูกลวกจากแรงดัน/น้ำร้อน", file:"Coolant_reservoir.jpg",
+      imgTitle:"ถังพักน้ำหล่อเย็น (Coolant reservoir)", imgCaption:"ภาพถังพักน้ำหล่อเย็น"},
+    {tag:"ระบบเบรก", q:"หลักการทำงานของดิสก์เบรกคืออะไร?",
+      choices:["ใช้แม่เหล็กดูดให้รถหยุด","ใช้แรงเสียดทานระหว่างผ้าเบรกกับจานเบรกเพื่อชะลอ/หยุดล้อ","ใช้ลมเป่าให้ล้อหยุด","ใช้แรงดันน้ำมันเครื่องไปดันล้อ"],
+      correct:1, explain:"ผ้าเบรกบีบจานเบรก เกิดแรงเสียดทานทำให้ล้อช้าลง/หยุด", file:"Disc_brake.jpg",
+      imgTitle:"ดิสก์เบรก (Disc brake)", imgCaption:"จานเบรกและคาลิปเปอร์"},
+    {tag:"ระบบเบรก", q:"คุณสมบัติสำคัญของน้ำมันเบรกคือข้อใด?",
+      choices:["ต้องเดือดง่ายเพื่อระบายความร้อนเร็ว","ต้องอัดตัวได้ง่ายเพื่อซับแรง","ต้องทนความร้อนและไม่อัดตัวง่าย เพื่อส่งแรงเบรกได้ดี","ต้องผสมน้ำได้มากเพื่อเจือจาง"],
+      correct:2, explain:"น้ำมันเบรกต้องจุดเดือดสูงและอัดตัวต่ำ เพื่อส่งแรงเบรกได้แม่นยำ", file:"Brake_fluid.jpg",
+      imgTitle:"น้ำมันเบรก (Brake fluid)", imgCaption:"ตัวอย่างน้ำมันเบรก"},
+    {tag:"ช่วงล่าง/ยาง", q:"โช้คอัพ (Shock Absorber) มีหน้าที่หลักอะไร?",
+      choices:["เพิ่มแรงดันเชื้อเพลิง","ลดการสั่นสะเทือน/ควบคุมการยุบ-ยืดของสปริง เพื่อให้ล้อเกาะถนน","ทำให้ไฟหน้าสว่างขึ้น","ช่วยให้เกียร์เปลี่ยนนิ่มขึ้น"],
+      correct:1, explain:"โช้คอัพหน่วงการเด้งของสปริง เพิ่มการยึดเกาะและความนุ่มนวล", file:"Shock_absorber.jpg",
+      imgTitle:"โช้คอัพ (Shock absorber)", imgCaption:"ภาพโช้คอัพ"},
+    {tag:"ช่วงล่าง/ยาง", q:"การตรวจสภาพดอกยาง (Tire Tread) มีประโยชน์หลักอะไร?",
+      choices:["ทำให้เครื่องยนต์ร้อนช้าลง","ช่วยคาดการณ์แรงดันไฟของไดชาร์จ","ลดความเสี่ยงลื่นไถล/รีดน้ำได้ดี โดยเฉพาะถนนเปียก","ทำให้เกียร์ทนขึ้นโดยตรง"],
+      correct:2, explain:"ดอกยางช่วยยึดเกาะและรีดน้ำ ลดโอกาสเหินน้ำ เพิ่มความปลอดภัย", file:"Tire_tread.jpg",
+      imgTitle:"ดอกยาง (Tire tread)", imgCaption:"ภาพลายดอกยาง"},
+    {tag:"ส่งกำลัง", q:"คลัตช์ (Clutch) ในรถเกียร์ธรรมดามีหน้าที่อะไร?",
+      choices:["ตัด-ต่อกำลังจากเครื่องยนต์ไปยังชุดเกียร์","สูบน้ำมันเครื่องไปหล่อลื่นลูกปืน","ตัดไฟจากแบตเตอรี่","ระบายความร้อนน้ำหล่อเย็น"],
+      correct:0, explain:"คลัตช์ใช้ตัด/ต่อกำลังเพื่อเปลี่ยนเกียร์/ออกตัว/หยุดแบบไม่ดับ", file:"Clutch_disk.jpg",
+      imgTitle:"แผ่นคลัตช์ (Clutch disc)", imgCaption:"ภาพแผ่นคลัตช์"},
+    {tag:"ส่งกำลัง", q:"เกียร์ (Transmission) มีหน้าที่สำคัญคืออะไร?",
+      choices:["ปรับอัตราทดให้เหมาะกับความเร็ว/แรงบิด","ผลิตไฟฟ้าให้ระบบชาร์จ","กรองน้ำมันเครื่อง","ทำให้อากาศเย็นลง"],
+      correct:0, explain:"เกียร์ช่วยให้เครื่องทำงานในรอบเหมาะสม และส่งแรงบิดตามสถานการณ์", file:"Manual_transmission.jpg",
+      imgTitle:"เกียร์ธรรมดา (Manual transmission)", imgCaption:"ภาพเกียร์ธรรมดา"},
+    {tag:"ส่งกำลัง", q:"ดิฟเฟอเรนเชียล (Differential) มีหน้าที่สำคัญข้อใด?",
+      choices:["ทำให้ล้อซ้าย-ขวาหมุนได้ต่างความเร็วเมื่อเข้าโค้ง","ทำให้เบรกทำงานเร็วขึ้น","ทำให้เครื่องยนต์เย็นลงทันที","ทำให้แรงดันไฟคงที่"],
+      correct:0, explain:"เวลาเข้าโค้ง ล้อด้านนอกต้องหมุนเร็วกว่า ดิฟช่วยให้ล้อหมุนต่างกันได้", file:"Differential_gear.jpg",
+      imgTitle:"ดิฟเฟอเรนเชียล (Differential gear)", imgCaption:"ภาพชุดเฟืองดิฟฯ"},
+    {tag:"เชื้อเพลิง/เครื่องยนต์", q:"ระบบหัวฉีดเชื้อเพลิงทำหน้าที่หลักอะไร?",
+      choices:["ฉีดเชื้อเพลิงเป็นละอองและควบคุมปริมาณให้เหมาะสม","กรองน้ำมันเครื่องให้สะอาด","ทำให้มอเตอร์สตาร์ทแรงขึ้น","ลดแรงเสียดทานผ้าเบรก"],
+      correct:0, explain:"หัวฉีดพ่นเชื้อเพลิงเป็นละออง เพื่อการเผาไหม้ที่มีประสิทธิภาพ", file:"Fuel_injector.jpg",
+      imgTitle:"หัวฉีดเชื้อเพลิง (Fuel injector)", imgCaption:"ภาพหัวฉีด"},
+    {tag:"วิเคราะห์ปัญหา (OBD)", q:"พอร์ต OBD-II ในรถยนต์ใช้ทำอะไรเป็นหลัก?",
+      choices:["เติมน้ำมันเครื่อง","อ่าน/ลบโค้ดความผิดปกติและดูข้อมูลเซ็นเซอร์จาก ECU ด้วยเครื่องสแกน","เพิ่มแรงดันลมยางทันทีเสมอ","ระบายความร้อนหม้อน้ำ"],
+      correct:1, explain:"OBD-II เป็นพอร์ตมาตรฐานสำหรับสแกนโค้ดและดูข้อมูลระบบ", file:"OBD2_connector.jpg",
+      imgTitle:"พอร์ต OBD-II (OBD2 connector)", imgCaption:"ภาพหัวต่อ OBD-II"},
+    {tag:"เครื่องยนต์", q:"สายพานไทม์มิ่ง (Timing Belt) สำคัญเพราะอะไร?",
+      choices:["ทำหน้าที่เป็นไส้กรองอากาศ","ใช้ส่งกำลังให้มอเตอร์สตาร์ท","ควบคุมจังหวะเพลาข้อเหวี่ยงกับเพลาลูกเบี้ยวให้สัมพันธ์กัน","ใช้เพิ่มแรงดันน้ำมันเบรก"],
+      correct:2, explain:"ทำให้จังหวะวาล์วสัมพันธ์กับลูกสูบ หากคลาดเคลื่อนอาจเครื่องสะดุดหรือเสียหายหนัก", file:"Timing_belt.jpg",
+      imgTitle:"สายพานไทม์มิ่ง (Timing belt)", imgCaption:"ภาพสายพานไทม์มิ่ง"},
+    {tag:"บำรุงรักษา", q:"การเปลี่ยนน้ำมันเครื่องควรคำนึงถึงอะไรเป็นหลัก?",
+      choices:["สีสติกเกอร์","ระยะทาง/เวลา + สเปกความหนืดและมาตรฐานตามคู่มือ","เสียงแตร","จำนวนผู้โดยสารเสมอ"],
+      correct:1, explain:"ควรเปลี่ยนตามระยะและใช้สเปกน้ำมันที่เหมาะสมตามคู่มือ เพื่อยืดอายุเครื่อง", file:"Engine_oil.jpg",
+      imgTitle:"น้ำมันเครื่อง (Engine oil)", imgCaption:"ภาพน้ำมันเครื่อง (ใช้ประกอบการบำรุงรักษา)"}
+  ];
+
+  const state = { idx:0, answers:new Array(questions.length).fill(null), skipped:new Array(questions.length).fill(false), started:false };
+
+  const chipStatus = document.getElementById("chipStatus");
+  const progressBar = document.getElementById("progressBar");
+  const screenStart = document.getElementById("screenStart");
+  const screenQuiz = document.getElementById("screenQuiz");
+  const screenResult = document.getElementById("screenResult");
+
+  const btnStart = document.getElementById("btnStart");
+  const btnPrev = document.getElementById("btnPrev");
+  const btnSkip = document.getElementById("btnSkip");
+  const btnJump = document.getElementById("btnJump");
+  const btnNext = document.getElementById("btnNext");
+
+  const qNo = document.getElementById("qNo");
+  const qTotal = document.getElementById("qTotal");
+  const qTag = document.getElementById("qTag");
+  const qState = document.getElementById("qState");
+  const qText = document.getElementById("qText");
+  const choicesEl = document.getElementById("choices");
+
+  const img = document.getElementById("img");
+  const imgTitle = document.getElementById("imgTitle");
+  const imgCaption = document.getElementById("imgCaption");
+  const imgSource = document.getElementById("imgSource");
+
+  const jumpBox = document.getElementById("jumpBox");
+  const jumpGrid = document.getElementById("jumpGrid");
+
+  const scoreBig = document.getElementById("scoreBig");
+  const scoreMeta = document.getElementById("scoreMeta");
+  const wrongList = document.getElementById("wrongList");
+  const correctList = document.getElementById("correctList");
+  const noWrong = document.getElementById("noWrong");
+
+  const btnDownload = document.getElementById("btnDownload");
+  const btnRestart = document.getElementById("btnRestart");
+
+  qTotal.textContent = questions.length;
+
+  function label(i){
+    if (state.answers[i] !== null) return "ตอบแล้ว";
+    if (state.skipped[i]) return "ข้าม";
+    return "ยังไม่ตอบ";
+  }
+
+  function updateTop(){
+    if (!state.started){
+      chipStatus.textContent = "ยังไม่เริ่ม";
+      progressBar.style.width = "0%";
+      return;
+    }
+    const answered = state.answers.filter(v=>v!==null).length;
+    const skipped = state.skipped.filter(Boolean).length;
+    chipStatus.textContent = `ตอบแล้ว ${answered} • ข้าม ${skipped} • ข้อ ${state.idx+1}/${questions.length}`;
+    progressBar.style.width = `${Math.round(((state.idx+1)/questions.length)*100)}%`;
+  }
+
+  function renderJump(){
+    jumpGrid.innerHTML = "";
+    for (let i=0;i<questions.length;i++){
+      const b = document.createElement("button");
+      b.className = "btn";
+      b.style.padding = "10px 0";
+      b.style.borderRadius = "12px";
+      b.textContent = (i+1);
+      const answered = state.answers[i] !== null;
+      b.style.borderColor = answered ? "rgba(248,212,106,.75)" : "rgba(255,59,59,.35)";
+      b.style.background = answered ? "rgba(248,212,106,.10)" : "rgba(255,59,59,.08)";
+      b.onclick = ()=> { state.idx = i; jumpBox.classList.add("hide"); render(); };
+      jumpGrid.appendChild(b);
+    }
+  }
+
+  function render(){
+    updateTop();
+    renderJump();
+
+    const item = questions[state.idx];
+    qNo.textContent = state.idx + 1;
+    qTag.textContent = item.tag;
+    qState.textContent = label(state.idx);
+    qText.textContent = item.q;
+
+    imgTitle.textContent = item.imgTitle || "ภาพประกอบ";
+    imgCaption.textContent = item.imgCaption || "—";
+    img.alt = item.imgTitle || "ภาพประกอบ";
+    img.src = filePathUrl(item.file, 1100);
+    imgSource.href = filePageUrl(item.file);
+
+    img.onerror = ()=> {
+      // ถ้า hotlink มีปัญหา ให้ลอง fallback ไปหน้าไฟล์
+      img.src = filePathUrl(item.file, 700);
+    };
+
+    // choices
+    choicesEl.innerHTML = "";
+    const selected = state.answers[state.idx];
+    item.choices.forEach((c, ci)=> {
+      const row = document.createElement("div");
+      row.className = "choice" + (selected===ci ? " selected" : "");
+      row.tabIndex = 0;
+      row.innerHTML = `<div class="bullet"><span class="dot"></span></div><div class="txt"></div>`;
+      row.querySelector(".txt").textContent = c;
+      row.onclick = ()=> { state.answers[state.idx] = ci; state.skipped[state.idx]=false; render(); };
+      row.onkeydown = (e)=> { if(e.key==="Enter"||e.key===" "){ e.preventDefault(); row.click(); } };
+      choicesEl.appendChild(row);
+    });
+
+    btnPrev.disabled = state.idx===0;
+    btnNext.textContent = (state.idx===questions.length-1) ? "จบเกม" : "Next";
+  }
+
+  function next(){
+    if (state.answers[state.idx] === null) state.skipped[state.idx] = true;
+    if (state.idx === questions.length - 1) return finish();
+    state.idx++;
+    render();
+  }
+
+  function prev(){ if(state.idx>0){ state.idx--; render(); } }
+  function skip(){ state.skipped[state.idx]=true; state.answers[state.idx]=null; next(); }
+  function toggleJump(){ jumpBox.classList.toggle("hide"); if(!jumpBox.classList.contains("hide")) jumpBox.scrollIntoView({behavior:"smooth"}); }
+
+  function finish(){
+    screenQuiz.classList.add("hide");
+    screenResult.classList.remove("hide");
+    window.scrollTo({top:0, behavior:"smooth"});
+
+    let correct=0, wrong=0, skipped=0;
+    wrongList.innerHTML = "";
+    correctList.innerHTML = "";
+    let wrongCount = 0;
+
+    for (let i=0;i<questions.length;i++){
+      const q = questions[i];
+      const ans = state.answers[i];
+      if (ans === null){ skipped++; continue; }
+      const ok = ans === q.correct;
+      ok ? correct++ : wrong++;
+
+      if (!ok){
+        wrongCount++;
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div class="q">ข้อ ${i+1}: ${escapeHtml(q.q)}</div>
+          <div class="a">สถานะ: <span class="no">ผิด</span><br/>คุณตอบ: <b>${escapeHtml(q.choices[ans])}</b><br/>เฉลย: <b>${escapeHtml(q.choices[q.correct])}</b></div>
+          <div class="a">${escapeHtml(q.explain)}</div>
+          <div class="a">ที่มาภาพ: <a href="${filePageUrl(q.file)}" target="_blank" rel="noopener">Wikimedia Commons</a></div>
+          <div class="thumb"><img loading="lazy" alt="${escapeHtml(q.imgTitle||"ภาพประกอบ")}" src="${filePathUrl(q.file, 1000)}"></div>
+        `;
+        wrongList.appendChild(el);
+      } else {
+        const el2 = document.createElement("div");
+        el2.className = "item";
+        el2.innerHTML = `
+          <div class="q">ข้อ ${i+1}: ${escapeHtml(q.q)}</div>
+          <div class="a"><span class="ok">ถูก</span> • เฉลย: <b>${escapeHtml(q.choices[q.correct])}</b> • <a href="${filePageUrl(q.file)}" target="_blank" rel="noopener">ที่มาภาพ</a></div>
+        `;
+        correctList.appendChild(el2);
+      }
+    }
+
+    if (wrongCount===0) noWrong.classList.remove("hide"); else noWrong.classList.add("hide");
+
+    const pct = Math.round((correct/questions.length)*100);
+    scoreBig.textContent = `${correct}/${questions.length}`;
+    scoreMeta.textContent = `ถูก ${correct} • ผิด ${wrong} • ข้าม/ไม่ตอบ ${skipped} • ${pct}%`;
+
+    btnDownload.onclick = ()=> downloadReport({correct, wrong, skipped, pct});
+  }
+
+  function downloadReport(stats){
+    const now = new Date();
+    const ts = now.toLocaleString("th-TH", {hour12:false});
+    const lines = [];
+    lines.push("รายงานผลข้อสอบช่างยนต์ (20 ข้อ)");
+    lines.push("เวลา: " + ts);
+    lines.push("");
+    lines.push(`คะแนน: ${stats.correct}/${questions.length} (${stats.pct}%)`);
+    lines.push(`ถูก: ${stats.correct} | ผิด: ${stats.wrong} | ข้าม/ไม่ตอบ: ${stats.skipped}`);
+    lines.push("");
+    lines.push("รายละเอียดข้อที่ตอบผิด (เฉพาะข้อที่ตอบ):");
+    let anyWrong = false;
+    for (let i=0;i<questions.length;i++){
+      const q = questions[i];
+      const ans = state.answers[i];
+      if (ans === null) continue;
+      if (ans !== q.correct){
+        anyWrong = true;
+        lines.push(`
+ข้อ ${i+1}: ${q.q}`);
+        lines.push(`- คุณตอบ: ${q.choices[ans]}`);
+        lines.push(`- เฉลย: ${q.choices[q.correct]}`);
+        lines.push(`- อธิบาย: ${q.explain}`);
+        lines.push(`- ที่มาภาพ: ${filePageUrl(q.file)}`);
+      }
+    }
+    if (!anyWrong) lines.push("(ไม่มีข้อที่ตอบผิด)");
+
+    const blob = new Blob([lines.join("\n")], {type:"text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `report_auto_mechanic_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}.txt`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=> URL.revokeObjectURL(url), 1500);
+  }
+
+  function escapeHtml(s){
+    return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
+
+  btnStart.onclick = ()=> {
+    state.started = true;
+    screenStart.classList.add("hide");
+    screenQuiz.classList.remove("hide");
+    state.idx = 0;
+    render();
+    window.scrollTo({top:0, behavior:"smooth"});
+  };
+
+  btnPrev.onclick = prev;
+  btnNext.onclick = next;
+  btnSkip.onclick = skip;
+  btnJump.onclick = toggleJump;
+
+  btnRestart.onclick = ()=> {
+    state.answers.fill(null);
+    state.skipped.fill(false);
+    state.idx = 0;
+    state.started = true;
+    screenResult.classList.add("hide");
+    screenQuiz.classList.remove("hide");
+    jumpBox.classList.add("hide");
+    render();
+    window.scrollTo({top:0, behavior:"smooth"});
+  };
+
+  updateTop();
+</script>
+</body>
+</html>
