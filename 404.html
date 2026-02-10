@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>404 - Page not found</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+    --green:#c9e94c;
+    --dark:#2f3437;
+    --gray:#6b7280;
+}
+
+*{
+    box-sizing:border-box;
+    font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+body{
+    margin:0;
+    background:#ffffff;
+    color:var(--dark);
+}
+
+.container{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:60px 8%;
+    gap:40px;
+}
+
+/* LEFT */
+.text{
+    max-width:480px;
+}
+
+.text h1{
+    font-size:64px;
+    margin:0 0 10px;
+    font-weight:800;
+}
+
+.text h1 span{
+    color:var(--green);
+}
+
+.text h2{
+    font-size:42px;
+    margin:0 0 20px;
+    font-weight:800;
+}
+
+.text p{
+    color:var(--gray);
+    line-height:1.7;
+    margin-bottom:30px;
+}
+
+.btn{
+    display:inline-block;
+    padding:12px 28px;
+    border:2px solid var(--dark);
+    border-radius:999px;
+    text-decoration:none;
+    color:var(--dark);
+    font-weight:600;
+    transition:.25s;
+}
+
+.btn:hover{
+    background:var(--dark);
+    color:#fff;
+}
+
+/* RIGHT */
+.illustration{
+    max-width:520px;
+    width:100%;
+}
+
+.illustration img{
+    width:100%;
+    height:auto;
+}
+
+/* FOOTER */
+.footer{
+    position:absolute;
+    bottom:20px;
+    left:8%;
+    font-size:14px;
+    color:#9ca3af;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+    .container{
+        flex-direction:column;
+        text-align:center;
+    }
+    .footer{
+        position:static;
+        margin-top:30px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="text">
+        <h1>Page <span>+</span></h1>
+        <h2>not found</h2>
+
+        <p>
+            Nullam ut quam vitae mauris faucibus malesuada.
+            Maecenas sed venenatis nisl. Phasellus sit amet felis diam
+        </p>
+
+        <a href="/" class="btn">Learn more</a>
+    </div>
+
+    <div class="illustration">
+        <!-- ใส่รูปที่คุณอัปโหลด -->
+        <img src="404-illustration.png" alt="404 illustration">
+    </div>
+
+</div>
+
+<div class="footer">
+    www.yourbrand.com
+</div>
+
+</body>
+</html>
