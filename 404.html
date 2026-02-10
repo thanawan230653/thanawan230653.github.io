@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
 <meta charset="UTF-8">
 <title>404 - Page not found</title>
@@ -10,6 +10,7 @@
     --green:#c9e94c;
     --dark:#2f3437;
     --gray:#6b7280;
+    --warning:#facc15;
 }
 
 *{
@@ -56,9 +57,21 @@ body{
 .text p{
     color:var(--gray);
     line-height:1.7;
-    margin-bottom:30px;
+    margin-bottom:20px;
 }
 
+/* WARNING BOX */
+.alert{
+    border-left:4px solid var(--green);
+    background:#f9fafb;
+    padding:14px 16px;
+    border-radius:8px;
+    font-size:15px;
+    color:#374151;
+    margin-bottom:28px;
+}
+
+/* BUTTON */
 .btn{
     display:inline-block;
     padding:12px 28px;
@@ -122,12 +135,17 @@ body{
             Maecenas sed venenatis nisl. Phasellus sit amet felis diam
         </p>
 
-        <a href="/" class="btn">Learn more</a>
+        <div class="alert">
+            ⚠️ <strong>ไม่สามารถติดต่อกับเซิร์ฟเวอร์กลางได้</strong><br>
+            โปรดเชื่อมต่ออีกครั้งเพื่อทำรายการต่อไป<br>
+            อาจมีการ <strong>Loss</strong> เกิดขึ้นได้ ตามความต้องการของผู้ใช้และเซิร์ฟเวอร์
+        </div>
+
+        <a href="/" class="btn">Reconnect</a>
     </div>
 
     <div class="illustration">
-        <!-- ใส่รูปที่คุณอัปโหลด -->
-        <img src="404-illustration.png" alt="404 illustration">
+        <img src="https://raw.githubusercontent.com/thanawan230653/thanawan230653.github.io/refs/heads/main/404.png" alt="404 illustration">
     </div>
 
 </div>
