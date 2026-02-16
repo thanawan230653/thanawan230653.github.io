@@ -1,10 +1,59 @@
 <!DOCTYPE html>
-<html>
-    <head>
-      <title>Pawarit Server</title>
-      <meta http-equiv="refresh" content="0;URL='http://pawarit.duckdns.org:3661/BoxTv.html" />
-    </head>
-    <body>
-      <p>This page has moved to <a href="http://pawarit.duckdns.org:3661/BoxTv.html</a>.</p>
-    </body>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Pawarit Server</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+        }
+
+        .popup {
+            background: #1f1f1f;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+            width: 300px;
+        }
+
+        .countdown {
+            font-size: 40px;
+            margin-top: 15px;
+            color: #00ff99;
+        }
+    </style>
+</head>
+<body>
+
+<div class="popup">
+    <h2>กรุณารอสักครู่...</h2>
+    <p>กำลังเข้าสู่ระบบ</p>
+    <div class="countdown" id="timer">7</div>
+</div>
+
+<script>
+    let timeLeft = 7;
+    const targetURL = "http://pawarit.duckdns.org:3661/BoxTv.html";
+    const timerElement = document.getElementById("timer");
+
+    const countdown = setInterval(function() {
+        timeLeft--;
+        timerElement.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            window.location.href = targetURL;
+        }
+    }, 1000);
+</script>
+
+</body>
 </html>
