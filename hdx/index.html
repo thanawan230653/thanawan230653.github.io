@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HxD Simple (HTML) - Drag & Find</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --panel:#fafafa;
+      --text:#222;
+      --muted:#666;
+      --border:#ddd;
+      --hi:#fff3b0;   /* match */
+      --cur:#b7f7c6;  /* current */
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans Thai", Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:var(--bg);
+      height:100vh;
+      overflow:hidden;
+    }
+
+    .topbar{
+      height:52px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px 12px;
+      border-bottom:1px solid var(--border);
+      background:var(--panel);
+    }
+    .brand{font-weight:700}
+    .meta{color:var(--muted); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    .spacer{flex:1}
+    .statuspill{
+      font-size:12px;
+      color:var(--muted);
+      padding:6px 10px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:#fff;
+      white-space:nowrap;
+      max-width:45vw;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .app{
+      height: calc(100vh - 52px);
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:0;
+    }
+    @media (max-width: 860px){
+      .app{grid-template-columns:1fr; grid-template-rows:auto 1fr;}
+    }
+
+    .left{
+      border-right:1px solid var(--border);
+      background:var(--panel);
+      padding:12px;
+      overflow:auto;
+    }
+    .right{
+      padding:12px;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height:0;
+    }
+
+    .box{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:10px;
+      padding:10px;
+    }
+
+    #drop{
+      border:1px dashed #bbb;
+      border-radius:10px;
+      padding:12px;
+      text-align:center;
+      background:#fff;
+      cursor:pointer;
+      user-select:none;
+    }
+    #drop.drag{
+      border-color:#2d8a4d;
+      background:#f3fff6;
+    }
+    .small{font-size:12px; color:var(--muted)}
+    .row{display:flex; gap:8px}
+    .row > *{flex:1}
+    label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px}
+    input, select, button{
+      font: inherit;
+    }
+    input, select{
+      width:100%;
+      padding:9px 10px;
+      border-radius:8px;
+      border:1px solid var(--border);
+      background:#fff;
+      outline:none;
+    }
+    input:focus, select:focus{
+      border-color:#999;
+      box-shadow:0 0 0 3px rgba(0,0,0,.06);
+    }
+    button{
+      padding:9px 10px;
+      border-radius:8px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+    }
+    button:hover{background:#f6f6f6}
+    button:disabled{opacity:.5; cursor:not-allowed}
+
+    #viewer{
+      border:1px solid var(--border);
+      border-radius:10px;
+      background:#fff;
+      padding:10px;
+      overflow:auto;
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.45;
+      min-height:0;
+      flex:1;
+      outline:none;
+      white-space:nowrap;
+    }
+
+    .line{
+      display:grid;
+      grid-template-columns: 90px 1fr 200px;
+      gap:10px;
+      padding:2px 4px;
+      border-radius:6px;
+    }
+    .line:hover{background:#f7f7f7}
+    .off{color:#444}
+    .byte{
+      display:inline-block;
+      width:2.1ch;
+      text-align:center;
+      padding:1px 0;
+      border-radius:4px;
+      margin-right:.55ch;
+    }
+    .byte.hi{background:var(--hi)}
+    .byte.cur{background:var(--cur)}
+    .ascii{color:#333}
+    .muted{color:var(--muted)}
+    #status{
+      font-family:var(--mono);
+      font-size:12px;
+      white-space:pre-wrap;
+      max-height:180px;
+      overflow:auto;
+    }
+    .help{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.45;
+    }
+    kbd{
+      font-family:var(--mono);
+      border:1px solid var(--border);
+      border-bottom-width:2px;
+      padding:1px 6px;
+      border-radius:6px;
+      background:#fff;
+      color:#333;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">HxD Simple</div>
+    <div class="meta" id="fileMeta">ยังไม่ได้โหลดไฟล์</div>
+    <div class="spacer"></div>
+    <div class="statuspill" id="pillText">Ready</div>
+  </div>
+
+  <div class="app">
+    <div class="left">
+      <input id="fileInput" type="file" hidden />
+
+      <div class="box">
+        <div id="drop">
+          <div><b>ลากไฟล์มาวาง</b></div>
+          <div class="small">หรือคลิกเพื่อเลือกไฟล์</div>
+        </div>
+
+        <label>โหมดค้นหา</label>
+        <div class="row">
+          <select id="mode">
+            <option value="text">Text (UTF-8)</option>
+            <option value="hex">Hex</option>
+          </select>
+          <select id="ci" title="Case-insensitive (เฉพาะ A-Z)">
+            <option value="0">Case: ปิด</option>
+            <option value="1">Case: เปิด</option>
+          </select>
+        </div>
+
+        <label>คำค้นหา</label>
+        <input id="q" placeholder='เช่น "PK" หรือ 504B0304' />
+
+        <div class="row" style="margin-top:10px;">
+          <button id="btnFind">Find</button>
+          <button id="btnPrev" disabled>Prev</button>
+          <button id="btnNext" disabled>Next</button>
+          <button id="btnClear" disabled>Clear</button>
+        </div>
+
+        <label>Jump Offset</label>
+        <div class="row">
+          <input id="jump" placeholder="0x1A2B หรือ 6699" />
+          <button id="btnJump" disabled>Go</button>
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <div class="help">
+          คีย์ลัด: <kbd>Ctrl</kbd>+<kbd>F</kbd> โฟกัสช่องค้นหา • <kbd>Enter</kbd> ค้นหา • <kbd>F3</kbd> Next • <kbd>Shift</kbd>+<kbd>F3</kbd> Prev<br>
+          Hex ใส่ได้: <span class="muted">DEADBEEF</span> หรือ <span class="muted">DE AD BE EF</span> หรือ <span class="muted">0xDE 0xAD</span>
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:10px;">
+        <div class="muted small">Log</div>
+        <div id="status">ลากไฟล์ลงมาก่อน…</div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="muted small" id="viewInfo">—</div>
+      <div id="viewer" tabindex="0" aria-label="hex viewer"></div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  // UI
+  const drop = $("drop");
+  const fileInput = $("fileInput");
+  const pillText = $("pillText");
+  const fileMeta = $("fileMeta");
+  const status = $("status");
+  const mode = $("mode");
+  const ci = $("ci");
+  const q = $("q");
+  const btnFind = $("btnFind");
+  const btnPrev = $("btnPrev");
+  const btnNext = $("btnNext");
+  const btnClear = $("btnClear");
+  const jump = $("jump");
+  const btnJump = $("btnJump");
+  const viewer = $("viewer");
+  const viewInfo = $("viewInfo");
+
+  // Data
+  let bytes = null;      // Uint8Array
+  let fileName = "";
+  let fileSize = 0;
+
+  // Viewer window
+  const BYTES_PER_LINE = 16;
+  const LINES_AROUND = 160; // window size
+  let currentCenterOffset = 0;
+
+  // Search
+  let matches = [];
+  let currentMatchIndex = -1;
+  let patternLen = 0;
+
+  function setPill(text){ pillText.textContent = text; }
+  function setStatus(text){ status.textContent = text; }
+  function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+
+  function fmtSize(n){
+    const units=["B","KB","MB","GB"];
+    let i=0,x=n;
+    while(x>=1024 && i<units.length-1){ x/=1024; i++; }
+    return i===0 ? `${n} B` : `${x.toFixed(2)} ${units[i]}`;
+  }
+  function toHex2(b){ return b.toString(16).toUpperCase().padStart(2,"0"); }
+  function byteToAscii(b){ return (b>=32 && b<=126) ? String.fromCharCode(b) : "."; }
+  function normalizeCaseByte(b){ return (b>=65 && b<=90) ? b+32 : b; }
+
+  function enableControls(loaded){
+    btnFind.disabled = !loaded;
+    btnJump.disabled = !loaded;
+    jump.disabled = !loaded;
+    q.disabled = !loaded;
+    mode.disabled = !loaded;
+    ci.disabled = !loaded;
+
+    if(!loaded){
+      btnPrev.disabled = true;
+      btnNext.disabled = true;
+      btnClear.disabled = true;
+    }
+  }
+
+  function parseHexPattern(s){
+    let t = s.trim().replace(/0x/gi,"").replace(/[^0-9a-fA-F]/g,"");
+    if(!t) return null;
+    if(t.length % 2 !== 0) return { error: "Hex ต้องมีจำนวนหลักเป็นเลขคู่ (เช่น DEADBEEF)" };
+    const out = new Uint8Array(t.length/2);
+    for(let i=0;i<out.length;i++) out[i] = parseInt(t.substr(i*2,2),16);
+    return out;
+  }
+
+  // Boyer-Moore-Horspool (byte)
+  function bmhSearch(hay, needle, caseInsensitiveASCII){
+    const n = hay.length, m = needle.length;
+    const res = [];
+    if(m === 0 || m > n) return res;
+
+    const skip = new Uint32Array(256);
+    for(let i=0;i<256;i++) skip[i]=m;
+
+    for(let i=0;i<m-1;i++){
+      const b = caseInsensitiveASCII ? normalizeCaseByte(needle[i]) : needle[i];
+      skip[b] = m-1-i;
+    }
+
+    let i=0;
+    while(i <= n-m){
+      let j=m-1;
+      while(j>=0){
+        const hb = caseInsensitiveASCII ? normalizeCaseByte(hay[i+j]) : hay[i+j];
+        const nb = caseInsensitiveASCII ? normalizeCaseByte(needle[j]) : needle[j];
+        if(hb !== nb) break;
+        j--;
+      }
+      if(j<0){
+        res.push(i);
+        i += 1; // overlap
+      }else{
+        const lastb = caseInsensitiveASCII ? normalizeCaseByte(hay[i+m-1]) : hay[i+m-1];
+        i += skip[lastb] || 1;
+      }
+    }
+    return res;
+  }
+
+  function renderAt(centerOffset){
+    if(!bytes) return;
+
+    currentCenterOffset = clamp(centerOffset, 0, Math.max(0, bytes.length-1));
+
+    const centerLine = Math.floor(currentCenterOffset / BYTES_PER_LINE);
+    const startLine = Math.max(0, centerLine - Math.floor(LINES_AROUND/2));
+    const endLine = Math.min(Math.ceil(bytes.length / BYTES_PER_LINE), startLine + LINES_AROUND);
+
+    const start = startLine * BYTES_PER_LINE;
+    const end = Math.min(bytes.length, endLine * BYTES_PER_LINE);
+
+    // highlight map for window
+    const windowLen = end - start;
+    const hi = new Uint8Array(windowLen); // 0 none, 1 match, 2 current
+
+    if(matches.length && patternLen){
+      for(let k=0;k<matches.length;k++){
+        const off = matches[k];
+        const rel = off - start;
+        if(rel <= -patternLen || rel >= windowLen) continue;
+        const a = Math.max(0, rel);
+        const b = Math.min(windowLen, rel + patternLen);
+        const mark = (k === currentMatchIndex) ? 2 : 1;
+        for(let p=a;p<b;p++) hi[p] = Math.max(hi[p], mark);
+      }
+    }
+
+    let html = "";
+    for(let line=startLine; line<endLine; line++){
+      const lineOff = line * BYTES_PER_LINE;
+      if(lineOff >= bytes.length) break;
+
+      const lineEnd = Math.min(bytes.length, lineOff + BYTES_PER_LINE);
+      const offStr = lineOff.toString(16).toUpperCase().padStart(8,"0");
+
+      let hexStr = "";
+      let ascStr = "";
+      for(let i=lineOff; i<lineOff+BYTES_PER_LINE; i++){
+        if(i < lineEnd){
+          const b = bytes[i];
+          const rel = i - start;
+          const mark = (rel>=0 && rel<windowLen) ? hi[rel] : 0;
+          const cls = mark === 2 ? "byte cur" : (mark === 1 ? "byte hi" : "byte");
+          hexStr += `<span class="${cls}" title="0x${i.toString(16).toUpperCase()}">${toHex2(b)}</span>`;
+          ascStr += byteToAscii(b);
+        }else{
+          hexStr += `<span class="byte" style="opacity:.2">  </span>`;
+          ascStr += " ";
+        }
+      }
+
+      html += `
+        <div class="line">
+          <div class="off">0x${offStr}</div>
+          <div>${hexStr}</div>
+          <div class="ascii">${ascStr.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>
+        </div>`;
+    }
+
+    viewer.innerHTML = html;
+    viewInfo.textContent =
+      `Window: 0x${start.toString(16).toUpperCase()} - 0x${(end-1).toString(16).toUpperCase()} | Center: 0x${currentCenterOffset.toString(16).toUpperCase()}`;
+
+    // keep center near middle
+    const lineHeight = 20;
+    const within = centerLine - startLine;
+    viewer.scrollTop = Math.max(0, within*lineHeight - viewer.clientHeight/2);
+  }
+
+  async function loadFile(file){
+    fileName = file.name;
+    fileSize = file.size;
+
+    setPill("Loading...");
+    setStatus("Loading...");
+    enableControls(false);
+
+    try{
+      const buf = await file.arrayBuffer();
+      bytes = new Uint8Array(buf);
+
+      matches = [];
+      currentMatchIndex = -1;
+      patternLen = 0;
+
+      enableControls(true);
+      fileMeta.textContent = `${fileName} • ${fmtSize(fileSize)}`;
+      setPill("Loaded");
+
+      currentCenterOffset = 0;
+      renderAt(0);
+      setStatus(`Loaded: ${fileName}\nSize: ${fmtSize(fileSize)}\n\nReady.`);
+    }catch(e){
+      bytes = null;
+      enableControls(false);
+      setPill("Error");
+      setStatus("Error: " + (e?.message || String(e)));
+    }
+  }
+
+  function updateNavButtons(){
+    const has = matches.length > 0;
+    btnPrev.disabled = !has;
+    btnNext.disabled = !has;
+    btnClear.disabled = !has;
+  }
+
+  function setCurrentMatch(idx){
+    if(matches.length === 0) return;
+    currentMatchIndex = (idx % matches.length + matches.length) % matches.length;
+    const off = matches[currentMatchIndex];
+    renderAt(off);
+    updateNavButtons();
+    setStatus(
+      `Loaded: ${fileName}\nSize: ${fmtSize(fileSize)}\n\n` +
+      `Matches: ${matches.length}\n` +
+      `Current: ${currentMatchIndex+1}/${matches.length}\n` +
+      `Offset: 0x${off.toString(16).toUpperCase()} (${off})`
+    );
+  }
+
+  function clearSearch(){
+    matches = [];
+    currentMatchIndex = -1;
+    patternLen = 0;
+    updateNavButtons();
+    if(bytes) renderAt(currentCenterOffset);
+    if(bytes) setStatus(`Loaded: ${fileName}\nSize: ${fmtSize(fileSize)}\n\nReady.`);
+  }
+
+  function doFind(){
+    if(!bytes) return;
+
+    const s = q.value.trim();
+    if(!s){
+      setStatus(`Loaded: ${fileName}\nSize: ${fmtSize(fileSize)}\n\nพิมพ์คำค้นหาก่อน`);
+      return;
+    }
+
+    let needle;
+    if(mode.value === "hex"){
+      const parsed = parseHexPattern(s);
+      if(!parsed){
+        setStatus(`Loaded: ${fileName}\nSize: ${fmtSize(fileSize)}\n\nHex ว่าง`);
+        return;
+      }
+      if(parsed.error){
+        setStatus(`Loaded: ${fileName}\nSize: ${fmtSize(fileSize)}\n\nError: ${parsed.error}`);
+        return;
+      }
+      needle = parsed;
+    }else{
+      needle = new TextEncoder().encode(s);
+    }
+
+    if(needle.length === 0){
+      setStatus(`Loaded: ${fileName}\nSize: ${fmtSize(fileSize)}\n\nคำค้นหาว่าง`);
+      return;
+    }
+
+    setPill("Searching...");
+    setStatus(`Loaded: ${fileName}\nSize: ${fmtSize(fileSize)}\n\nSearching...`);
+
+    const caseInsensitiveASCII = (ci.value === "1" && mode.value === "text");
+    const res = bmhSearch(bytes, needle, caseInsensitiveASCII);
+
+    matches = res;
+    patternLen = needle.length;
+
+    if(matches.length === 0){
+      setPill("Not found");
+      currentMatchIndex = -1;
+      updateNavButtons();
+      renderAt(currentCenterOffset);
+      setStatus(`Loaded: ${fileName}\nSize: ${fmtSize(fileSize)}\n\nNot found: "${s}"`);
+      return;
+    }
+
+    setPill(`Found: ${matches.length}`);
+    setCurrentMatch(0);
+  }
+
+  function doJump(){
+    if(!bytes) return;
+    const s = jump.value.trim();
+    if(!s) return;
+
+    let off = 0;
+    if(/^0x/i.test(s)) off = parseInt(s, 16);
+    else off = parseInt(s, 10);
+
+    if(Number.isNaN(off)) return;
+
+    off = clamp(off, 0, Math.max(0, bytes.length-1));
+    renderAt(off);
+    setStatus(`Loaded: ${fileName}\nSize: ${fmtSize(fileSize)}\n\nJump to: 0x${off.toString(16).toUpperCase()} (${off})`);
+  }
+
+  /* กัน browser เปิดไฟล์ทับหน้าเว็บ ถ้าลากมาวางนอก drop */
+  ["dragover","drop"].forEach(ev=>{
+    document.addEventListener(ev, (e)=>{ e.preventDefault(); }, false);
+  });
+
+  // Drag / Click
+  drop.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", (e) => {
+    const f = e.target.files?.[0];
+    if(f) loadFile(f);
+  });
+
+  ["dragenter","dragover"].forEach(ev=>{
+    drop.addEventListener(ev, (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      drop.classList.add("drag");
+    });
+  });
+  ["dragleave","drop"].forEach(ev=>{
+    drop.addEventListener(ev, (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      drop.classList.remove("drag");
+    });
+  });
+  drop.addEventListener("drop", (e)=>{
+    const f = e.dataTransfer?.files?.[0];
+    if(f) loadFile(f);
+  });
+
+  // Buttons
+  btnFind.addEventListener("click", doFind);
+  btnPrev.addEventListener("click", ()=> matches.length && setCurrentMatch(currentMatchIndex-1));
+  btnNext.addEventListener("click", ()=> matches.length && setCurrentMatch(currentMatchIndex+1));
+  btnClear.addEventListener("click", clearSearch);
+  btnJump.addEventListener("click", doJump);
+
+  // Keys
+  q.addEventListener("keydown", (e)=>{ if(e.key==="Enter") doFind(); });
+  jump.addEventListener("keydown", (e)=>{ if(e.key==="Enter") doJump(); });
+
+  document.addEventListener("keydown", (e)=>{
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==="f"){
+      e.preventDefault();
+      q.focus(); q.select();
+    }else if(e.key==="F3"){
+      e.preventDefault();
+      if(matches.length) setCurrentMatch(currentMatchIndex + (e.shiftKey ? -1 : 1));
+    }
+  });
+
+  // Init
+  enableControls(false);
+  setPill("Ready");
+  updateNavButtons();
+})();
+</script>
+</body>
+</html>
