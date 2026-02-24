@@ -1,158 +1,135 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<title>404 - Page not found</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>404 | ไม่เจอจริงๆนะ 🫥</title>
 
 <style>
 :root{
-    --green:#c9e94c;
-    --dark:#2f3437;
-    --gray:#6b7280;
-    --warning:#facc15;
+  --bg:#0f1117;
+  --card:#161b22;
+  --text:#e6edf3;
+  --muted:#9da7b3;
+  --accent:#7c5cff;
+  --line:rgba(255,255,255,.08);
 }
-
-*{
-    box-sizing:border-box;
-    font-family: "Inter", "Segoe UI", sans-serif;
-}
-
+*{box-sizing:border-box}
 body{
-    margin:0;
-    background:#ffffff;
-    color:var(--dark);
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans Thai",sans-serif;
+  background:linear-gradient(135deg,#0f1117,#111827);
+  color:var(--text);
+  padding:20px;
 }
-
-.container{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:60px 8%;
-    gap:40px;
+.card{
+  width:min(820px,100%);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:28px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
 }
-
-/* LEFT */
-.text{
-    max-width:480px;
+h1{
+  margin:0;
+  font-size:64px;
+  background:linear-gradient(90deg,#7c5cff,#00d4ff);
+  -webkit-background-clip:text;
+  color:transparent;
 }
-
-.text h1{
-    font-size:64px;
-    margin:0 0 10px;
-    font-weight:800;
+h2{
+  margin:5px 0 15px;
+  font-weight:500;
 }
-
-.text h1 span{
-    color:var(--green);
+p{
+  color:var(--muted);
 }
-
-.text h2{
-    font-size:42px;
-    margin:0 0 20px;
-    font-weight:800;
+.box{
+  margin-top:20px;
+  padding:16px;
+  border-radius:14px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line);
+  font-size:14px;
 }
-
-.text p{
-    color:var(--gray);
-    line-height:1.7;
-    margin-bottom:20px;
+.row{
+  margin:6px 0;
+  word-break:break-all;
 }
-
-/* WARNING BOX */
-.alert{
-    border-left:4px solid var(--green);
-    background:#f9fafb;
-    padding:14px 16px;
-    border-radius:8px;
-    font-size:15px;
-    color:#374151;
-    margin-bottom:28px;
+b{color:#fff}
+button{
+  margin-top:15px;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.05);
+  color:white;
+  cursor:pointer;
 }
-
-/* BUTTON */
-.btn{
-    display:inline-block;
-    padding:12px 28px;
-    border:2px solid var(--dark);
-    border-radius:999px;
-    text-decoration:none;
-    color:var(--dark);
-    font-weight:600;
-    transition:.25s;
+button:hover{
+  background:rgba(255,255,255,.08);
 }
-
-.btn:hover{
-    background:var(--dark);
-    color:#fff;
-}
-
-/* RIGHT */
-.illustration{
-    max-width:520px;
-    width:100%;
-}
-
-.illustration img{
-    width:100%;
-    height:auto;
-}
-
-/* FOOTER */
 .footer{
-    position:absolute;
-    bottom:20px;
-    left:8%;
-    font-size:14px;
-    color:#9ca3af;
-}
-
-/* RESPONSIVE */
-@media(max-width:900px){
-    .container{
-        flex-direction:column;
-        text-align:center;
-    }
-    .footer{
-        position:static;
-        margin-top:30px;
-    }
+  margin-top:18px;
+  font-size:12px;
+  color:var(--muted);
 }
 </style>
 </head>
 
 <body>
+<div class="card">
 
-<div class="container">
+<h1>404</h1>
+<h2>หาไม่เจออะ 😶‍🌫️</h2>
+<p>หน้านี้อาจถูกลบ ย้าย หรือคุณพิมพ์ URL แบบมั่วเกินไป 🤝</p>
 
-    <div class="text">
-        <h1>Page <span>+</span></h1>
-        <h2>not found</h2>
-
-        <p>
-            Nullam ut quam vitae mauris faucibus malesuada.
-            Maecenas sed venenatis nisl. Phasellus sit amet felis diam
-        </p>
-
-        <div class="alert">
-            ⚠️ <strong>ไม่สามารถติดต่อกับเซิร์ฟเวอร์กลางได้</strong><br>
-            โปรดเชื่อมต่ออีกครั้งเพื่อทำรายการต่อไป<br>
-            อาจมีการ <strong>Loss</strong> เกิดขึ้นได้ ตามความต้องการของผู้ใช้และเซิร์ฟเวอร์
-        </div>
-
-        <a href="/" class="btn">Reconnect</a>
-    </div>
-
-    <div class="illustration">
-        <img src="https://raw.githubusercontent.com/thanawan230653/thanawan230653.github.io/refs/heads/main/404.png" alt="404 illustration">
-    </div>
-
+<div class="box">
+  <div class="row"><b>IP:</b> <span id="ip">กำลังโหลด...</span></div>
+  <div class="row"><b>ประเทศ / เมือง:</b> <span id="geo">กำลังโหลด...</span></div>
+  <div class="row"><b>Browser:</b> <span id="ua"></span></div>
+  <div class="row"><b>Language:</b> <span id="lang"></span></div>
+  <div class="row"><b>Referrer:</b> <span id="ref"></span></div>
+  <div class="row"><b>Local Time:</b> <span id="localtime"></span></div>
+  <div class="row"><b>Full URL:</b> <span id="url"></span></div>
 </div>
+
+<button onclick="history.back()">↩️ ย้อนกลับ</button>
 
 <div class="footer">
-    thanawan230653.github.io
+สถานะระบบ: ยังไม่พัง แค่ไม่เจอหน้า 🫠
 </div>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// ข้อมูลฝั่งผู้ใช้
+$("ua").textContent = navigator.userAgent;
+$("lang").textContent = navigator.language;
+$("ref").textContent = document.referrer || "-";
+$("localtime").textContent = new Date().toString();
+$("url").textContent = location.href;
+
+// ดึง IP + Geo จาก ipapi
+fetch("https://ipapi.co/json/")
+  .then(res => res.json())
+  .then(data => {
+    $("ip").textContent = data.ip || "ไม่พบ";
+    const geo = [data.country_name, data.region, data.city]
+      .filter(Boolean).join(" / ");
+    $("geo").textContent = geo || "-";
+  })
+  .catch(() => {
+    $("ip").textContent = "ดึง IP ไม่ได้ (ออฟไลน์หรือถูกบล็อก)";
+    $("geo").textContent = "-";
+  });
+</script>
 
 </body>
 </html>
