@@ -1,42 +1,80 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <title>Mini Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            text-align: center;
-            padding: 50px;
-        }
-        .box {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            display: inline-block;
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            background: #6c5ce7;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #4b3fcf;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Demo Login</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .login-box {
+        background: white;
+        padding: 40px;
+        width: 320px;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        text-align: center;
+    }
+
+    h2 {
+        margin-bottom: 25px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        outline: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 8px;
+        background: #6a11cb;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #4b0ea9;
+    }
+
+    .note {
+        margin-top: 15px;
+        font-size: 12px;
+        color: gray;
+    }
+</style>
 </head>
 <body>
 
-    <div class="box">
-        <h1>สวัสดี 👋</h1>
-        <p>นี่คือหน้าเว็บ HTML สั้น ๆ แบบง่าย ๆ</p>
-        <button onclick="alert('กดทำไม 😆')">กดสิ</button>
-    </div>
+<div class="login-box">
+    <h2>เข้าสู่ระบบ</h2>
+    <input type="text" placeholder="ชื่อผู้ใช้">
+    <input type="password" placeholder="รหัสผ่าน">
+    <button onclick="fakeLogin()">Login</button>
+    <div class="note">* หน้า Demo ไม่ได้ส่งข้อมูลจริง</div>
+</div>
+
+<script>
+function fakeLogin() {
+    alert("ระบบกำลังพัฒนา 🚧");
+}
+</script>
 
 </body>
 </html>
