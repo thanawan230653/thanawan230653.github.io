@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secure Download Page</title>
+  <style>
+    :root{
+      --bg1:#0f172a;
+      --bg2:#1e293b;
+      --card:#0b1220cc;
+      --line:#334155;
+      --text:#e2e8f0;
+      --muted:#94a3b8;
+      --accent:#60a5fa;
+      --accent2:#a78bfa;
+      --ok:#22c55e;
+      --bad:#ef4444;
+      --warn:#f59e0b;
+      --shadow:0 20px 50px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96,165,250,.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(167,139,250,.18), transparent 28%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+    }
+
+    .wrap{
+      width:min(1150px, calc(100% - 32px));
+      margin:32px auto;
+    }
+
+    .hero{
+      padding:28px;
+      border:1px solid rgba(148,163,184,.16);
+      border-radius:28px;
+      background:linear-gradient(180deg, rgba(15,23,42,.82), rgba(15,23,42,.58));
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      margin-bottom:22px;
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(28px, 4vw, 42px);
+      line-height:1.1;
+    }
+
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      font-size:15px;
+    }
+
+    .toolbar{
+      display:grid;
+      grid-template-columns: 1fr 220px;
+      gap:14px;
+      margin:20px 0 24px;
+    }
+
+    .input{
+      width:100%;
+      border:none;
+      outline:none;
+      padding:15px 18px;
+      border-radius:18px;
+      background:rgba(15,23,42,.86);
+      color:var(--text);
+      border:1px solid rgba(148,163,184,.14);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+      font-size:15px;
+    }
+
+    .stats{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    .chip{
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(96,165,250,.1);
+      border:1px solid rgba(96,165,250,.18);
+      color:#dbeafe;
+      font-size:13px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap:18px;
+    }
+
+    .card{
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(15,23,42,.92), rgba(2,6,23,.9));
+      border:1px solid rgba(148,163,184,.14);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0 auto auto 0;
+      width:100%;
+      height:4px;
+      background:linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .file-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:10px;
+    }
+
+    .title{
+      font-size:20px;
+      font-weight:700;
+      line-height:1.2;
+      word-break:break-word;
+      margin:0;
+    }
+
+    .badge{
+      white-space:nowrap;
+      font-size:12px;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(167,139,250,.12);
+      border:1px solid rgba(167,139,250,.2);
+      color:#ede9fe;
+    }
+
+    .meta{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      color:var(--muted);
+      font-size:14px;
+      margin:14px 0 18px;
+    }
+
+    .meta span{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .pass-row{
+      display:flex;
+      gap:10px;
+      margin-top:8px;
+    }
+
+    .pass-input{
+      flex:1;
+      border:none;
+      outline:none;
+      padding:13px 14px;
+      border-radius:14px;
+      background:rgba(30,41,59,.85);
+      color:var(--text);
+      border:1px solid rgba(148,163,184,.15);
+      font-size:14px;
+    }
+
+    .btn{
+      cursor:pointer;
+      border:none;
+      outline:none;
+      border-radius:14px;
+      padding:13px 16px;
+      font-weight:700;
+      font-size:14px;
+      transition:.18s ease;
+    }
+
+    .btn:hover{ transform:translateY(-1px); }
+    .btn:active{ transform:translateY(0); }
+
+    .btn-main{
+      background:linear-gradient(90deg, var(--accent), var(--accent2));
+      color:white;
+      min-width:118px;
+    }
+
+    .status{
+      min-height:22px;
+      margin-top:12px;
+      font-size:13px;
+      font-weight:600;
+    }
+
+    .status.ok{ color:var(--ok); }
+    .status.bad{ color:var(--bad); }
+    .status.warn{ color:var(--warn); }
+
+    .empty{
+      text-align:center;
+      padding:40px 20px;
+      color:var(--muted);
+      border:1px dashed rgba(148,163,184,.2);
+      border-radius:24px;
+      background:rgba(2,6,23,.45);
+    }
+
+    .footer{
+      color:var(--muted);
+      text-align:center;
+      padding:22px 0 8px;
+      font-size:13px;
+    }
+
+    @media (max-width:700px){
+      .toolbar{ grid-template-columns:1fr; }
+      .pass-row{ flex-direction:column; }
+      .btn-main{ width:100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>หน้าโหลดไฟล์แบบใส่รหัสผ่าน</h1>
+      <p>เพิ่มรายการในไฟล์ <b>downloads.json</b> ได้เลย โดยใช้รูปแบบ <b>ชื่อ&gt;ลิ้ง&gt;เวลา&gt;พาส</b> แต่ละบรรทัดจะขึ้นบนหน้าเว็บอัตโนมัติ</p>
+      <div class="stats">
+        <div class="chip" id="totalChip">ไฟล์ทั้งหมด: 0</div>
+        <div class="chip">รูปแบบข้อมูล: ชื่อ &gt; ลิ้ง &gt; เวลา &gt; พาส</div>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <input id="searchBox" class="input" type="text" placeholder="ค้นหาชื่อไฟล์..." />
+      <input id="jsonFileName" class="input" type="text" value="downloads.json" placeholder="ชื่อไฟล์ JSON" />
+    </div>
+
+    <div id="fileGrid" class="grid"></div>
+    <div class="footer">สร้างไว้ให้พร้อมใช้งานแล้ว เปิดไฟล์ HTML นี้ผ่านเว็บเซิร์ฟเวอร์เล็กๆ หรือวางไว้ในโฮสต์ปกติได้เลย</div>
+  </div>
+
+  <script>
+    const grid = document.getElementById("fileGrid");
+    const totalChip = document.getElementById("totalChip");
+    const searchBox = document.getElementById("searchBox");
+    const jsonFileNameInput = document.getElementById("jsonFileName");
+
+    let allItems = [];
+
+    function escapeHtml(text){
+      return String(text ?? "").replace(/[&<>"']/g, m => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+      }[m]));
+    }
+
+    function parseData(raw){
+      return raw
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(line => line && !line.startsWith("#"))
+        .map((line, idx) => {
+          const parts = line.split(">").map(v => v.trim());
+          return {
+            id: idx + 1,
+            name: parts[0] || "ไม่มีชื่อ",
+            link: parts[1] || "",
+            time: parts[2] || "-",
+            pass: parts[3] || ""
+          };
+        })
+        .filter(item => item.link);
+    }
+
+    function render(items){
+      totalChip.textContent = `ไฟล์ทั้งหมด: ${items.length}`;
+      if(!items.length){
+        grid.innerHTML = '<div class="empty">ไม่พบรายการไฟล์</div>';
+        return;
+      }
+
+      grid.innerHTML = items.map(item => `
+        <div class="card">
+          <div class="file-top">
+            <h2 class="title">${escapeHtml(item.name)}</h2>
+            <div class="badge">ลำดับ #${item.id}</div>
+          </div>
+
+          <div class="meta">
+            <span>🕒 เวลา: ${escapeHtml(item.time)}</span>
+            <span>🔒 ต้องใส่รหัสผ่านก่อนดาวน์โหลด</span>
+          </div>
+
+          <div class="pass-row">
+            <input class="pass-input" type="password" placeholder="กรอกรหัสผ่าน" data-pass-input="${item.id}">
+            <button class="btn btn-main" data-download="${item.id}">ดาวน์โหลด</button>
+          </div>
+
+          <div class="status" id="status-${item.id}"></div>
+        </div>
+      `).join("");
+
+      document.querySelectorAll("[data-download]").forEach(btn => {
+        btn.addEventListener("click", () => handleDownload(Number(btn.dataset.download)));
+      });
+    }
+
+    function handleDownload(id){
+      const item = allItems.find(x => x.id === id);
+      const input = document.querySelector(`[data-pass-input="${id}"]`);
+      const status = document.getElementById(`status-${id}`);
+
+      if(!item || !input || !status) return;
+
+      const typed = input.value.trim();
+
+      if(!typed){
+        status.className = "status warn";
+        status.textContent = "กรุณาใส่รหัสผ่านก่อน";
+        return;
+      }
+
+      if(typed !== item.pass){
+        status.className = "status bad";
+        status.textContent = "รหัสผ่านไม่ถูกต้อง";
+        return;
+      }
+
+      status.className = "status ok";
+      status.textContent = "รหัสผ่านถูกต้อง กำลังเปิดลิงก์ดาวน์โหลด...";
+
+      const a = document.createElement("a");
+      a.href = item.link;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    async function loadJsonFile(){
+      const fileName = jsonFileNameInput.value.trim() || "downloads.json";
+
+      try{
+        const res = await fetch(fileName + "?t=" + Date.now());
+        if(!res.ok) throw new Error("โหลดไฟล์ไม่สำเร็จ");
+        const raw = await res.text();
+        allItems = parseData(raw);
+        applySearch();
+      }catch(err){
+        grid.innerHTML = `
+          <div class="empty">
+            โหลดข้อมูลไม่ได้<br><br>
+            ตรวจสอบว่าไฟล์ <b>${escapeHtml(fileName)}</b> อยู่โฟลเดอร์เดียวกับ HTML และเปิดผ่านเว็บเซิร์ฟเวอร์
+          </div>
+        `;
+        totalChip.textContent = "ไฟล์ทั้งหมด: 0";
+      }
+    }
+
+    function applySearch(){
+      const q = searchBox.value.trim().toLowerCase();
+      const filtered = !q
+        ? allItems
+        : allItems.filter(item =>
+            item.name.toLowerCase().includes(q) ||
+            item.time.toLowerCase().includes(q)
+          );
+      render(filtered);
+    }
+
+    searchBox.addEventListener("input", applySearch);
+    jsonFileNameInput.addEventListener("change", loadJsonFile);
+
+    loadJsonFile();
+  </script>
+</body>
+</html>
