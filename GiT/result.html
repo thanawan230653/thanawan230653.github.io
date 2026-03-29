@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ผลการทำข้อสอบ</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>สรุปผลการทำข้อสอบ</h1>
+    <p id="score" class="score"></p>
+    <p id="percentage" class="percentage"></p>
+    <p id="timeTaken" class="time-taken"></p>
+    <button id="retryBtn" class="primary-btn">ทำข้อสอบอีกครั้ง</button>
+  </div>
+  <footer>
+    ผู้จัดทำ: Pawarit Sosirikul
+  </footer>
+  <script>
+    // Retrieve stored results from localStorage
+    const total = parseInt(localStorage.getItem('quiz_total') || '0');
+    const correct = parseInt(localStorage.getItem('quiz_correct') || '0');
+    const timeSeconds = parseInt(localStorage.getItem('quiz_time') || '0');
+    // Display score and percentage
+    document.getElementById('score').innerText = 'ได้คะแนน ' + correct + ' จาก ' + total + ' ข้อ';
+    const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
+    document.getElementById('percentage').innerText = 'คิดเป็น ' + percent + '%';
+    // Convert time into minutes and seconds
+    const minutes = Math.floor(timeSeconds / 60);
+    const seconds = timeSeconds % 60;
+    document.getElementById('timeTaken').innerText = 'ใช้เวลา ' + minutes + ' นาที ' + seconds + ' วินาที';
+    // Retry button navigates back to the quiz page
+    document.getElementById('retryBtn').addEventListener('click', function () {
+      window.location.href = 'quiz.html';
+    });
+  </script>
+</body>
+</html>

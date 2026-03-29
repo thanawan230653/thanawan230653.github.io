@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ทำข้อสอบ</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Display progress and timer for the quiz -->
+    <div id="progress">ข้อที่ <span id="questionNumber">1</span> / 60</div>
+    <div id="timer">เวลา: <span id="time">00:00</span></div>
+    <!-- Question card -->
+    <div id="questionContainer" class="card">
+      <h2 id="category" class="category"></h2>
+      <!-- Optional image for questions that include a visual element -->
+      <img id="questionImage" class="question-image" src="" alt="" style="display:none;">
+      <h3 id="question" class="question"></h3>
+      <div id="options"></div>
+      <button id="nextBtn" class="primary-btn" disabled>ถัดไป</button>
+    </div>
+  </div>
+  <footer>
+    ผู้จัดทำ: Pawarit Sosirikul
+  </footer>
+  <!-- Quiz data and logic -->
+  <script src="js/questions.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>
