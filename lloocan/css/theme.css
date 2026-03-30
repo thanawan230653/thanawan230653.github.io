@@ -1,0 +1,30 @@
+/* Colour palette and global theming */
+:root {
+  --background-color: #fff0f7;
+  --primary-color: #c2185b;
+  --secondary-color: #7b1fa2;
+  --text-color: #3d3d3d;
+  --button-background: #f06292;
+  --button-text: #ffffff;
+  --heart-color: #ec407a;
+  --fade-out-duration: 0.8s;
+  --typing-caret-color: #c2185b;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.fade-out {
+  animation: fadeOut var(--fade-out-duration) ease forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
